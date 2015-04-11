@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Census Data</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <link rel="stylesheet" href="http://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+  <style>
+    html, body, #mapDiv{
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+	#HomeButton {
+      position: absolute;
+      top: 135px;
+      left: 20px;
+      z-index: 50;
+    }
+	#search {
+        display: block;
+        position: absolute;
+        z-index: 1000;
+        top: 20px;
+        left: 74px;
+    }
+
+	#basemapTitle { 
+        background:rgba(56,56,56,.5);
+        color: #fff;
+        font-family: times;
+        padding: 5px;
+        text-align: center;
+        z-index: 40;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        border: 1px solid rgb(56,56,56);
+    }
+	#dashboard { 
+
+        right: 30px;
+        text-align: center;
+        top: 30px;
+        width: 300px;
+
+    }
+    #dashboardWidgets {
+        background: #fff;
+        color: #888;
+        margin: 0 auto;
+        text-align: left;
+    }
+	#legendWrapper {
+        background: #fff;
+        color: #888;
+        margin: 0 auto;
+        text-align: left;
+    }
+	#slider { 
+        right: 30px;
+        text-align: center;
+        top: 300px;
+        width: 300px;
+
+    }
+	#LocateButton {
+      position: absolute;
+      top: 95px;
+      left: 20px;
+      z-index: 50;
+    }
+	#chart { 
+        left: 30px;
+        top: 290px;
+        width: 410px;
+		height: 400px;
+    }
+	
+	#chart, #slider, #dashboard {
+		background:rgba(56,56,56,.5);
+		color: #fff;
+        font-family: times;
+        height: auto;
+        text-align: center;		
+        overflow: hidden;
+        padding: 5px;
+        position: absolute;
+		z-index: 40;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        border: 1px solid rgb(56,56,56);
+    }
+
+	#demochart, #CensusSelect, #agechart, #statisticSelect,#genderchart {
+        background: #fff;
+        color: #888;
+        margin: 0 auto;
+        text-align: left;
+
+  </style>
+  
+  <script src="http://js.arcgis.com/3.13/"></script>
+  <script>
+    var map, legend;
+	var AGE_UNDER5, AGE_5_17, AGE_18_21, AGE_22_29, AGE_30_39, AGE_40_49, AGE_50_64, AGE_65_UP;
+	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES;
+    require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer",
+			"esri/InfoTemplate","esri/dijit/Gauge","esri/plugins/FeatureLayerStatistics",
+			"esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
+			"esri/renderers/SimpleRenderer","esri/graphic", "esri/Color","esri/dijit/LocateButton","dojox/charting/plot2d/Pie","dojox/charting/Chart",
+			"dojox/charting/axis2d/Default","dojox/charting/action2d/Tooltip","dojox/charting/action2d/MoveSlice","dojox/charting/action2d/Highlight",
+			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/Legend","esri/renderers/smartMapping",
+			"dojo/_base/array", "dojo/dom", "dojo/on","dojo/dom-construct","esri/dijit/Legend","dijit/form/Select", "esri/dijit/HomeButton",
+			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps","dojo/domReady!"], 
+	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,InfoTemplate,Gauge,FeatureLayerStatistics,ColorInfoSlider,
+				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
+				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
+				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps) {
+				 
+    parser.parse();
+	var gauge;
+	var currentStatistic = "natural-breaks";
+	var currentField = "MED_AGE";
+	var basemap = "gray",
+	//////////////////////////////////////////// Create Map ///////////////////////////////////////////////
+	map = new Map("mapDiv", {
+		center: [-56.049, 38.485],
+		zoom: 3,
+		basemap: "gray"
+    });
+	//////////////////////////////////////////// Create Basemap Gallery ///////////////////////////////////////////////
+     var basemapGallery = new BasemapGallery({
+        showArcGISBasemaps: false,
+        map: map
+      }, "basemapGallery");
+
+      for (var basemap_key in esriBasemaps) {
+      
+        var esriBasemap = esriBasemaps[basemap_key];
+        basemapGallery.add(
+          new Basemap({
+            id: basemap_key,
+            layers: esriBasemap.baseMapLayers,
+            thumbnailUrl: esriBasemap.thumbnailUrl,
+            title: esriBasemap["title"]
+          })
+        );
+        
+        if (basemap_key == basemap) {
+          basemapGallery.select(basemap_key);
+        }
+      }
+    basemapGallery.startup();
+	//////////////////////////////////////////// Create Geocoder ///////////////////////////////////////////////
+	var geocoder = new Geocoder ({
+		map:map,
+		autoComplete: true,
+		geocoderMenu: true
+	}, "search");
+	geocoder.startup();
+	 dom.byId("search_input").placeholder = "Search for address";
+	//////////////////////////////////////////// Create Locate Button ///////////////////////////////////////////////
+	var geoLocate = new LocateButton({
+		map: map,
+		highlightLocation: false,
+		scale: 100000
+		}, "LocateButton"
+	);
+	geoLocate.startup();
+	//////////////////////////////////////////// Create Home Button ///////////////////////////////////////////////
+	var home = new HomeButton({
+        map: map
+      }, "HomeButton");
+      home.startup();
+	//////////////////////////////////////////// Create highlight field symbology ///////////////////////////////////////////////
+	var highlightSymbol = new SimpleFillSymbol(
+          SimpleFillSymbol.STYLE_NULL, 
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID, 
+            new Color([255,0,0]), 3
+          ), 
+          new Color([125,125,125,0.35])
+        );
+	//////////////////////////////////////////// Create Info Slider ///////////////////////////////////////////////	
+	var colorInfoSlider = new ColorInfoSlider({
+		colorInfo: {
+			stops:[
+				{color: new Color([92,92,92]), label: "50", value: 50}, 
+				{color: new Color([92,92,92]), label: "51", value: 51}
+			]
+		},
+		maxLabel: "$70000",
+		minLabel: "$0",
+		maxValue: 70000,
+		minValue: 0,
+		handles: [10000,30000,50000]
+		}, "esri-colorinfoslider");
+	colorInfoSlider.startup();
+	//////////////////////////////////////////// Add layers ///////////////////////////////////////////////	
+	var blockCensus = new FeatureLayer ("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/1", {
+			"mode": FeatureLayer.MODE_ONDEMAND, 
+			"outFields":["*"],
+			"maxScale":0,
+			"minScale":1000000,
+			"opacity":0.8
+		}); 
+	var countyCensus = new FeatureLayer ("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2", {
+			"mode": FeatureLayer.MODE_ONDEMAND, 
+			"outFields":["*"],
+			"maxScale":1000001,
+			"minScale":5000000,
+			"opacity":0.8
+		}); 
+	var stateCensus = new FeatureLayer ("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3", {
+			"mode": FeatureLayer.MODE_ONDEMAND, 
+			"outFields":["*"],
+			"maxScale":5000001,
+			"minScale":0,
+			"opacity":0.8
+		});
+	//var pointCensus = new FeatureLayer ("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/0", {
+			//"mode": FeatureLayer.MODE_ONDEMAND, 
+			//"outFields":["*"],
+			//"maxScale":0,
+			//"minScale":1000000
+			//"opacity":0.9
+		//}); 
+	var whichLayer = stateCensus;
+
+	var featureLayerStats = new FeatureLayerStatistics({layer: stateCensus, visible: false});
+	
+	map.addLayers([ stateCensus,countyCensus,blockCensus]);
+	
+	stateCensus.on("load",function(){
+		updateSmartMappingState();
+		createGauge();
+	});
+	
+	countyCensus.on("load",function(){
+		updateSmartMappingCounty();
+	});
+	
+	blockCensus.on("load",function(){
+		updateSmartMappingBlock();
+	});
+	////////////////////////////////////// Create the render for each layer /////////////////////////////////////////////
+	function updateSmartMappingState(){
+		smartMapping.createClassedColorRenderer({
+			layer: stateCensus,
+			field: currentField,
+			basemap: basemap,
+			classificationMethod: currentStatistic
+		}).then(function (colorRenderer){
+			stateCensus.setRenderer(colorRenderer.renderer);
+			stateCensus.redraw();
+			createLegend(map, whichLayer , currentField);
+		})
+	};
+	
+	function updateSmartMappingCounty(){
+		smartMapping.createClassedColorRenderer({
+			layer: countyCensus,
+			field: currentField,
+			basemap: basemap,
+			classificationMethod: currentStatistic
+		}).then(function (colorRenderer){
+			countyCensus.setRenderer(colorRenderer.renderer);
+			countyCensus.redraw();
+			createLegend(map, whichLayer , currentField);
+		})
+	};
+	
+	function updateSmartMappingBlock(){
+		smartMapping.createClassedColorRenderer({
+			layer: blockCensus,
+			field: currentField,
+			basemap: basemap,
+
+			classificationMethod: currentStatistic
+		}).then(function (colorRenderer){
+			blockCensus.setRenderer(colorRenderer.renderer);
+			blockCensus.redraw();
+			createLegend(map, whichLayer , currentField);
+		})
+	};
+	//stateCensus.on("load",createGauge);
+	
+	function createGauge(stateCensus){
+		var gaugeParams = {
+			"caption": "2010 Median Age",
+			//"maxDataValue": 60,
+			"unitLabel": " years",
+			"title": "",
+			"dataLabel": "Click on the Map"
+		}
+		gauge = new Gauge(gaugeParams, "gaugeDiv");
+        gauge.startup();
+    };
+	///////////////////////// STATE CENSUS ///////////////////////////////////////////////////////////////////
+	stateCensus.on("click", function(evt){
+		map.graphics.clear();
+		//var med_inc = evt.graphic.attributes.MEDHINC_CY;
+		var med_age = evt.graphic.attributes.MED_AGE;
+		var state = evt.graphic.attributes.STATE_NAME;
+		document.getElementById('chartTitle').innerHTML = state;
+		gauge.set("value", med_age);
+		gauge.set("dataLabel", state);
+		var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
+        map.graphics.add(highlightGraphic);
+		AGE_UNDER5 = evt.graphic.attributes.AGE_UNDER5;
+		AGE_5_17 = evt.graphic.attributes.AGE_5_17;
+		AGE_18_21 = evt.graphic.attributes.AGE_18_21;
+		AGE_22_29 = evt.graphic.attributes.AGE_22_29;
+		AGE_30_39 = evt.graphic.attributes.AGE_30_39;
+		AGE_40_49 = evt.graphic.attributes.AGE_40_49;
+		AGE_50_64 = evt.graphic.attributes.AGE_50_64;
+		AGE_65_UP = evt.graphic.attributes.AGE_65_UP;
+		
+		WHITE = evt.graphic.attributes.WHITE;
+		BLACK = evt.graphic.attributes.BLACK;
+		AMERI_ES = evt.graphic.attributes.AMERI_ES;
+		ASIAN = evt.graphic.attributes.ASIAN;
+		HAWN_PI= evt.graphic.attributes.HAWN_PI;
+		OTHER = evt.graphic.attributes.OTHER;
+		MULT_RACE = evt.graphic.attributes.MULT_RACE;
+		HISPANIC= evt.graphic.attributes.HISPANIC;
+
+		Ages();
+		Demographics ();
+		FEMALES = evt.graphic.attributes.FEMALES;
+		MALES = evt.graphic.attributes.MALES;
+		Gender ();
+		
+		//chart1.render();
+		
+	});
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	///////////////////////// COUNTY CENSUS ///////////////////////////////////////////////////////////////////
+	countyCensus.on("click", function(evt){
+		map.graphics.clear();
+		var med_age = evt.graphic.attributes.MED_AGE;
+		var county = evt.graphic.attributes.NAME;
+		document.getElementById('chartTitle').innerHTML = county + " County";
+		gauge.set("value", med_age);
+		gauge.set("dataLabel", county + " County");
+		var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
+        map.graphics.add(highlightGraphic);
+		AGE_UNDER5 = evt.graphic.attributes.AGE_UNDER5;
+		AGE_5_17 = evt.graphic.attributes.AGE_5_17;
+		AGE_18_21 = evt.graphic.attributes.AGE_18_21;
+		AGE_22_29 = evt.graphic.attributes.AGE_22_29;
+		AGE_30_39 = evt.graphic.attributes.AGE_30_39;
+		AGE_40_49 = evt.graphic.attributes.AGE_40_49;
+		AGE_50_64 = evt.graphic.attributes.AGE_50_64;
+		AGE_65_UP = evt.graphic.attributes.AGE_65_UP;
+		Ages();
+		WHITE = evt.graphic.attributes.WHITE;
+		BLACK = evt.graphic.attributes.BLACK;
+		AMERI_ES = evt.graphic.attributes.AMERI_ES;
+		ASIAN = evt.graphic.attributes.ASIAN;
+		HAWN_PI= evt.graphic.attributes.HAWN_PI;
+		OTHER = evt.graphic.attributes.OTHER;
+		MULT_RACE = evt.graphic.attributes.MULT_RACE;
+		HISPANIC= evt.graphic.attributes.HISPANIC;
+		Demographics ();
+		FEMALES = evt.graphic.attributes.FEMALES;
+		MALES = evt.graphic.attributes.MALES;
+		Gender ();
+	});
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	///////////////////////// BLOCK CENSUS ///////////////////////////////////////////////////////////////////////
+	blockCensus.on("click", function(evt){
+		map.graphics.clear();
+		var med_age = evt.graphic.attributes.MED_AGE;
+		var tract = evt.graphic.attributes.TRACT;
+		document.getElementById('chartTitle').innerHTML = "Tract: " + tract;
+		gauge.set("value", med_age);
+		gauge.set("dataLabel", "Tract: " + tract);
+		var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
+        map.graphics.add(highlightGraphic);
+		AGE_UNDER5 = evt.graphic.attributes.AGE_UNDER5;
+		AGE_5_17 = evt.graphic.attributes.AGE_5_17;
+		AGE_18_21 = evt.graphic.attributes.AGE_18_21;
+		AGE_22_29 = evt.graphic.attributes.AGE_22_29;
+		AGE_30_39 = evt.graphic.attributes.AGE_30_39;
+		AGE_40_49 = evt.graphic.attributes.AGE_40_49;
+		AGE_50_64 = evt.graphic.attributes.AGE_50_64;
+		AGE_65_UP = evt.graphic.attributes.AGE_65_UP;
+		Ages();
+		WHITE = evt.graphic.attributes.WHITE;
+		BLACK = evt.graphic.attributes.BLACK;
+		AMERI_ES = evt.graphic.attributes.AMERI_ES;
+		ASIAN = evt.graphic.attributes.ASIAN;
+		HAWN_PI= evt.graphic.attributes.HAWN_PI;
+		OTHER = evt.graphic.attributes.OTHER;
+		MULT_RACE = evt.graphic.attributes.MULT_RACE;
+		HISPANIC= evt.graphic.attributes.HISPANIC;
+		Demographics ();
+		FEMALES = evt.graphic.attributes.FEMALES;
+		MALES = evt.graphic.attributes.MALES;
+		Gender ();
+	});
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	var chart3 = new Chart("genderchart",{
+	  title: "Gender",
+      titlePos: "bottom",
+      titleGap: 8,
+      titleFont: "bold normal normal 10pt Arial",
+      titleFontColor: "blue"
+	});
+	chart3.addPlot("default", {type: Pie, font: "normal normal 11pt Tahoma",fontColor: "black",labelOffset: -30,radius: 70,startAngle: 45,labelStyle: "columns",labelWiring: "black"});
+	chart3.addAxis("x");
+	chart3.addAxis("y", {vertical: true});
+	chart3.addSeries("Series A", [
+		{y: 3, text: "Male",  color: "blue",  stroke: "black", tooltip: "MALES"},
+		{y: 3, text: "Female",  color: "red",  stroke: "black", tooltip: "FEMALE"}
+		]);
+	var anim10c = new Tooltip(chart3, "default");
+	var anim10a = new MoveSlice(chart3, "default");
+	var anim10b = new Highlight(chart3, "default");
+
+	chart3.render();
+	
+	//////////////////////////// CREATE AGE CHART /////////////////////////////////////////////////////////////////////
+	var chart1 = new Chart("agechart",{
+	  title: "Age Distribution",
+      titlePos: "bottom",
+      titleGap: 8,
+      titleFont: "bold normal normal 10pt Arial",
+      titleFontColor: "blue"
+	});
+	chart1.addPlot("default", {type: Pie, font: "normal normal 11pt Tahoma",fontColor: "black",labelOffset: -30,radius: 70,startAngle: 45,labelStyle: "columns",labelWiring: "black"});
+	chart1.addAxis("x");
+	chart1.addAxis("y", {vertical: true});
+	chart1.addSeries("Series A", [
+		{y: 3, text: "5 & Under",  color: "pink",  stroke: "black", tooltip: "AGE_UNDER5"},
+		{y: 3, text: "5 - 17",   color: "red",   stroke: "black", tooltip: "AGE_5_17"},
+		{y: 4, text: "18 - 21", color: "green", stroke: "black", tooltip: "AGE_18_21"},
+		{y: 5, text: "22 - 29",  color: "blue",  stroke: "black", tooltip: "AGE_22_29"},
+		{y: 6, text: "30 - 39", color: "white", stroke: "black", tooltip: "AGE_30_39"},
+		{y: 5, text: "40 - 49",  color: "yellow",  stroke: "black", tooltip: "AGE_40_49"},
+		{y: 4, text: "50 - 64",  color: "purple",  stroke: "black", tooltip: "AGE_50_64"},
+		{y: 3, text: "65 & Up",  color: "orange",  stroke: "black", tooltip: "AGE_65_UP"}
+		]);
+	var anim10c = new Tooltip(chart1, "default");
+	var anim10a = new MoveSlice(chart1, "default");
+	var anim10b = new Highlight(chart1, "default");
+
+		chart1.render();
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	//////////////////////////// CREATE DEMOGRAPHIC CHART /////////////////////////////////////////////////////////////////////
+	
+	var chart2 = new Chart("demochart",{
+	  title: "Demographic",
+      titlePos: "bottom",
+      titleGap: 8,
+      titleFont: "bold normal normal 10pt Arial",
+      titleFontColor: "blue"
+	});
+	chart2.addPlot("default", {type: Pie, font: "normal normal 11pt Tahoma",fontColor: "black",labelOffset: -30,radius: 80,startAngle: 45,labelStyle: "columns",labelWiring: "black"});
+	chart2.addAxis("x");
+	chart2.addAxis("y", {vertical: true});
+	//chart2.setTheme(Tom);
+	chart2.addSeries("Series A", [
+		{y: 3,  text: "White",   color: "pink",  stroke: "black", tooltip: "AGE_UNDER5"},
+		{y: 3, text: "Black",   color: "red",   stroke: "black", tooltip: "AGE_5_17"},
+		{y: 4, text: "AI/AN", color: "green", stroke: "black", tooltip: "AGE_18_21"},
+		{y: 5,  text: "Asian", color: "blue",  stroke: "black", tooltip: "AGE_22_29"},
+		{y: 6,text: "NH/PI", color: "white", stroke: "black", tooltip: "AGE_30_39"},
+		{y: 5, text: "Other",   color: "yellow",  stroke: "black", tooltip: "AGE_40_49"},
+		{y: 4,  text: "Multi Race",   color: "purple",  stroke: "black", tooltip: "AGE_50_64"},
+		{y: 3,  text: "Hispanic",  color: "orange",  stroke: "black", tooltip: "AGE_65_UP"}
+		]);
+	var anim10c = new Tooltip(chart2, "default");
+	var anim10a = new MoveSlice(chart2, "default");
+	var anim10b = new Highlight(chart2, "default");
+
+		chart2.render();
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//stateCensus.on("mouse-out", function(evt){
+		//map.graphics.clear();
+	//});
+	function Demographics () {
+		chart2.updateSeries("Series A", [
+		{y: WHITE, text: "White",  color: "pink",  stroke: "black", tooltip: WHITE},
+		{y: BLACK, text: "Black",   color: "red",   stroke: "black", tooltip: BLACK},
+		{y: AMERI_ES, text: "AI/AN", color: "green", stroke: "black", tooltip: AMERI_ES},
+		{y: ASIAN, text: "Asian",  color: "blue",  stroke: "black", tooltip: ASIAN},
+		{y: HAWN_PI, text: "NH/PI", color: "white", stroke: "black", tooltip: HAWN_PI},
+		{y: OTHER, text: "Other",  color: "yellow",  stroke: "black", tooltip: OTHER},
+		{y: MULT_RACE, text: "Multi Race",  color: "purple",  stroke: "black", tooltip: MULT_RACE},
+		{y: HISPANIC, text: "Hispanic",  color: "orange",  stroke: "black", tooltip: HISPANIC}
+		]);
+		chart2.render();
+	};
+	
+	function Ages () {
+		chart1.updateSeries("Series A", [
+		{y: AGE_UNDER5, text: "5 & Under",  color: "pink",  stroke: "black", tooltip: AGE_UNDER5},
+		{y: AGE_5_17, text: "5 - 17",   color: "red",   stroke: "black", tooltip: AGE_5_17},
+		{y: AGE_18_21, text: "18 - 21", color: "green", stroke: "black", tooltip: AGE_18_21},
+		{y: AGE_22_29, text: "22 - 29",  color: "blue",  stroke: "black", tooltip: AGE_22_29},
+		{y: AGE_30_39, text: "30 - 39", color: "white", stroke: "black", tooltip: AGE_30_39},
+		{y: AGE_40_49, text: "40 - 49",  color: "yellow",  stroke: "black", tooltip: AGE_40_49},
+		{y: AGE_50_64, text: "50 - 64",  color: "purple",  stroke: "black", tooltip: AGE_50_64},
+		{y: AGE_65_UP, text: "65 & Up",  color: "orange",  stroke: "black", tooltip: AGE_65_UP}
+		]);
+		chart1.render();
+	};
+	
+	function Gender () {
+		chart3.updateSeries("Series A", [
+		{y: MALES, text: "Male",  color: "blue",  stroke: "black", tooltip: MALES},
+		{y: FEMALES, text: "Female",  color: "red",  stroke: "black", tooltip: FEMALES}
+		]);
+		chart3.render();
+	};
+	///////////////////////////////////// Create the Legend ///////////////////////////////////////////////////////////////////////////////
+	 function createLegend(map, whichLayer, currentField ) {
+            //If applicable, destroy previous legend
+            if (legend) {
+               legend.destroy();
+               domConstruct.destroy(dom.byId("legendDiv"));
+            }
+
+           // create a new div for the legend
+            var legendDiv = domConstruct.create("div", {
+               id: "legendDiv"
+            }, dom.byId("legendWrapper"));
+
+            legend = new Legend({
+               map: map,
+               layerInfos: [{
+                  layer: whichLayer,
+                  title: "Census Attribute: " + currentField
+            }]
+            }, legendDiv);
+            legend.startup();
+         }
+	///////////////////////////////////// Sniff the visible Layer ///////////////////////////////////////////////////////////////////////////////
+	map.on("extent-change", function(evt){
+		if (evt.lod.scale > 4622325){
+			console.log("S");
+			whichLayer = stateCensus;
+			updateSmartMappingState();
+		} else if (evt.lod.scale > 577791){
+			console.log("C");
+			whichLayer = countyCensus;
+			updateSmartMappingCounty();
+		} else {
+			console.log("B");
+			whichLayer = blockCensus;
+			updateSmartMappingBlock();
+		}
+	});
+	////////////////////////////////// Create Attribute Select ///////////////////////////////////////////////////////////////////////////////////////////////	
+	var fieldSelect = new Select({
+		name: "select",
+		options: [
+			{ label: "Median Age", value: "MED_AGE", selected: true  },
+			{ label: "White", value: "WHITE"},
+			{ label: "Black", value: "BLACK"},
+			{ label: "Native American", value: "AMERI_ES" },
+			{ label: "Asian", value: "ASIAN" },
+			{ label: "Native Hawaiian/Pacific Islander", value: "HAWN_PI" },
+			{ label: "Hispanic", value: "HISPANIC" },
+			{ label: "Multiple Races", value: "MULT_RACE" },
+			{ label: "Other", value: "OTHER" }
+		]
+	    },"CensusSelect");
+	fieldSelect.startup();
+	////////////////////////////////// Create Statistic Select ///////////////////////////////////////////////////////////////////////////////////////////////	
+	var statisticSelect = new Select({
+		name: "select",
+		options: [
+			{ label: "Natural Breaks", value: "natural-breaks", selected: true  },
+			{ label: "Equal Interval", value: "equal-interval"},
+			{ label: "Quantile", value: "quantile"}
+		]
+	    },"statisticSelect");
+	statisticSelect.startup();
+	////////////////////////////////// Create Statistic Change Event ///////////////////////////////////////////////////////////////////////////////////////////////
+	statisticSelect.on("change", function (evt){
+		currentStatistic = evt;
+		if (whichLayer == stateCensus) {
+			updateSmartMappingState();
+		} else if (whichLayer == countyCensus){
+			updateSmartMappingCounty();
+		} else if (whichLayer == blockCensus){
+			updateSmartMappingBlock();
+		}
+	});
+	////////////////////////////////// Create Attribute Change Event ///////////////////////////////////////////////////////////////////////////////////////////////
+	fieldSelect.on("change", function (evt){
+		currentField = evt;
+		if (whichLayer == stateCensus) {
+			updateSmartMappingState();
+		} else if (whichLayer == countyCensus){
+			updateSmartMappingCounty();
+		} else if (whichLayer == blockCensus){
+			updateSmartMappingBlock();
+		}
+	});
+	////////////////////////////////// Create Basemap Change Event ///////////////////////////////////////////////////////////////////////////////////////////////
+	basemapGallery.on("selection-change", function(evt){
+		basemap = evt.target.getSelected().id;
+		if (whichLayer == stateCensus) {
+			updateSmartMappingState();
+		} else if (whichLayer == countyCensus){
+			updateSmartMappingCounty();
+		} else if (whichLayer == blockCensus){
+			updateSmartMappingBlock();
+		}
+	});
+	
+});
+  </script>
+
+</head>
+<body class="claro">
+<div id="mapDiv">
+	<div id="LocateButton"></div>
+	<div id="HomeButton"></div>
+	<div id="search"></div>
+    <div id="dashboard">
+		<span style='text-align:center;'>Dashboard</span>
+		<div id="dashboardWidgets">
+			<div id="gaugeDiv"></div>
+        </div>
+    </div>
+	<div id="slider">
+		<span style='text-align:center;'>Legend</span>
+		<div id="legendWrapper"></div>
+		<div>Select which data you want to show:</div>
+		 <div id="CensusSelect"></div>
+		 <div>Select Statistics:</div>
+		 <div id="statisticSelect"></div>
+	</div>
+	<div id="chart">
+	<span id="chartTitle" style='text-align:center;'>Click on Map to get stats</span>
+		<div data-dojo-type="dijit/layout/TabContainer"style="width: 410px; height: 380px">
+			<div data-dojo-type="dijit/layout/ContentPane" title="Age" data-dojo-props="selected:true"style="width: 400px; height: 300px">
+				<div id="agechart"></div>
+			</div>
+			<div data-dojo-type="dijit/layout/ContentPane" title="Demographic" data-dojo-props="selected:false"style="width: 400px; height: 300px">
+				<div id="demochart"></div>
+
+			</div>
+			<div data-dojo-type="dijit/layout/ContentPane" title="Gender" data-dojo-props="selected:false"style="width: 400px; height: 300px">
+				<div id="genderchart"></div>
+			</div>
+			<div data-dojo-type="dijit/layout/ContentPane" title="Statistics" data-dojo-props="selected:false"style="width: 400px; height: 300px">
+				<!--<div id="demochart"></div>-->
+			</div>
+
+			
+
+		</div>		
+	</div>
+	 <div style="position:absolute; left:74px; top:60px; z-Index:999;">
+        <div data-dojo-type="dijit/TitlePane" id="basemapTitle"
+             data-dojo-props="title:'Switch Basemap', closable:false, open:false" >
+          <div data-dojo-type="dijit/layout/ContentPane" style="width:380px;  height:280px; overflow:auto;">
+            <div id="basemapGallery"></div>
+          </div>
+        </div>
+</div>
+</body>
+</html>
