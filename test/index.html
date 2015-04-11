@@ -192,13 +192,13 @@
 	//////////////////////////////////////////// Create Locate Button ///////////////////////////////////////////////
 	var geoLocate = new LocateButton({
 		map: map,
-		highlightLocation: false,
+		highlightLocation: true,
 		scale: 100000
 		}, "LocateButton"
 	);
 	geoLocate.startup();
 	
-	geoLocate.on("find", function(evt){
+	geoLocate.on("locate", function(evt){
 		map.graphics.clear();
 		var point = evt.result.feature.geometry;
 		var graphic = new Graphic(point, addressSymbol);
