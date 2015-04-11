@@ -200,7 +200,7 @@
 	
 	geoLocate.on("locate", function(evt){
 		map.graphics.clear();
-		var point = evt.result.feature.geometry;
+		var point = evt.graphic.geometry;
 		var graphic = new Graphic(point, addressSymbol);
 		map.graphics.add(graphic);
 	
