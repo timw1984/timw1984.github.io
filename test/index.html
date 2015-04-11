@@ -107,6 +107,7 @@
     var map, legend;
 	var AGE_UNDER5, AGE_5_17, AGE_18_21, AGE_22_29, AGE_30_39, AGE_40_49, AGE_50_64, AGE_65_UP;
 	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES;
+	var gaugeValue
     require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer",
 			"esri/InfoTemplate","esri/dijit/Gauge","esri/plugins/FeatureLayerStatistics",
 			"esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
@@ -114,17 +115,20 @@
 			"dojox/charting/axis2d/Default","dojox/charting/action2d/Tooltip","dojox/charting/action2d/MoveSlice","dojox/charting/action2d/Highlight",
 			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/Legend","esri/renderers/smartMapping",
 			"dojo/_base/array", "dojo/dom", "dojo/on","dojo/dom-construct","esri/dijit/Legend","dijit/form/Select", "esri/dijit/HomeButton",
-			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps","dojo/domReady!"], 
+			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps",
+			"esri/symbols/SimpleMarkerSymbol","dojo/domReady!"], 
 	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,InfoTemplate,Gauge,FeatureLayerStatistics,ColorInfoSlider,
 				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
 				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
-				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps) {
+				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps,
+				SimpleMarkerSymbol) {
 				 
     parser.parse();
 	var gauge;
 	var currentStatistic = "natural-breaks";
 	var currentField = "MED_AGE";
-	var basemap = "gray",
+	var basemap = "gray";
+	var med_test = "MED_AGE";
 	//////////////////////////////////////////// Create Map ///////////////////////////////////////////////
 	map = new Map("mapDiv", {
 		center: [-56.049, 38.485],
@@ -161,7 +165,30 @@
 		geocoderMenu: true
 	}, "search");
 	geocoder.startup();
-	 dom.byId("search_input").placeholder = "Search for address";
+	dom.byId("search_input").placeholder = "Search for address";
+	var addressSymbol = new SimpleMarkerSymbol(
+        SimpleMarkerSymbol.STYLE_CIRCLE, 15, 
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID, 
+            new Color([0, 0, 255, 0.5]), 8), 
+          new Color([0, 0, 255])
+    );
+	
+	geocoder.on("select", function (evt){
+		map.graphics.clear();
+		var point = evt.result.feature.geometry;
+		var graphic = new Graphic(point, addressSymbol);
+		map.graphics.add(graphic);
+		map.infoWindow.setTitle("Adress");
+        map.infoWindow.setContent(evt.result.name);
+        map.infoWindow.show(evt.result.feature.geometry);
+        map.infoWindow.resize(180, 100);
+	});
+	
+	geocoder.on("clear", function(){
+		map.graphics.clear();
+		map.infoWindow.hide();
+	});
 	//////////////////////////////////////////// Create Locate Button ///////////////////////////////////////////////
 	var geoLocate = new LocateButton({
 		map: map,
@@ -170,6 +197,14 @@
 		}, "LocateButton"
 	);
 	geoLocate.startup();
+	
+	geoLocate.on("find", function(evt){
+		map.graphics.clear();
+		var point = evt.result.feature.geometry;
+		var graphic = new Graphic(point, addressSymbol);
+		map.graphics.add(graphic);
+	
+	})
 	//////////////////////////////////////////// Create Home Button ///////////////////////////////////////////////
 	var home = new HomeButton({
         map: map
@@ -236,7 +271,7 @@
 	
 	stateCensus.on("load",function(){
 		updateSmartMappingState();
-		createGauge();
+		//createGauge();
 	});
 	
 	countyCensus.on("load",function(){
@@ -288,7 +323,7 @@
 	};
 	//stateCensus.on("load",createGauge);
 	
-	function createGauge(stateCensus){
+	function createGauge(){
 		var gaugeParams = {
 			"caption": "2010 Median Age",
 			//"maxDataValue": 60,
@@ -299,6 +334,7 @@
 		gauge = new Gauge(gaugeParams, "gaugeDiv");
         gauge.startup();
     };
+	createGauge();
 	///////////////////////// STATE CENSUS ///////////////////////////////////////////////////////////////////
 	stateCensus.on("click", function(evt){
 		map.graphics.clear();
@@ -418,8 +454,8 @@
 	chart3.addAxis("x");
 	chart3.addAxis("y", {vertical: true});
 	chart3.addSeries("Series A", [
-		{y: 3, text: "Male",  color: "blue",  stroke: "black", tooltip: "MALES"},
-		{y: 3, text: "Female",  color: "red",  stroke: "black", tooltip: "FEMALE"}
+		{y:  138053563, text: "Male",  color: "blue",  stroke: "black", tooltip: "138,053,563"},
+		{y:  143368343, text: "Female",  color: "red",  stroke: "black", tooltip: "143,368,343"}
 		]);
 	var anim10c = new Tooltip(chart3, "default");
 	var anim10a = new MoveSlice(chart3, "default");
@@ -566,6 +602,7 @@
 		name: "select",
 		options: [
 			{ label: "Median Age", value: "MED_AGE", selected: true  },
+			{ label: "Population per SqMile", value: "POP00_SQMI"},
 			{ label: "White", value: "WHITE"},
 			{ label: "Black", value: "BLACK"},
 			{ label: "Native American", value: "AMERI_ES" },
@@ -577,6 +614,7 @@
 		]
 	    },"CensusSelect");
 	fieldSelect.startup();
+	
 	////////////////////////////////// Create Statistic Select ///////////////////////////////////////////////////////////////////////////////////////////////	
 	var statisticSelect = new Select({
 		name: "select",
