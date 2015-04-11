@@ -203,8 +203,15 @@
 		var point = evt.graphic.geometry;
 		var graphic = new Graphic(point, addressSymbol);
 		map.graphics.add(graphic);
+		map.infoWindow.setTitle("Geo Locate");
+        map.infoWindow.setContent("Found you!");
+		map.infoWindow.show(point);
+		map.infoWindow.resize(180, 100);
+	});
 	
-	})
+	map.infoWindow.on("hide", function(){
+		map.graphics.clear();
+	});
 	//////////////////////////////////////////// Create Home Button ///////////////////////////////////////////////
 	var home = new HomeButton({
         map: map
