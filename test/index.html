@@ -25,7 +25,6 @@
         top: 20px;
         left: 74px;
     }
-
 	#basemapTitle { 
         background:rgba(56,56,56,.5);
         color: #fff;
@@ -39,12 +38,10 @@
         border: 1px solid rgb(56,56,56);
     }
 	#dashboard { 
-
         right: 30px;
         text-align: center;
         top: 30px;
         width: 300px;
-
     }
     #dashboardWidgets {
         background: #fff;
@@ -63,7 +60,6 @@
         text-align: center;
         top: 300px;
         width: 300px;
-
     }
 	#LocateButton {
       position: absolute;
@@ -93,13 +89,11 @@
         border-radius: 4px;
         border: 1px solid rgb(56,56,56);
     }
-
 	#demochart, #CensusSelect, #agechart, #statisticSelect,#genderchart {
         background: #fff;
         color: #888;
         margin: 0 auto;
         text-align: left;
-
   </style>
   
   <script src="http://js.arcgis.com/3.13/"></script>
@@ -113,15 +107,15 @@
 			"esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
 			"esri/renderers/SimpleRenderer","esri/graphic", "esri/Color","esri/dijit/LocateButton","dojox/charting/plot2d/Pie","dojox/charting/Chart",
 			"dojox/charting/axis2d/Default","dojox/charting/action2d/Tooltip","dojox/charting/action2d/MoveSlice","dojox/charting/action2d/Highlight",
-			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/Legend","esri/renderers/smartMapping",
+			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/SelectableLegend","esri/renderers/smartMapping",
 			"dojo/_base/array", "dojo/dom", "dojo/on","dojo/dom-construct","esri/dijit/Legend","dijit/form/Select", "esri/dijit/HomeButton",
 			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps",
-			"esri/symbols/SimpleMarkerSymbol","dojo/domReady!"], 
+			"esri/symbols/SimpleMarkerSymbol","dojox/charting/plot2d/Spider","dojo/domReady!"], 
 	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,InfoTemplate,Gauge,FeatureLayerStatistics,ColorInfoSlider,
 				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
 				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
 				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps,
-				SimpleMarkerSymbol) {
+				SimpleMarkerSymbol,Spider) {
 				 
     parser.parse();
 	var gauge;
@@ -140,7 +134,6 @@
         showArcGISBasemaps: false,
         map: map
       }, "basemapGallery");
-
       for (var basemap_key in esriBasemaps) {
       
         var esriBasemap = esriBasemaps[basemap_key];
@@ -271,7 +264,6 @@
 			//"opacity":0.9
 		//}); 
 	var whichLayer = stateCensus;
-
 	var featureLayerStats = new FeatureLayerStatistics({layer: stateCensus, visible: false});
 	
 	map.addLayers([ stateCensus,countyCensus,blockCensus]);
@@ -320,7 +312,6 @@
 			layer: blockCensus,
 			field: currentField,
 			basemap: basemap,
-
 			classificationMethod: currentStatistic
 		}).then(function (colorRenderer){
 			blockCensus.setRenderer(colorRenderer.renderer);
@@ -370,14 +361,32 @@
 		OTHER = evt.graphic.attributes.OTHER;
 		MULT_RACE = evt.graphic.attributes.MULT_RACE;
 		HISPANIC= evt.graphic.attributes.HISPANIC;
-
 		Ages();
 		Demographics ();
 		FEMALES = evt.graphic.attributes.FEMALES;
 		MALES = evt.graphic.attributes.MALES;
 		Gender ();
 		
-		//chart1.render();
+		POP00_SQMI = evt.graphic.attributes.POP00_SQMI;
+		MED_AGE_M = evt.graphic.attributes.MED_AGE_M;
+		MED_AGE_F = evt.graphic.attributes.MED_AGE_F;
+		AVE_HH_SZ = evt.graphic.attributes.AVE_HH_SZ;
+		AVE_FAM_SZ = evt.graphic.attributes.AVE_FAM_SZ;
+		
+		chart4name = "State";
+		chart4.addSeries("USA", {data: {"Median Age Male": 34,"Pop per SqMi": 345,"Avg household size": 2.55,"Avg family size": 3.00,"Median Age Female": 37}}, { fill: "blue" });
+		chart4.addSeries(chart4name, {data: {"Median Age Male": MED_AGE_M,"Pop per SqMi": POP00_SQMI,"Avg household size": AVE_HH_SZ,"Avg family size": AVE_FAM_SZ,"Median Age Female": MED_AGE_F}}, { fill: "red" });
+		chart4.addSeries("Max", {data: {"Median Age Male": 36,"Pop per SqMi": 400,"Avg household size": 4.00,"Avg family size": 4.00,"Median Age Female": 41}}, { fill: "red" });
+		chart4.addSeries("Min", {data: {"Median Age Male": 26,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 27}}, { fill: "yellow" });
+		
+		if (chart4) {
+		
+		console.log("test");
+		}
+
+		chart4.render();
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 		
 	});
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -413,6 +422,21 @@
 		FEMALES = evt.graphic.attributes.FEMALES;
 		MALES = evt.graphic.attributes.MALES;
 		Gender ();
+		
+		POP00_SQMI = evt.graphic.attributes.POP00_SQMI;
+		MED_AGE_M = evt.graphic.attributes.MED_AGE_M;
+		MED_AGE_F = evt.graphic.attributes.MED_AGE_F;
+		AVE_HH_SZ = evt.graphic.attributes.AVE_HH_SZ;
+		AVE_FAM_SZ = evt.graphic.attributes.AVE_FAM_SZ;
+		chart4name = "State";
+		
+		chart4.addSeries(chart4name, {data: {"Median Age Male": MED_AGE_M,"Pop per SqMi": POP00_SQMI,"Avg household size": AVE_HH_SZ,"Avg family size": AVE_FAM_SZ,"Median Age Female": MED_AGE_F}}, { fill: "red" });
+		chart4.addSeries("Max", {data: {"Median Age Male": 38,"Pop per SqMi": 8700,"Avg household size": 4.00,"Avg family size": 4.00,"Median Age Female": 41}}, { fill: "red" });
+		chart4.addSeries("Min", {data: {"Median Age Male": 26,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 27}}, { fill: "yellow" });
+		
+		chart4.render();
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 	});
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -447,6 +471,22 @@
 		FEMALES = evt.graphic.attributes.FEMALES;
 		MALES = evt.graphic.attributes.MALES;
 		Gender ();
+		
+		POP00_SQMI = evt.graphic.attributes.POP00_SQMI;
+		MED_AGE_M = evt.graphic.attributes.MED_AGE_M;
+		MED_AGE_F = evt.graphic.attributes.MED_AGE_F;
+		AVE_HH_SZ = evt.graphic.attributes.AVE_HH_SZ;
+		AVE_FAM_SZ = evt.graphic.attributes.AVE_FAM_SZ;
+		
+		chart4name = "State";
+		
+		chart4.addSeries(chart4name, {data: {"Median Age Male": MED_AGE_M,"Pop per SqMi": POP00_SQMI,"Avg household size": AVE_HH_SZ,"Avg family size": AVE_FAM_SZ,"Median Age Female": MED_AGE_F}}, { fill: "red" });
+		chart4.addSeries("Max", {data: {"Median Age Male": 38,"Pop per SqMi": 8700,"Avg household size": 4.00,"Avg family size": 4.00,"Median Age Female": 41}}, { fill: "red" });
+		chart4.addSeries("Min", {data: {"Median Age Male": 26,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 27}}, { fill: "yellow" });
+		
+		chart4.render();
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 	});
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -467,7 +507,6 @@
 	var anim10c = new Tooltip(chart3, "default");
 	var anim10a = new MoveSlice(chart3, "default");
 	var anim10b = new Highlight(chart3, "default");
-
 	chart3.render();
 	
 	//////////////////////////// CREATE AGE CHART /////////////////////////////////////////////////////////////////////
@@ -494,7 +533,6 @@
 	var anim10c = new Tooltip(chart1, "default");
 	var anim10a = new MoveSlice(chart1, "default");
 	var anim10b = new Highlight(chart1, "default");
-
 		chart1.render();
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -524,9 +562,22 @@
 	var anim10c = new Tooltip(chart2, "default");
 	var anim10a = new MoveSlice(chart2, "default");
 	var anim10b = new Highlight(chart2, "default");
-
 		chart2.render();
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var chart4 = new Chart("statChart");
+	chart4.addPlot("default", {type: Spider,labelOffset:-10,seriesFillAlpha:0.2,markerSize:4,precision:0,spiderType:"polygon"});
+	//chart2.setTheme(Tom);
+	chart4.addSeries("USA", {data: {"Median Age Male": 34,"Pop per SqMi": 345,"Avg household size": 2.55,"Avg family size": 3.00,"Median Age Female": 37}}, { fill: "blue" });
+	chart4.addSeries("Max", {data: {"Median Age Male": 35,"Pop per SqMi": 350,"Avg household size": 4.00,"Avg family size": 4.00,"Median Age Female": 41}}, { fill: "red" });
+	chart4.addSeries("Min", {data: {"Median Age Male": 26,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 27}}, { fill: "yellow" });
+	var anim11c = new Tooltip(chart4);
+	//var anim10a = new MoveSlice(chart2, "default");
+	var anim11b = new Highlight(chart4);
 
+		chart4.render();
+
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//stateCensus.on("mouse-out", function(evt){
 		//map.graphics.clear();
@@ -573,12 +624,10 @@
                legend.destroy();
                domConstruct.destroy(dom.byId("legendDiv"));
             }
-
            // create a new div for the legend
             var legendDiv = domConstruct.create("div", {
                id: "legendDiv"
             }, dom.byId("legendWrapper"));
-
             legend = new Legend({
                map: map,
                layerInfos: [{
@@ -668,7 +717,6 @@
 	
 });
   </script>
-
 </head>
 <body class="claro">
 <div id="mapDiv">
@@ -697,17 +745,15 @@
 			</div>
 			<div data-dojo-type="dijit/layout/ContentPane" title="Demographic" data-dojo-props="selected:false"style="width: 400px; height: 300px">
 				<div id="demochart"></div>
-
 			</div>
 			<div data-dojo-type="dijit/layout/ContentPane" title="Gender" data-dojo-props="selected:false"style="width: 400px; height: 300px">
 				<div id="genderchart"></div>
 			</div>
 			<div data-dojo-type="dijit/layout/ContentPane" title="Statistics" data-dojo-props="selected:false"style="width: 400px; height: 300px">
-				<!--<div id="demochart"></div>-->
+				<div id="statChart"><div id="legend1"></div></div>
+
 			</div>
-
 			
-
 		</div>		
 	</div>
 	 <div style="position:absolute; left:74px; top:60px; z-Index:999;">
