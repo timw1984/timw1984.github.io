@@ -25,16 +25,17 @@
         top: 20px;
         left: 74px;
     }
+	
 	#field1 { 
-	    background: white;
+	     background: white;
         color: #3E3E35;
         margin: 0 auto;
-		border: 1px solid #black; 
-		border-radius: 5px; 
-		box-shadow: 0 0 5px 3px gray; 
-		outline: none; 
-		padding: 5px;	
-		margin: 5px;
+    border: 1px solid #black; 
+    border-radius: 5px; 
+    box-shadow: 0 0 5px 3px gray; 
+    outline: none; 
+	padding: 5px;	
+	margin: 5px;
   } 
 	
 	#basemapTitle { 
@@ -80,17 +81,7 @@
         width: 410px;
 		height: 400px;
     }
-	#header {
-		color: White;
-		text-align: center;
-		background:#3399ff;
-		border: 1px solid rgb(56,56,56);
-		font-family: times;
-		font-weight: bold;
-	}
-	#mapDiv {
-		border: 1px solid rgb(56,56,56);
-	}
+	
 	#chart, #slider, #dashboard {
 		background:rgba(56,56,56,.5);
 		color: white;
@@ -132,31 +123,29 @@
 			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/SelectableLegend","esri/renderers/smartMapping",
 			"dojo/_base/array", "dojo/dom", "dojo/on","dojo/dom-construct","esri/dijit/Legend","dijit/form/Select", "esri/dijit/HomeButton",
 			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps",
-			"esri/symbols/SimpleMarkerSymbol","dojox/charting/plot2d/Spider","dijit/layout/BorderContainer","dojox/charting/action2d/Magnify",
-			"esri/dijit/util/busyIndicator","dojo/domReady!"], 
+			"esri/symbols/SimpleMarkerSymbol","dojox/charting/plot2d/Spider","dojox/gauges/GlossySemiCircularGauge","dojo/domReady!"], 
 	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,registry,InfoTemplate,Gauge,FeatureLayerStatistics,aspect,ColorInfoSlider,
 				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
 				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
 				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps,
-				SimpleMarkerSymbol,Spider,BorderContainer,Magnify,busyIndicator) {
+				SimpleMarkerSymbol,Spider, dojgauge) {
 				 
     parser.parse();
 	//////////////////////////////////////////// Create default values //////////////////////////////////////////////////////
 	var gauge;
 	var currentStatistic = "natural-breaks";
 	var currentField = "MED_AGE";
-	var basemap = "streets";
+	var basemap = "gray";
 	var med_test = "MED_AGE";
 	var caption = "Stats";
 	var value = 5;
 	var title = "Click on map";
 	var theme = "high-to-low";
-	var busyIndicator = busyIndicator.create({target: "esri-colorinfoslider", imageUrl: "http://archive.dojotoolkit.org/nightly/dojotoolkit/dijit/icons/images/loadingAnimation_rtl.gif", backgroundOpacity: 0});
 	//////////////////////////////////////////// Create Map ///////////////////////////////////////////////
 	map = new Map("mapDiv", {
 		center: [-86.049, 38.485],
 		zoom: 3,
-		basemap: basemap
+		basemap: "gray"
     });
 	//////////////////////////////////////////// Create Basemap Gallery ///////////////////////////////////////////////
      var basemapGallery = new BasemapGallery({
@@ -184,8 +173,7 @@
 	var geocoder = new Geocoder ({
 		map:map,
 		autoComplete: true,
-		geocoderMenu: true,
-		zoomScale: 100000
+		geocoderMenu: true
 	}, "search");
 	geocoder.startup();
 	dom.byId("search_input").placeholder = "Search for address";
@@ -249,7 +237,7 @@
           ), 
           new Color([125,125,125,0.35])
         );
-	//////////////////////////////////////////// Create Info Slider/ placeholder ///////////////////////////////////////////////	
+	//////////////////////////////////////////// Create Info Slider ///////////////////////////////////////////////	
 	var colorInfoSlider = new ColorInfoSlider({
 		colorInfo: {
 			stops:[
@@ -288,6 +276,7 @@
 		});
 
 	var whichLayer = stateCensus;
+	var featureLayerStats = new FeatureLayerStatistics({layer: stateCensus, visible: false});
 	map.addLayers([ stateCensus,countyCensus,blockCensus]);
 	////////////////////////////////////// Create the render for each layer /////////////////////////////////////////////
 	function updateSmartMappingState(){
@@ -475,7 +464,6 @@
 	chart4.addSeries("Min", {data: {"Median Age Male": 30,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 30}}, { fill: "yellow" });
 	var anim11c = new Tooltip(chart4);
 	var anim11b = new Highlight(chart4);
-	var anim11b = new Magnify(chart4);
 	chart4.render();
 	chart4.removeSeries("Max");
 	chart4.removeSeries("Min");
@@ -701,7 +689,6 @@
 	};
 	////////////////////////////////// Create interactive Legend ///////////////////////////////////////////////////////////////////////////////////////////////
 	function sliderSmart(){
-		busyIndicator.show();
 		smartMapping.createColorRenderer({
           layer: whichLayer,
           field: currentField,
@@ -717,7 +704,6 @@
 				colorInfoSlider.set("statistics", colorRenderer.statistics);
 				colorInfoSlider.set("handles",sliderHandleInfo["handles"]);
 				colorInfoSlider.set("primaryHandle", sliderHandleInfo["primaryHandle"]);
-				busyIndicator.hide();
 		     colorInfoSlider.on("handle-value-change", function (sliderValueChange){
               //console.log("handle-value-change", sliderValueChange);
               whichLayer.renderer.setVisualVariables([sliderValueChange]);
@@ -776,7 +762,6 @@
 	        dom.byId("color-renderer-theme").onchange = function (){
               theme = this.value;
               //busyIndicator.show();
-			  busyIndicator.show();
               smartMapping.createColorRenderer({
                 layer: whichLayer,
                 field: currentField,
@@ -786,28 +771,21 @@
                 whichLayer.setRenderer(colorRenderer.renderer);
                 whichLayer.redraw();
                 var sliderHandleInfo = getSliderHandlePositions(theme);
-                colorInfoSlider.set("minValue", 0);
+                colorInfoSlider.set("minValue", colorRenderer.statistics.min);
                 colorInfoSlider.set("maxValue", colorRenderer.statistics.max);
                 colorInfoSlider.set("colorInfo", colorRenderer.renderer.visualVariables[0]);
                 colorInfoSlider.set("handles", sliderHandleInfo["handles"]);
                 colorInfoSlider.set("primaryHandle", sliderHandleInfo["primaryHandle"]);
-				busyIndicator.hide();
-              })
-			};
 
+              }
+			  )};
+	
 	
 });
   </script>
 </head>
 <body class="claro">
-<div id="content"
-     data-dojo-type="dijit/layout/BorderContainer"
-     data-dojo-props="design:'headline', gutters:true"
-     style="width: 100%; height: 100%; margin: 0; color: #1F5C99;">
-<div id="mapDiv"
-    data-dojo-type="dijit/layout/ContentPane"
-    data-dojo-props="region:'center'"
-    >
+<div id="mapDiv">
 	<div id="LocateButton"></div>
 	<div id="HomeButton"></div>
 	<div id="search"></div>
@@ -841,7 +819,7 @@
 		<div id="CensusSelect"></div>
 	</div>
 	<div id="chart">
-	<span id="chartTitle" style='text-align:center;'>USA</span>
+	<span id="chartTitle" style='text-align:center;'>Click on Map to get stats</span>
 		<div data-dojo-type="dijit/layout/TabContainer"style="width: 410px; height: 380px">
 			<div data-dojo-type="dijit/layout/ContentPane" title="Age" data-dojo-props="selected:true"style="width: 400px; height: 300px">
 				<div id="agechart"></div>
@@ -866,12 +844,6 @@
             <div id="basemapGallery"></div>
           </div>
         </div>
-</div>
-</div>
-<div id="header"
-       data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
-	  <span id="mapTitle">Who lives in the United States?</span>
-</div>
 </div>
 </body>
 </html>
