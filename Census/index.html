@@ -36,7 +36,6 @@
 		padding: 5px;	
 		margin: 5px;
   } 
-	
 	#basemapTitle { 
         background:rgba(56,56,56,.5);
         color: #fff;
@@ -55,7 +54,6 @@
         top: 30px;
         width: 300px;
     }
-
 	#legendWrapper {
          background: #fff;
         color: #3E3E35;
@@ -124,7 +122,7 @@
 	var AGE_UNDER5, AGE_5_17, AGE_18_21, AGE_22_29, AGE_30_39, AGE_40_49, AGE_50_64, AGE_65_UP;
 	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES, POP00_SQMI, MED_AGE_M, MED_AGE_F, AVE_HH_SZ,AVE_FAM_SZ;
 	var gaugeValue, SQMI,POP2000,LegendTabTrue,CurrentAtt;
-    require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer","dijit/registry",
+    require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer","dijit/registry","dojo/number",
 			"esri/InfoTemplate","esri/dijit/Gauge","esri/plugins/FeatureLayerStatistics","dojo/aspect",
 			"esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
 			"esri/renderers/SimpleRenderer","esri/graphic", "esri/Color","esri/dijit/LocateButton","dojox/charting/plot2d/Pie","dojox/charting/Chart",
@@ -134,7 +132,7 @@
 			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps",
 			"esri/symbols/SimpleMarkerSymbol","dojox/charting/plot2d/Spider","dijit/layout/BorderContainer","dojox/charting/action2d/Magnify",
 			"esri/dijit/util/busyIndicator","dojo/domReady!"], 
-	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,registry,InfoTemplate,Gauge,FeatureLayerStatistics,aspect,ColorInfoSlider,
+	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,registry,number,InfoTemplate,Gauge,FeatureLayerStatistics,aspect,ColorInfoSlider,
 				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
 				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
 				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps,
@@ -196,7 +194,6 @@
             new Color([0, 0, 255, 0.5]), 8), 
           new Color([0, 0, 255])
     );
-	
 	geocoder.on("select", function (evt){
 		map.graphics.clear();
 		var point = evt.result.feature.geometry;
@@ -206,8 +203,7 @@
         map.infoWindow.setContent(evt.result.name);
         map.infoWindow.show(evt.result.feature.geometry);
         map.infoWindow.resize(180, 100);
-	});
-	
+	});	
 	geocoder.on("clear", function(){
 		map.graphics.clear();
 		map.infoWindow.hide();
@@ -220,7 +216,6 @@
 		}, "LocateButton"
 	);
 	geoLocate.startup();
-	
 	geoLocate.on("locate", function(evt){
 		map.graphics.clear();
 		var point = evt.graphic.geometry;
@@ -230,8 +225,7 @@
         map.infoWindow.setContent("Found you!");
 		map.infoWindow.show(point);
 		map.infoWindow.resize(180, 100);
-	});
-	
+	});	
 	map.infoWindow.on("hide", function(){
 		map.graphics.clear();
 	});
@@ -337,8 +331,8 @@
         map.graphics.add(highlightGraphic);
 		getAttributes(evt);
 		gaugeVal(evt);
-		document.getElementById('field1').innerHTML = clickName + "<hr>" + "Square Milage: " + SQMI + "<hr>" + "Total Population: " + POP2000 + "<hr>" + CurrentAtt + 
-		": " + Gaugevalue;
+		document.getElementById('field1').innerHTML = clickName + "<hr>" + "Square Milage: " + number.format(SQMI) + "<hr>" + "Total Population: " + number.format(POP2000) + "<hr>" + CurrentAtt + 
+		": " + number.format(Gaugevalue);
 		Ages();
 		Demographics ();
 		Gender ();
@@ -362,8 +356,8 @@
         map.graphics.add(highlightGraphic);
 		getAttributes(evt);
 		gaugeVal(evt);
-		document.getElementById('field1').innerHTML = clickName + " County" + "<hr>" + "Square Milage: " + SQMI + "<hr>" + "Total Population: " + POP2000 + "<hr>" + CurrentAtt + 
-		": " + Gaugevalue;
+		document.getElementById('field1').innerHTML = clickName + " County" + "<hr>" + "Square Milage: " + number.format(SQMI) + "<hr>" + "Total Population: " + number.format(POP2000) + "<hr>" + CurrentAtt + 
+		": " + number.format(Gaugevalue);
 		Ages();
 		Demographics ();
 		Gender ();
@@ -384,8 +378,8 @@
         map.graphics.add(highlightGraphic);
 		getAttributes(evt);
 		gaugeVal(evt);
-		document.getElementById('field1').innerHTML = "Tract: " + clickName +  "<hr>" + "Square Milage: " + SQMI + "<hr>" + "Total Population: " + POP2000 + "<hr>" + CurrentAtt + 
-		": " + Gaugevalue;
+		document.getElementById('field1').innerHTML = "Tract: " + clickName +  "<hr>" + "Square Milage: " + number.format(SQMI) + "<hr>" + "Total Population: " + number.format(POP2000) + "<hr>" + CurrentAtt + 
+		": " + number.format(Gaugevalue);
 		Ages();
 		Demographics ();
 		Gender ();	
@@ -428,14 +422,14 @@
 	chart1.addAxis("x");
 	chart1.addAxis("y", {vertical: true});
 	chart1.addSeries("Series A", [
-		{y: 3, text: "5 & Under",  color: "pink",  stroke: "black", tooltip: "AGE_UNDER5"},
-		{y: 3, text: "5 - 17",   color: "red",   stroke: "black", tooltip: "AGE_5_17"},
-		{y: 4, text: "18 - 21", color: "green", stroke: "black", tooltip: "AGE_18_21"},
-		{y: 5, text: "22 - 29",  color: "blue",  stroke: "black", tooltip: "AGE_22_29"},
-		{y: 6, text: "30 - 39", color: "white", stroke: "black", tooltip: "AGE_30_39"},
-		{y: 5, text: "40 - 49",  color: "yellow",  stroke: "black", tooltip: "AGE_40_49"},
-		{y: 4, text: "50 - 64",  color: "purple",  stroke: "black", tooltip: "AGE_50_64"},
-		{y: 3, text: "65 & Up",  color: "orange",  stroke: "black", tooltip: "AGE_65_UP"}
+		{y: 3, text: "5 & Under",  color: "pink",  stroke: "black", tooltip: "18,354,443"},
+		{y: 3, text: "5 - 17",   color: "red",   stroke: "black", tooltip: "35,213,428"},
+		{y: 4, text: "18 - 21", color: "green", stroke: "black", tooltip: " 17,754,015"},
+		{y: 5, text: "22 - 29",  color: "blue",  stroke: "black", tooltip: "40,333,356"},
+		{y: 6, text: "30 - 39", color: "white", stroke: "black", tooltip: "41,826,004"},
+		{y: 5, text: "40 - 49",  color: "yellow",  stroke: "black", tooltip: "31,488,359"},
+		{y: 4, text: "50 - 64",  color: "purple",  stroke: "black", tooltip: "32,498,436"},
+		{y: 3, text: "65 & Up",  color: "orange",  stroke: "black", tooltip: "31,241,831"}
 		]);
 	var anim10c = new Tooltip(chart1, "default");
 	var anim10a = new MoveSlice(chart1, "default");
@@ -482,36 +476,36 @@
 	/////////////////////////////////////////////////// Update the pie charts //////////////////////////////////////////////////////////////////
 	function Demographics () {
 		chart2.updateSeries("Series A", [
-		{y: WHITE, text: "White",  color: "pink",  stroke: "black", tooltip: WHITE},
-		{y: BLACK, text: "Black",   color: "red",   stroke: "black", tooltip: BLACK},
-		{y: AMERI_ES, text: "AI/AN", color: "green", stroke: "black", tooltip: AMERI_ES},
-		{y: ASIAN, text: "Asian",  color: "blue",  stroke: "black", tooltip: ASIAN},
-		{y: HAWN_PI, text: "NH/PI", color: "white", stroke: "black", tooltip: HAWN_PI},
-		{y: OTHER, text: "Other",  color: "yellow",  stroke: "black", tooltip: OTHER},
-		{y: MULT_RACE, text: "Multi Race",  color: "purple",  stroke: "black", tooltip: MULT_RACE},
-		{y: HISPANIC, text: "Hispanic",  color: "orange",  stroke: "black", tooltip: HISPANIC}
+		{y: WHITE, text: "White",  color: "pink",  stroke: "black", tooltip: number.format(WHITE)},
+		{y: BLACK, text: "Black",   color: "red",   stroke: "black", tooltip: number.format(BLACK)},
+		{y: AMERI_ES, text: "AI/AN", color: "green", stroke: "black", tooltip: number.format(AMERI_ES)},
+		{y: ASIAN, text: "Asian",  color: "blue",  stroke: "black", tooltip: number.format(ASIAN)},
+		{y: HAWN_PI, text: "NH/PI", color: "white", stroke: "black", tooltip: number.format(HAWN_PI)},
+		{y: OTHER, text: "Other",  color: "yellow",  stroke: "black", tooltip: number.format(OTHER)},
+		{y: MULT_RACE, text: "Multi Race",  color: "purple",  stroke: "black", tooltip: number.format(MULT_RACE)},
+		{y: HISPANIC, text: "Hispanic",  color: "orange",  stroke: "black", tooltip: number.format(HISPANIC)}
 		]);
 		chart2.render();
 	};
 	
 	function Ages () {
 		chart1.updateSeries("Series A", [
-		{y: AGE_UNDER5, text: "5 & Under",  color: "pink",  stroke: "black", tooltip: AGE_UNDER5},
-		{y: AGE_5_17, text: "5 - 17",   color: "red",   stroke: "black", tooltip: AGE_5_17},
-		{y: AGE_18_21, text: "18 - 21", color: "green", stroke: "black", tooltip: AGE_18_21},
-		{y: AGE_22_29, text: "22 - 29",  color: "blue",  stroke: "black", tooltip: AGE_22_29},
-		{y: AGE_30_39, text: "30 - 39", color: "white", stroke: "black", tooltip: AGE_30_39},
-		{y: AGE_40_49, text: "40 - 49",  color: "yellow",  stroke: "black", tooltip: AGE_40_49},
-		{y: AGE_50_64, text: "50 - 64",  color: "purple",  stroke: "black", tooltip: AGE_50_64},
-		{y: AGE_65_UP, text: "65 & Up",  color: "orange",  stroke: "black", tooltip: AGE_65_UP}
+		{y: AGE_UNDER5, text: "5 & Under",  color: "pink",  stroke: "black", tooltip: number.format(AGE_UNDER5)},
+		{y: AGE_5_17, text: "5 - 17",   color: "red",   stroke: "black", tooltip: number.format(AGE_5_17)},
+		{y: AGE_18_21, text: "18 - 21", color: "green", stroke: "black", tooltip: number.format(AGE_18_21)},
+		{y: AGE_22_29, text: "22 - 29",  color: "blue",  stroke: "black", tooltip: number.format(AGE_22_29)},
+		{y: AGE_30_39, text: "30 - 39", color: "white", stroke: "black", tooltip: number.format(AGE_30_39)},
+		{y: AGE_40_49, text: "40 - 49",  color: "yellow",  stroke: "black", tooltip: number.format(AGE_40_49)},
+		{y: AGE_50_64, text: "50 - 64",  color: "purple",  stroke: "black", tooltip: number.format(AGE_50_64)},
+		{y: AGE_65_UP, text: "65 & Up",  color: "orange",  stroke: "black", tooltip: number.format(AGE_65_UP)}
 		]);
 		chart1.render();
 	};
 	
 	function Gender () {
 		chart3.updateSeries("Series A", [
-		{y: MALES, text: "Male",  color: "blue",  stroke: "black", tooltip: MALES},
-		{y: FEMALES, text: "Female",  color: "red",  stroke: "black", tooltip: FEMALES}
+		{y: MALES, text: "Male",  color: "blue",  stroke: "black", tooltip: number.format(MALES)},
+		{y: FEMALES, text: "Female",  color: "red",  stroke: "black", tooltip: number.format(FEMALES)}
 		]);
 		chart3.render();
 	};
