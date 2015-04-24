@@ -35,7 +35,7 @@
 		outline: none; 
 		padding: 5px;	
 		margin: 5px;
-    } 
+  } 
 	#basemapTitle { 
         background:rgba(56,56,56,.5);
         color: #fff;
@@ -54,21 +54,6 @@
         top: 30px;
         width: 300px;
     }
-	#Splash{ 
-
-        text-align: center;
-		height: 60%;
-        width: 60%;
-		z-index: 9999;
-		background-color: white;
-		position: absolute;
-		top: 200px;
-		right: 400px;
-		-webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
-        border-radius: 4px;
-        border: 1px solid rgb(56,56,56);
-    }
 	#legendWrapper {
          background: #fff;
         color: #3E3E35;
@@ -78,7 +63,7 @@
 	#slider { 
         right: 30px;
         text-align: center;
-        top: 270px;
+        top: 300px;
         width: 300px;
     }
 	#LocateButton {
@@ -104,10 +89,6 @@
 	#mapDiv {
 		border: 1px solid rgb(56,56,56);
 	}
-	#SliderText {
-		color: black;
-		font-size: 10px;
-	}
 	#chart, #slider, #dashboard {
 		background:rgba(56,56,56,.5);
 		color: white;
@@ -131,7 +112,8 @@
 	#seletctText, #ThemeSelect{
 		color: #3E3E35;
 		text-align: center;
-	}		
+	}
+		
   </style>
   
   <script src="http://js.arcgis.com/3.13/"></script>
@@ -141,33 +123,33 @@
 	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES, POP00_SQMI, MED_AGE_M, MED_AGE_F, AVE_HH_SZ,AVE_FAM_SZ;
 	var gaugeValue, SQMI,POP2000,LegendTabTrue,CurrentAtt;
     require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer","dijit/registry","dojo/number",
-			"esri/plugins/FeatureLayerStatistics","dojo/aspect","esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
+			"esri/InfoTemplate","esri/dijit/Gauge","esri/plugins/FeatureLayerStatistics","dojo/aspect",
+			"esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
 			"esri/renderers/SimpleRenderer","esri/graphic", "esri/Color","esri/dijit/LocateButton","dojox/charting/plot2d/Pie","dojox/charting/Chart",
 			"dojox/charting/axis2d/Default","dojox/charting/action2d/Tooltip","dojox/charting/action2d/MoveSlice","dojox/charting/action2d/Highlight",
 			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/SelectableLegend","esri/renderers/smartMapping",
 			"dojo/_base/array", "dojo/dom", "dojo/on","dojo/dom-construct","esri/dijit/Legend","dijit/form/Select", "esri/dijit/HomeButton",
 			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps",
 			"esri/symbols/SimpleMarkerSymbol","dojox/charting/plot2d/Spider","dijit/layout/BorderContainer","dojox/charting/action2d/Magnify",
-			"esri/dijit/util/busyIndicator","esri/dijit/util/busyIndicator","dojo/domReady!"], 
-	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,registry,number,FeatureLayerStatistics,aspect,ColorInfoSlider,
+			"esri/dijit/util/busyIndicator","dojo/domReady!"], 
+	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,registry,number,InfoTemplate,Gauge,FeatureLayerStatistics,aspect,ColorInfoSlider,
 				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
 				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
 				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps,
-				SimpleMarkerSymbol,Spider,BorderContainer,Magnify,busyIndicator,busyIndicator2) {
+				SimpleMarkerSymbol,Spider,BorderContainer,Magnify,busyIndicator) {
 				 
     parser.parse();
 	//////////////////////////////////////////// Create default values //////////////////////////////////////////////////////
+	var gauge;
 	var currentStatistic = "natural-breaks";
 	var currentField = "MED_AGE";
 	var basemap = "streets";
 	var med_test = "MED_AGE";
 	var caption = "Stats";
 	var value = 5;
-	var isitLoaded = true;
 	var title = "Click on map";
 	var theme = "high-to-low";
 	var busyIndicator = busyIndicator.create({target: "esri-colorinfoslider", imageUrl: "http://archive.dojotoolkit.org/nightly/dojotoolkit/dijit/icons/images/loadingAnimation_rtl.gif", backgroundOpacity: 0});
-	var busyIndicatorMap = busyIndicator2.create({target: "mapDiv", imageUrl: "http://archive.dojotoolkit.org/nightly/dojotoolkit/dijit/icons/images/loadingAnimation_rtl.gif", backgroundOpacity: 0});
 	//////////////////////////////////////////// Create Map ///////////////////////////////////////////////
 	map = new Map("mapDiv", {
 		center: [-86.049, 38.485],
@@ -549,21 +531,27 @@
 	map.on("zoom-end", function(evt){
 		if (dijit.byId("LegendTab").selected){
 			if (evt.target.__LOD.scale > 4622325){
+				console.log("S");
 				whichLayer = stateCensus;
 				updateSmartMappingState();
 			} else if (evt.target.__LOD.scale > 577791){
+				console.log("C");
 				whichLayer = countyCensus;
 				updateSmartMappingCounty();
 			} else {
+				console.log("B");
 				whichLayer = blockCensus;
 				updateSmartMappingBlock();
 			}
 		} else {		
 			if (evt.target.__LOD.scale > 4622325){
+				console.log("S");
 				whichLayer = stateCensus;
 			} else if (evt.target.__LOD.scale> 577791){
+				console.log("C");
 				whichLayer = countyCensus;
 			} else {
+				console.log("B");
 				whichLayer = blockCensus;
 
 			}
@@ -725,6 +713,7 @@
 				colorInfoSlider.set("primaryHandle", sliderHandleInfo["primaryHandle"]);
 				busyIndicator.hide();
 		     colorInfoSlider.on("handle-value-change", function (sliderValueChange){
+              //console.log("handle-value-change", sliderValueChange);
               whichLayer.renderer.setVisualVariables([sliderValueChange]);
               whichLayer.redraw();
             });
@@ -799,137 +788,84 @@
 				busyIndicator.hide();
               })
 			};
-////////////////////////////////// Show busy Indicator if layers load slow////////////////////////////////////////////////////////////////////////////////////	
-			stateCensus.on("update-start", function(){
-				isitLoaded = false;
-				setTimeout(function () {
-					if (isitLoaded == false) {
-						busyIndicatorMap.show();
-						isitLoaded = true;
-					}
-				}, 500);
-			});
-			stateCensus.on("update-end", function(){
-				isitLoaded = true;
-				busyIndicatorMap.hide();
-			});
-			countyCensus.on("update-start", function(){
-				isitLoaded = false;
-				setTimeout(function () {
-					if (isitLoaded == false) {
-						busyIndicatorMap.show();
-						isitLoaded = true;
-					}
-				}, 500);
-			});
-			countyCensus.on("update-end", function(){
-				isitLoaded = true;
-				busyIndicatorMap.hide();
-			});
-			blockCensus.on("update-start", function(){
-				isitLoaded = false;
-				setTimeout(function () {
-					if (isitLoaded == false) {
-						busyIndicatorMap.show();
-						isitLoaded = true;
-					}
-				}, 500);
-			});
-			blockCensus.on("update-end", function(){
-				isitLoaded = true;
-				busyIndicatorMap.hide();
-			});
-//////////////////////////////////Add the startup splash screen ////////////////////////////////////////////////////////////////////////////////////			
-			function init() {
-				dialogWelcome.show();
-			}
-			dojo.addOnLoad(init); 
+
+	
 });
   </script>
 </head>
 <body class="claro">
-
 <div id="content"
      data-dojo-type="dijit/layout/BorderContainer"
      data-dojo-props="design:'headline', gutters:true"
      style="width: 100%; height: 100%; margin: 0; color: #1F5C99;">
-	 
-		<div data-dojo-type="dijit/Dialog" data-dojo-id="dialogWelcome" title="Explore your neighbourhood through the Census" style="width: 600px">
-        <table class="dijitDialogPaneContentArea">
-            <tr>
-                <td>
-                    <div id="divDialogMessage">This is the splash text</div>
-                </td>
-            </tr>
-        </table>
-        <div class="dijitDialogPaneActionBar">
-            <button id="buttonClose" data-dojo-type="dijit/form/Button" type="button" style="align-content: center" onclick="dialogWelcome.onCancel();">Close</button>
-        </div>
+<div id="mapDiv"
+    data-dojo-type="dijit/layout/ContentPane"
+    data-dojo-props="region:'center'"
+    >
+	<div id="LocateButton"></div>
+	<div id="HomeButton"></div>
+	<div id="search"></div>
+    <div id="dashboard">
+		<span style='text-align:center;'>Information</span>
+		
+			<div id="field1">Click anywhere within the United States to get census information</div>
+        
     </div>
-	<div id="mapDiv"
-		data-dojo-type="dijit/layout/ContentPane"
-		data-dojo-props="region:'center'">
-		<div id="LocateButton"></div>
-		<div id="HomeButton"></div>
-		<div id="search"></div>
-		<div id="dashboard">
-			<span style='text-align:center;'>Information</span>
-			<div id="field1">Click anywhere within the United States to get census information</div>  
-		</div>
-		<div id="slider">
-			<div id="TabContainer" data-dojo-type="dijit/layout/TabContainer"style="width: 300px; height: 370px">
-				<div id="LegendTab" data-dojo-type="dijit/layout/ContentPane" title="Legend" data-dojo-props="selected:true"style="width: 200px; height: 200px">
-					<div id="legendWrapper"></div>
-					<div id="seletctText">Select Statistics:</div>
-					<div id="statisticSelect"></div>
-				</div>
-				<div id="InteractiveTab"  data-dojo-type="dijit/layout/ContentPane" title="Interactive Legend" data-dojo-props="selected:true"style="width: 200px; height: 210px">
-					<div id="SliderText"> Use the slider or click on the numbers to change them. </div>
-					<div id="esri-colorinfoslider"></div>
-					<div id="ThemeSelect">
-						Theme:
-						<select id="color-renderer-theme">
-						<option value="high-to-low" selected>High to low</option>
-						<option value="above-and-below">Above and below</option>
-						<option value="centered-on">Centered on</option>
-						<option value="extremes">Extremes</option>
-						</select>
-					</div>
-				</div>
+	<div id="slider">
+		<div id="TabContainer" data-dojo-type="dijit/layout/TabContainer"style="width: 300px; height: 360px">
+			<div id="LegendTab" data-dojo-type="dijit/layout/ContentPane" title="Legend" data-dojo-props="selected:true"style="width: 200px; height: 200px">
+				<div id="legendWrapper"></div>
+				<div id="seletctText">Select Statistics:</div>
+				<div id="statisticSelect"></div>
 			</div>
-			<div>Select which data you want to show:</div>
-			<div id="CensusSelect"></div>
-		</div>
-		<div id="chart">
-			<span id="chartTitle" style='text-align:center;'>USA</span>
-			<div data-dojo-type="dijit/layout/TabContainer"style="width: 410px; height: 380px">
-				<div data-dojo-type="dijit/layout/ContentPane" title="Age" data-dojo-props="selected:true"style="width: 400px; height: 300px">
-					<div id="agechart"></div>
-				</div>
-				<div id="piecharts"data-dojo-type="dijit/layout/ContentPane" title="Demographic" data-dojo-props="selected:false"style="width: 400px; height: 300px">
-					<div id="demochart"></div>
-				</div>
-				<div data-dojo-type="dijit/layout/ContentPane" title="Gender" data-dojo-props="selected:false"style="width: 400px; height: 300px">
-					<div id="genderchart"></div>
-				</div>
-				<div data-dojo-type="dijit/layout/ContentPane" title="Statistics" data-dojo-props="selected:false"style="width: 400px; height: 300px">
-					<div id="statChart"><div id="legend1"></div></div>
-				</div>
-			</div>		
-		</div>
-		<div style="position:absolute; left:74px; top:60px; z-Index:999;">
-			<div data-dojo-type="dijit/TitlePane" id="basemapTitle"
-				data-dojo-props="title:'Switch Basemap', closable:false, open:false" >
-				<div data-dojo-type="dijit/layout/ContentPane" style="width:380px;  height:280px; overflow:auto;">
-					<div id="basemapGallery"></div>
+			<div id="InteractiveTab"  data-dojo-type="dijit/layout/ContentPane" title="Interactive Legend" data-dojo-props="selected:true"style="width: 200px; height: 200px">
+			<div id="esri-colorinfoslider"></div>
+			<div id="ThemeSelect">
+				Theme:
+				<select id="color-renderer-theme">
+				<option value="high-to-low" selected>High to low</option>
+				<option value="above-and-below">Above and below</option>
+				<option value="centered-on">Centered on</option>
+				<option value="extremes">Extremes</option>
+				</select>
 				</div>
 			</div>
 		</div>
+		<div>Select which data you want to show:</div>
+		<div id="CensusSelect"></div>
 	</div>
-	<div id="header"
+	<div id="chart">
+	<span id="chartTitle" style='text-align:center;'>USA</span>
+		<div data-dojo-type="dijit/layout/TabContainer"style="width: 410px; height: 380px">
+			<div data-dojo-type="dijit/layout/ContentPane" title="Age" data-dojo-props="selected:true"style="width: 400px; height: 300px">
+				<div id="agechart"></div>
+			</div>
+			<div id="piecharts"data-dojo-type="dijit/layout/ContentPane" title="Demographic" data-dojo-props="selected:false"style="width: 400px; height: 300px">
+				<div id="demochart"></div>
+			</div>
+			<div data-dojo-type="dijit/layout/ContentPane" title="Gender" data-dojo-props="selected:false"style="width: 400px; height: 300px">
+				<div id="genderchart"></div>
+			</div>
+			<div data-dojo-type="dijit/layout/ContentPane" title="Statistics" data-dojo-props="selected:false"style="width: 400px; height: 300px">
+				<div id="statChart"><div id="legend1"></div></div>
+
+			</div>
+			
+		</div>		
+	</div>
+	 <div style="position:absolute; left:74px; top:60px; z-Index:999;">
+        <div data-dojo-type="dijit/TitlePane" id="basemapTitle"
+             data-dojo-props="title:'Switch Basemap', closable:false, open:false" >
+          <div data-dojo-type="dijit/layout/ContentPane" style="width:380px;  height:280px; overflow:auto;">
+            <div id="basemapGallery"></div>
+          </div>
+        </div>
+</div>
+</div>
+<div id="header"
        data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
-	  <span id="mapTitle">Explore your neighbourhood</span>
-	</div>
+	  <span id="mapTitle">Who lives in the United States?</span>
+</div>
 </div>
 </body>
 </html>
