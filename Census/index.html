@@ -139,7 +139,7 @@
     var map, legend;
 	var AGE_UNDER5, AGE_5_17, AGE_18_21, AGE_22_29, AGE_30_39, AGE_40_49, AGE_50_64, AGE_65_UP;
 	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES, POP00_SQMI, MED_AGE_M, MED_AGE_F, AVE_HH_SZ,AVE_FAM_SZ;
-	var gaugeValue, SQMI,POP2000,LegendTabTrue,CurrentAtt;
+	var gaugeValue, SQMI,POP2000,LegendTabTrue,CurrentAtt,currentRender;
     require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer","dijit/registry","dojo/number",
 			"esri/plugins/FeatureLayerStatistics","dojo/aspect","esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
 			"esri/renderers/SimpleRenderer","esri/graphic", "esri/Color","esri/dijit/LocateButton","dojox/charting/plot2d/Pie","dojox/charting/Chart",
@@ -166,7 +166,8 @@
 	var isitLoaded = true;
 	var title = "Click on map";
 	var theme = "high-to-low";
-	var busyIndicator = busyIndicator.create({target: "esri-colorinfoslider", imageUrl: "http://archive.dojotoolkit.org/nightly/dojotoolkit/dijit/icons/images/loadingAnimation_rtl.gif", backgroundOpacity: 0});
+	var currentAtt = "Median Age"
+	var busyIndicator = busyIndicator.create({target: "SliderLegend", imageUrl: "http://archive.dojotoolkit.org/nightly/dojotoolkit/dijit/icons/images/loadingAnimation_rtl.gif", backgroundOpacity: 0});
 	var busyIndicatorMap = busyIndicator2.create({target: "mapDiv", imageUrl: "http://archive.dojotoolkit.org/nightly/dojotoolkit/dijit/icons/images/loadingAnimation_rtl.gif", backgroundOpacity: 0});
 	//////////////////////////////////////////// Create Map ///////////////////////////////////////////////
 	map = new Map("mapDiv", {
@@ -274,7 +275,7 @@
 		maxValue: 70000,
 		minValue: 0,
 		handles: [10000,30000,50000]
-		}, "esri-colorinfoslider");
+		}, "SliderLegend");
 	colorInfoSlider.startup();
 	//////////////////////////////////////////// Add layers ///////////////////////////////////////////////	
 	var blockCensus = new FeatureLayer ("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/1", {
@@ -568,6 +569,7 @@
 
 			}
 			sliderSmart();
+
 		}
 	});
 	////////////////////////////////// Create Attribute Select ///////////////////////////////////////////////////////////////////////////////////////////////	
@@ -717,19 +719,21 @@
 			whichLayer.setRenderer(colorRenderer.renderer);
 			whichLayer.redraw();
 			var sliderHandleInfo = getSliderHandlePositions(theme);
-				colorInfoSlider.set("colorInfo", colorRenderer.renderer.visualVariables[0]);
-				colorInfoSlider.set("minValue", 0);
-				colorInfoSlider.set("maxValue", colorRenderer.statistics.max);
-				colorInfoSlider.set("statistics", colorRenderer.statistics);
-				colorInfoSlider.set("handles",sliderHandleInfo["handles"]);
-				colorInfoSlider.set("primaryHandle", sliderHandleInfo["primaryHandle"]);
-				busyIndicator.hide();
-		     colorInfoSlider.on("handle-value-change", function (sliderValueChange){
-              whichLayer.renderer.setVisualVariables([sliderValueChange]);
-              whichLayer.redraw();
+			colorInfoSlider.set("colorInfo", colorRenderer.renderer.visualVariables[0]);
+			colorInfoSlider.set("minValue", 0);
+			colorInfoSlider.set("maxValue", colorRenderer.statistics.max);
+			colorInfoSlider.set("statistics", colorRenderer.statistics);
+			colorInfoSlider.set("handles",sliderHandleInfo["handles"]);
+			colorInfoSlider.set("primaryHandle", sliderHandleInfo["primaryHandle"]);
+			busyIndicator.hide();
+		    colorInfoSlider.on("handle-value-change", function (sliderValueChange){
+				whichLayer.renderer.setVisualVariables([sliderValueChange]);
+				whichLayer.redraw();
             });
 		});
-	};
+		};
+	
+	
 	////////////////////////////////// Legend Tab change event ///////////////////////////////////////////////////////////////////////////////////////////////
 	var InteractiveTab1 = registry.byId("InteractiveTab");
 		aspect.after(InteractiveTab1 ,"_onShow", function() {
@@ -860,12 +864,13 @@
                 <td>
                     <div id="divDialogMessage"><div><img src="http://i.imgur.com/WfmvFfU.png" alt="Census" style="align: center" ></div>
 					<br>
-					I created this application to better visualize the 2000 Census data.
-					The data includes total population, population density, racial counts, and more, on a state, county, and block level. 
+					I created this application to explore the US Census beyond just looking at the attribute table, but making it as interactive for the user as possible. 
+					This is especially an interesting subject in the US, which was built by so many different ethnicities. 
 					<p>
 					Using 
 					<a class="one" href="http://www.esri.com/landing-pages/arcgis-online/smart-mapping" target="_blank">ESRI Smart Mapping</a> 
-					you are able to better visualize the data you are interested in.
+					you are able to better visualize the data you are interested in. You can use the interactive legend to adjust the Layer render to 
+					better explore the data that interests you. You will be able to use an address locator or location button to find the area you are interested in
 					</div>
 					<br>
 					<div><img src="http://i.imgur.com/3sKsT57.gif" alt="Census" style="align: center" ></div>
@@ -894,8 +899,8 @@
 					<div id="statisticSelect"></div>
 				</div>
 				<div id="InteractiveTab"  data-dojo-type="dijit/layout/ContentPane" title="Interactive Legend" data-dojo-props="selected:true"style="width: 200px; height: 210px">
-					<div id="SliderText"> Use the slider or click on the numbers to change them. </div>
-					<div id="esri-colorinfoslider"></div>
+					<div id="SliderText"> Use the handles or click on the numbers to change them. </div>
+					<div id="SliderLegend"></div>
 					<div id="ThemeSelect">
 						Theme:
 						<select id="color-renderer-theme">
