@@ -218,7 +218,7 @@
 		var point = evt.result.feature.geometry;
 		var graphic = new Graphic(point, addressSymbol);
 		map.graphics.add(graphic);
-		map.infoWindow.setTitle("Adress");
+		map.infoWindow.setTitle("Address");
         map.infoWindow.setContent(evt.result.name);
         map.infoWindow.show(evt.result.feature.geometry);
         map.infoWindow.resize(180, 100);
