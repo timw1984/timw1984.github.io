@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html>
-<<<<<<< HEAD
-<body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
-=======
 <head>
   <title>Census Data</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -30,7 +25,19 @@
         top: 20px;
         left: 74px;
     }
-
+	
+	#field1 { 
+	     background: white;
+        color: #3E3E35;
+        margin: 0 auto;
+    border: 1px solid #black; 
+    border-radius: 5px; 
+    box-shadow: 0 0 5px 3px gray; 
+    outline: none; 
+	padding: 5px;	
+	margin: 5px;
+  } 
+	
 	#basemapTitle { 
         background:rgba(56,56,56,.5);
         color: #fff;
@@ -44,31 +51,28 @@
         border: 1px solid rgb(56,56,56);
     }
 	#dashboard { 
-
         right: 30px;
         text-align: center;
         top: 30px;
         width: 300px;
+    }
 
-    }
-    #dashboardWidgets {
-        background: #fff;
-        color: #888;
-        margin: 0 auto;
-        text-align: left;
-    }
 	#legendWrapper {
         background: #fff;
-        color: #888;
+        color: #3E3E35;
         margin: 0 auto;
         text-align: left;
+		box-shadow: 0 0 5px 3px gray; 
+		border: 1px solid #black; 
+		border-radius: 4px;
+		padding: 5px;	
+		margin: 5px;
     }
 	#slider { 
         right: 30px;
         text-align: center;
         top: 300px;
         width: 300px;
-
     }
 	#LocateButton {
       position: absolute;
@@ -85,7 +89,7 @@
 	
 	#chart, #slider, #dashboard {
 		background:rgba(56,56,56,.5);
-		color: #fff;
+		color: white;
         font-family: times;
         height: auto;
         text-align: center;		
@@ -98,41 +102,47 @@
         border-radius: 4px;
         border: 1px solid rgb(56,56,56);
     }
-
 	#demochart, #CensusSelect, #agechart, #statisticSelect,#genderchart {
         background: #fff;
-        color: #888;
+        color: #3E3E35;
         margin: 0 auto;
         text-align: left;
-
+		
   </style>
   
   <script src="http://js.arcgis.com/3.13/"></script>
   <script>
     var map, legend;
 	var AGE_UNDER5, AGE_5_17, AGE_18_21, AGE_22_29, AGE_30_39, AGE_40_49, AGE_50_64, AGE_65_UP;
-	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES;
+	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES, POP00_SQMI, MED_AGE_M, MED_AGE_F, AVE_HH_SZ,AVE_FAM_SZ;
+	var gaugeValue, SQMI,POP2000;
     require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer",
 			"esri/InfoTemplate","esri/dijit/Gauge","esri/plugins/FeatureLayerStatistics",
 			"esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
 			"esri/renderers/SimpleRenderer","esri/graphic", "esri/Color","esri/dijit/LocateButton","dojox/charting/plot2d/Pie","dojox/charting/Chart",
 			"dojox/charting/axis2d/Default","dojox/charting/action2d/Tooltip","dojox/charting/action2d/MoveSlice","dojox/charting/action2d/Highlight",
-			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/Legend","esri/renderers/smartMapping",
+			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/SelectableLegend","esri/renderers/smartMapping",
 			"dojo/_base/array", "dojo/dom", "dojo/on","dojo/dom-construct","esri/dijit/Legend","dijit/form/Select", "esri/dijit/HomeButton",
-			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps","dojo/domReady!"], 
+			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps",
+			"esri/symbols/SimpleMarkerSymbol","dojox/charting/plot2d/Spider","dojox/gauges/GlossySemiCircularGauge","dojo/domReady!"], 
 	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,InfoTemplate,Gauge,FeatureLayerStatistics,ColorInfoSlider,
 				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
 				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
-				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps) {
+				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps,
+				SimpleMarkerSymbol,Spider, dojgauge) {
 				 
     parser.parse();
 	var gauge;
 	var currentStatistic = "natural-breaks";
 	var currentField = "MED_AGE";
-	var basemap = "gray",
+	var basemap = "gray";
+	var med_test = "MED_AGE";
+	var caption = "Stats";
+	var value = 5;
+	var title = "Click on map";
 	//////////////////////////////////////////// Create Map ///////////////////////////////////////////////
 	map = new Map("mapDiv", {
-		center: [-56.049, 38.485],
+		center: [-86.049, 38.485],
 		zoom: 3,
 		basemap: "gray"
     });
@@ -141,7 +151,6 @@
         showArcGISBasemaps: false,
         map: map
       }, "basemapGallery");
-
       for (var basemap_key in esriBasemaps) {
       
         var esriBasemap = esriBasemaps[basemap_key];
@@ -166,15 +175,53 @@
 		geocoderMenu: true
 	}, "search");
 	geocoder.startup();
-	 dom.byId("search_input").placeholder = "Search for address";
+	dom.byId("search_input").placeholder = "Search for address";
+	var addressSymbol = new SimpleMarkerSymbol(
+        SimpleMarkerSymbol.STYLE_CIRCLE, 15, 
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID, 
+            new Color([0, 0, 255, 0.5]), 8), 
+          new Color([0, 0, 255])
+    );
+	
+	geocoder.on("select", function (evt){
+		map.graphics.clear();
+		var point = evt.result.feature.geometry;
+		var graphic = new Graphic(point, addressSymbol);
+		map.graphics.add(graphic);
+		map.infoWindow.setTitle("Adress");
+        map.infoWindow.setContent(evt.result.name);
+        map.infoWindow.show(evt.result.feature.geometry);
+        map.infoWindow.resize(180, 100);
+	});
+	
+	geocoder.on("clear", function(){
+		map.graphics.clear();
+		map.infoWindow.hide();
+	});
 	//////////////////////////////////////////// Create Locate Button ///////////////////////////////////////////////
 	var geoLocate = new LocateButton({
 		map: map,
-		highlightLocation: false,
+		highlightLocation: true,
 		scale: 100000
 		}, "LocateButton"
 	);
 	geoLocate.startup();
+	
+	geoLocate.on("locate", function(evt){
+		map.graphics.clear();
+		var point = evt.graphic.geometry;
+		var graphic = new Graphic(point, addressSymbol);
+		map.graphics.add(graphic);
+		map.infoWindow.setTitle("Geo Locate");
+        map.infoWindow.setContent("Found you!");
+		map.infoWindow.show(point);
+		map.infoWindow.resize(180, 100);
+	});
+	
+	map.infoWindow.on("hide", function(){
+		map.graphics.clear();
+	});
 	//////////////////////////////////////////// Create Home Button ///////////////////////////////////////////////
 	var home = new HomeButton({
         map: map
@@ -234,14 +281,13 @@
 			//"opacity":0.9
 		//}); 
 	var whichLayer = stateCensus;
-
 	var featureLayerStats = new FeatureLayerStatistics({layer: stateCensus, visible: false});
 	
 	map.addLayers([ stateCensus,countyCensus,blockCensus]);
 	
 	stateCensus.on("load",function(){
 		updateSmartMappingState();
-		createGauge();
+		//createGauge();
 	});
 	
 	countyCensus.on("load",function(){
@@ -283,7 +329,6 @@
 			layer: blockCensus,
 			field: currentField,
 			basemap: basemap,
-
 			classificationMethod: currentStatistic
 		}).then(function (colorRenderer){
 			blockCensus.setRenderer(colorRenderer.renderer);
@@ -292,54 +337,35 @@
 		})
 	};
 	//stateCensus.on("load",createGauge);
-	
-	function createGauge(stateCensus){
-		var gaugeParams = {
-			"caption": "2010 Median Age",
-			//"maxDataValue": 60,
-			"unitLabel": " years",
-			"title": "",
-			"dataLabel": "Click on the Map"
-		}
-		gauge = new Gauge(gaugeParams, "gaugeDiv");
-        gauge.startup();
-    };
+
 	///////////////////////// STATE CENSUS ///////////////////////////////////////////////////////////////////
 	stateCensus.on("click", function(evt){
 		map.graphics.clear();
-		//var med_inc = evt.graphic.attributes.MEDHINC_CY;
-		var med_age = evt.graphic.attributes.MED_AGE;
-		var state = evt.graphic.attributes.STATE_NAME;
-		document.getElementById('chartTitle').innerHTML = state;
-		gauge.set("value", med_age);
-		gauge.set("dataLabel", state);
+
+		clickName = evt.graphic.attributes.STATE_NAME;
+		document.getElementById('chartTitle').innerHTML = clickName;
+
 		var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
         map.graphics.add(highlightGraphic);
-		AGE_UNDER5 = evt.graphic.attributes.AGE_UNDER5;
-		AGE_5_17 = evt.graphic.attributes.AGE_5_17;
-		AGE_18_21 = evt.graphic.attributes.AGE_18_21;
-		AGE_22_29 = evt.graphic.attributes.AGE_22_29;
-		AGE_30_39 = evt.graphic.attributes.AGE_30_39;
-		AGE_40_49 = evt.graphic.attributes.AGE_40_49;
-		AGE_50_64 = evt.graphic.attributes.AGE_50_64;
-		AGE_65_UP = evt.graphic.attributes.AGE_65_UP;
-		
-		WHITE = evt.graphic.attributes.WHITE;
-		BLACK = evt.graphic.attributes.BLACK;
-		AMERI_ES = evt.graphic.attributes.AMERI_ES;
-		ASIAN = evt.graphic.attributes.ASIAN;
-		HAWN_PI= evt.graphic.attributes.HAWN_PI;
-		OTHER = evt.graphic.attributes.OTHER;
-		MULT_RACE = evt.graphic.attributes.MULT_RACE;
-		HISPANIC= evt.graphic.attributes.HISPANIC;
-
+		getAttributes(evt);
+		document.getElementById('field1').innerHTML = clickName + "<hr>" + "Square Milage: " + SQMI + "<hr>" + "Total Population: " + POP2000;
 		Ages();
 		Demographics ();
-		FEMALES = evt.graphic.attributes.FEMALES;
-		MALES = evt.graphic.attributes.MALES;
 		Gender ();
+		chart4name = "Selected";
+		chart4.addSeries("USA", {data: {"Median Age Male": 34,"Pop per SqMi": 345,"Avg household size": 2.55,"Avg family size": 3.00,"Median Age Female": 37}}, { fill: "blue" });
+		chart4.addSeries(chart4name, {data: {"Median Age Male": MED_AGE_M,"Pop per SqMi": POP00_SQMI,"Avg household size": AVE_HH_SZ,"Avg family size": AVE_FAM_SZ,"Median Age Female": MED_AGE_F}}, { fill: "red" });
+		chart4.addSeries("Max", {data: {"Median Age Male": 35,"Pop per SqMi": 400,"Avg household size": 3.00,"Avg family size": 3.50,"Median Age Female": 38}}, { fill: "red" });
+		chart4.addSeries("Min", {data: {"Median Age Male": 30,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 32}}, { fill: "yellow" });
 		
-		//chart1.render();
+		if (chart4) {
+		
+		console.log("test");
+		}
+
+		chart4.render();
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 		
 	});
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,68 +373,44 @@
 	///////////////////////// COUNTY CENSUS ///////////////////////////////////////////////////////////////////
 	countyCensus.on("click", function(evt){
 		map.graphics.clear();
-		var med_age = evt.graphic.attributes.MED_AGE;
-		var county = evt.graphic.attributes.NAME;
-		document.getElementById('chartTitle').innerHTML = county + " County";
-		gauge.set("value", med_age);
-		gauge.set("dataLabel", county + " County");
+		clickName = evt.graphic.attributes.NAME;
+		document.getElementById('chartTitle').innerHTML = clickName + " County";
 		var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
         map.graphics.add(highlightGraphic);
-		AGE_UNDER5 = evt.graphic.attributes.AGE_UNDER5;
-		AGE_5_17 = evt.graphic.attributes.AGE_5_17;
-		AGE_18_21 = evt.graphic.attributes.AGE_18_21;
-		AGE_22_29 = evt.graphic.attributes.AGE_22_29;
-		AGE_30_39 = evt.graphic.attributes.AGE_30_39;
-		AGE_40_49 = evt.graphic.attributes.AGE_40_49;
-		AGE_50_64 = evt.graphic.attributes.AGE_50_64;
-		AGE_65_UP = evt.graphic.attributes.AGE_65_UP;
+		getAttributes(evt);
+		document.getElementById('field1').innerHTML = clickName + " County" + "<hr>" + "Square Milage: " + SQMI + "<hr>" + "Total Population: " + POP2000;
 		Ages();
-		WHITE = evt.graphic.attributes.WHITE;
-		BLACK = evt.graphic.attributes.BLACK;
-		AMERI_ES = evt.graphic.attributes.AMERI_ES;
-		ASIAN = evt.graphic.attributes.ASIAN;
-		HAWN_PI= evt.graphic.attributes.HAWN_PI;
-		OTHER = evt.graphic.attributes.OTHER;
-		MULT_RACE = evt.graphic.attributes.MULT_RACE;
-		HISPANIC= evt.graphic.attributes.HISPANIC;
 		Demographics ();
-		FEMALES = evt.graphic.attributes.FEMALES;
-		MALES = evt.graphic.attributes.MALES;
 		Gender ();
+		chart4name = "Selected";
+		chart4.addSeries(chart4name, {data: {"Median Age Male": MED_AGE_M,"Pop per SqMi": POP00_SQMI,"Avg household size": AVE_HH_SZ,"Avg family size": AVE_FAM_SZ,"Median Age Female": MED_AGE_F}}, { fill: "red" });
+		chart4.addSeries("Max", {data: {"Median Age Male": 38,"Pop per SqMi": 8700,"Avg household size": 4.00,"Avg family size": 4.00,"Median Age Female": 41}}, { fill: "red" });
+		chart4.addSeries("Min", {data: {"Median Age Male": 30,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 30}}, { fill: "yellow" });
+		chart4.render();
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 	});
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	///////////////////////// BLOCK CENSUS ///////////////////////////////////////////////////////////////////////
 	blockCensus.on("click", function(evt){
 		map.graphics.clear();
-		var med_age = evt.graphic.attributes.MED_AGE;
-		var tract = evt.graphic.attributes.TRACT;
-		document.getElementById('chartTitle').innerHTML = "Tract: " + tract;
-		gauge.set("value", med_age);
-		gauge.set("dataLabel", "Tract: " + tract);
+		clickName = evt.graphic.attributes.TRACT;
+		document.getElementById('chartTitle').innerHTML = "Tract: " + clickName;
 		var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
         map.graphics.add(highlightGraphic);
-		AGE_UNDER5 = evt.graphic.attributes.AGE_UNDER5;
-		AGE_5_17 = evt.graphic.attributes.AGE_5_17;
-		AGE_18_21 = evt.graphic.attributes.AGE_18_21;
-		AGE_22_29 = evt.graphic.attributes.AGE_22_29;
-		AGE_30_39 = evt.graphic.attributes.AGE_30_39;
-		AGE_40_49 = evt.graphic.attributes.AGE_40_49;
-		AGE_50_64 = evt.graphic.attributes.AGE_50_64;
-		AGE_65_UP = evt.graphic.attributes.AGE_65_UP;
+		getAttributes(evt);
+		document.getElementById('field1').innerHTML = "Tract: " + clickName +  "<hr>" + "Square Milage: " + SQMI + "<hr>" + "Total Population: " + POP2000;
 		Ages();
-		WHITE = evt.graphic.attributes.WHITE;
-		BLACK = evt.graphic.attributes.BLACK;
-		AMERI_ES = evt.graphic.attributes.AMERI_ES;
-		ASIAN = evt.graphic.attributes.ASIAN;
-		HAWN_PI= evt.graphic.attributes.HAWN_PI;
-		OTHER = evt.graphic.attributes.OTHER;
-		MULT_RACE = evt.graphic.attributes.MULT_RACE;
-		HISPANIC= evt.graphic.attributes.HISPANIC;
 		Demographics ();
-		FEMALES = evt.graphic.attributes.FEMALES;
-		MALES = evt.graphic.attributes.MALES;
-		Gender ();
+		Gender ();	
+		chart4name = "Selected";	
+		chart4.addSeries(chart4name, {data: {"Median Age Male": MED_AGE_M,"Pop per SqMi": POP00_SQMI,"Avg household size": AVE_HH_SZ,"Avg family size": AVE_FAM_SZ,"Median Age Female": MED_AGE_F}}, { fill: "red" });
+		chart4.addSeries("Max", {data: {"Median Age Male": 38,"Pop per SqMi": 8700,"Avg household size": 4.00,"Avg family size": 4.00,"Median Age Female": 41}}, { fill: "red" });
+		chart4.addSeries("Min", {data: {"Median Age Male": 30,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 30}}, { fill: "yellow" });
+		chart4.render();
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 	});
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -423,13 +425,12 @@
 	chart3.addAxis("x");
 	chart3.addAxis("y", {vertical: true});
 	chart3.addSeries("Series A", [
-		{y: 3, text: "Male",  color: "blue",  stroke: "black", tooltip: "MALES"},
-		{y: 3, text: "Female",  color: "red",  stroke: "black", tooltip: "FEMALE"}
+		{y:  138053563, text: "Male",  color: "blue",  stroke: "black", tooltip: "138,053,563"},
+		{y:  143368343, text: "Female",  color: "red",  stroke: "black", tooltip: "143,368,343"}
 		]);
 	var anim10c = new Tooltip(chart3, "default");
 	var anim10a = new MoveSlice(chart3, "default");
 	var anim10b = new Highlight(chart3, "default");
-
 	chart3.render();
 	
 	//////////////////////////// CREATE AGE CHART /////////////////////////////////////////////////////////////////////
@@ -456,7 +457,6 @@
 	var anim10c = new Tooltip(chart1, "default");
 	var anim10a = new MoveSlice(chart1, "default");
 	var anim10b = new Highlight(chart1, "default");
-
 		chart1.render();
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -474,21 +474,34 @@
 	chart2.addAxis("y", {vertical: true});
 	//chart2.setTheme(Tom);
 	chart2.addSeries("Series A", [
-		{y: 3,  text: "White",   color: "pink",  stroke: "black", tooltip: "AGE_UNDER5"},
-		{y: 3, text: "Black",   color: "red",   stroke: "black", tooltip: "AGE_5_17"},
-		{y: 4, text: "AI/AN", color: "green", stroke: "black", tooltip: "AGE_18_21"},
-		{y: 5,  text: "Asian", color: "blue",  stroke: "black", tooltip: "AGE_22_29"},
-		{y: 6,text: "NH/PI", color: "white", stroke: "black", tooltip: "AGE_30_39"},
-		{y: 5, text: "Other",   color: "yellow",  stroke: "black", tooltip: "AGE_40_49"},
-		{y: 4,  text: "Multi Race",   color: "purple",  stroke: "black", tooltip: "AGE_50_64"},
-		{y: 3,  text: "Hispanic",  color: "orange",  stroke: "black", tooltip: "AGE_65_UP"}
+		{y: 211460626,  text: "White",   color: "pink",  stroke: "black", tooltip: "211,460,626"},
+		{y: 34658190, text: "Black",   color: "red",   stroke: "black", tooltip: "34,658,190"},
+		{y: 2475956 , text: "AI/AN", color: "green", stroke: "black", tooltip: "24,75,956"},
+		{y: 10242998,  text: "Asian", color: "blue",  stroke: "black", tooltip: "10,242,998"},
+		{y: 87441, text: "NH/PI", color: "white", stroke: "black", tooltip: "87,441"},
+		{y: 9804847, text: "Other",   color: "yellow",  stroke: "black", tooltip: "9,804,847"},
+		{y: 6826228,  text: "Multi Race",   color: "purple",  stroke: "black", tooltip: "6,826,228"},
+		{y: 22354059,  text: "Hispanic",  color: "orange",  stroke: "black", tooltip: "22,354,059"}
 		]);
 	var anim10c = new Tooltip(chart2, "default");
 	var anim10a = new MoveSlice(chart2, "default");
 	var anim10b = new Highlight(chart2, "default");
-
 		chart2.render();
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var chart4 = new Chart("statChart");
+	chart4.addPlot("default", {type: Spider,labelOffset:-10,seriesFillAlpha:0.2,markerSize:4,precision:0,spiderType:"polygon"});
+	//chart2.setTheme(Tom);
+	chart4.addSeries("USA", {data: {"Median Age Male": 34,"Pop per SqMi": 345,"Avg household size": 2.55,"Avg family size": 3.00,"Median Age Female": 37}}, { fill: "blue" });
+	chart4.addSeries("Max", {data: {"Median Age Male": 35,"Pop per SqMi": 350,"Avg household size": 3.00,"Avg family size": 3.50,"Median Age Female": 41}}, { fill: "red" });
+	chart4.addSeries("Min", {data: {"Median Age Male": 30,"Pop per SqMi": 1,"Avg household size": 2.00,"Avg family size": 2.00,"Median Age Female": 30}}, { fill: "yellow" });
+	var anim11c = new Tooltip(chart4);
+	//var anim10a = new MoveSlice(chart2, "default");
+	var anim11b = new Highlight(chart4);
 
+		chart4.render();
+
+		chart4.removeSeries("Max");
+		chart4.removeSeries("Min");
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//stateCensus.on("mouse-out", function(evt){
 		//map.graphics.clear();
@@ -535,12 +548,10 @@
                legend.destroy();
                domConstruct.destroy(dom.byId("legendDiv"));
             }
-
            // create a new div for the legend
             var legendDiv = domConstruct.create("div", {
                id: "legendDiv"
             }, dom.byId("legendWrapper"));
-
             legend = new Legend({
                map: map,
                layerInfos: [{
@@ -571,6 +582,7 @@
 		name: "select",
 		options: [
 			{ label: "Median Age", value: "MED_AGE", selected: true  },
+			{ label: "Population per SqMile", value: "POP00_SQMI"},
 			{ label: "White", value: "WHITE"},
 			{ label: "Black", value: "BLACK"},
 			{ label: "Native American", value: "AMERI_ES" },
@@ -582,6 +594,7 @@
 		]
 	    },"CensusSelect");
 	fieldSelect.startup();
+	
 	////////////////////////////////// Create Statistic Select ///////////////////////////////////////////////////////////////////////////////////////////////	
 	var statisticSelect = new Select({
 		name: "select",
@@ -626,9 +639,60 @@
 		}
 	});
 	
+	function gaugeVal(evt){
+		if (fieldSelect.value == "MED_AGE"){
+			Gaugevalue = evt.graphic.attributes.MED_AGE;
+		} else if (fieldSelect.value == "POP00_SQMI") {
+			Gaugevalue = evt.graphic.attributes.POP00_SQMI;
+		} else if (fieldSelect.value =="WHITE"){
+			Gaugevalue = evt.graphic.attributes.WHITE;
+		} else if (fieldSelect.value == "BLACK") {
+			Gaugevalue = evt.graphic.attributes.BLACK;
+		} else if (fieldSelect.value == "AMERI_ES") {
+			Gaugevalue = evt.graphic.attributes.AMERI_ES;
+		} else if (fieldSelect.value == "ASIAN") {
+			Gaugevalue = evt.graphic.attributes.ASIAN;
+		} else if (fieldSelect.value == "HAWN_PI") {
+			Gaugevalue = evt.graphic.attributes.HAWN_PI;
+		} else if (fieldSelect.value == "HISPANIC") {
+			Gaugevalue = evt.graphic.attributes.HISPANIC;
+		} else if (fieldSelect.value == "MULT_RACE") {
+			Gaugevalue = evt.graphic.attributes.MULT_RACE;
+		} else if (fieldSelect.value == "OTHER") {
+			Gaugevalue = evt.graphic.attributes.OTHER;
+		}	
+	};
+	
+	function getAttributes(evt){
+		AGE_UNDER5 = evt.graphic.attributes.AGE_UNDER5;
+		AGE_5_17 = evt.graphic.attributes.AGE_5_17;
+		AGE_18_21 = evt.graphic.attributes.AGE_18_21;
+		AGE_22_29 = evt.graphic.attributes.AGE_22_29;
+		AGE_30_39 = evt.graphic.attributes.AGE_30_39;
+		AGE_40_49 = evt.graphic.attributes.AGE_40_49;
+		AGE_50_64 = evt.graphic.attributes.AGE_50_64;
+		AGE_65_UP = evt.graphic.attributes.AGE_65_UP;		
+		WHITE = evt.graphic.attributes.WHITE;
+		BLACK = evt.graphic.attributes.BLACK;
+		AMERI_ES = evt.graphic.attributes.AMERI_ES;
+		ASIAN = evt.graphic.attributes.ASIAN;
+		HAWN_PI= evt.graphic.attributes.HAWN_PI;
+		OTHER = evt.graphic.attributes.OTHER;
+		MULT_RACE = evt.graphic.attributes.MULT_RACE;
+		HISPANIC= evt.graphic.attributes.HISPANIC;
+		POP00_SQMI = evt.graphic.attributes.POP00_SQMI;
+		MED_AGE_M = evt.graphic.attributes.MED_AGE_M;
+		MED_AGE_F = evt.graphic.attributes.MED_AGE_F;
+		AVE_HH_SZ = evt.graphic.attributes.AVE_HH_SZ;
+		AVE_FAM_SZ = evt.graphic.attributes.AVE_FAM_SZ;	
+		FEMALES = evt.graphic.attributes.FEMALES;
+		MALES = evt.graphic.attributes.MALES;
+		SQMI = evt.graphic.attributes.SQMI;
+		POP2000 = evt.graphic.attributes.POP2000;
+	};
+	
 });
   </script>
-
 </head>
 <body class="claro">
 <div id="mapDiv">
@@ -636,10 +700,10 @@
 	<div id="HomeButton"></div>
 	<div id="search"></div>
     <div id="dashboard">
-		<span style='text-align:center;'>Dashboard</span>
-		<div id="dashboardWidgets">
-			<div id="gaugeDiv"></div>
-        </div>
+		<span style='text-align:center;'>Information</span>
+		
+			<div id="field1">Click anywhere within the United States to get census information</div>
+        
     </div>
 	<div id="slider">
 		<span style='text-align:center;'>Legend</span>
@@ -655,19 +719,17 @@
 			<div data-dojo-type="dijit/layout/ContentPane" title="Age" data-dojo-props="selected:true"style="width: 400px; height: 300px">
 				<div id="agechart"></div>
 			</div>
-			<div data-dojo-type="dijit/layout/ContentPane" title="Demographic" data-dojo-props="selected:false"style="width: 400px; height: 300px">
+			<div id="piecharts"data-dojo-type="dijit/layout/ContentPane" title="Demographic" data-dojo-props="selected:false"style="width: 400px; height: 300px">
 				<div id="demochart"></div>
-
 			</div>
 			<div data-dojo-type="dijit/layout/ContentPane" title="Gender" data-dojo-props="selected:false"style="width: 400px; height: 300px">
 				<div id="genderchart"></div>
 			</div>
 			<div data-dojo-type="dijit/layout/ContentPane" title="Statistics" data-dojo-props="selected:false"style="width: 400px; height: 300px">
-				<!--<div id="demochart"></div>-->
+				<div id="statChart"><div id="legend1"></div></div>
+
 			</div>
-
 			
-
 		</div>		
 	</div>
 	 <div style="position:absolute; left:74px; top:60px; z-Index:999;">
@@ -678,6 +740,5 @@
           </div>
         </div>
 </div>
->>>>>>> origin/master
 </body>
 </html>

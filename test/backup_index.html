@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html>
-<<<<<<< HEAD
-<body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
-=======
 <head>
   <title>Census Data</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -82,14 +77,20 @@
         width: 410px;
 		height: 400px;
     }
-	
+	#StatName, #StatPopSQ {
+        background: #fff;
+        color: #000000;
+        margin: 0 auto;
+        text-align: left;
+	}
+
 	#chart, #slider, #dashboard {
 		background:rgba(56,56,56,.5);
 		color: #fff;
         font-family: times;
         height: auto;
-        text-align: center;		
         overflow: hidden;
+		text-align: center;
         padding: 5px;
         position: absolute;
 		z-index: 40;
@@ -99,11 +100,12 @@
         border: 1px solid rgb(56,56,56);
     }
 
-	#demochart, #CensusSelect, #agechart, #statisticSelect,#genderchart {
+	#demochart, #CensusSelect, #agechart, #statisticSelect,#genderchart{
         background: #fff;
         color: #888;
         margin: 0 auto;
-        text-align: left;
+        text-align: center;
+	}
 
   </style>
   
@@ -112,6 +114,7 @@
     var map, legend;
 	var AGE_UNDER5, AGE_5_17, AGE_18_21, AGE_22_29, AGE_30_39, AGE_40_49, AGE_50_64, AGE_65_UP;
 	var WHITE, BLACK, AMERI_ES, ASIAN, HAWN_PI, OTHER, MULT_RACE, HISPANIC, FEMALES, MALES;
+	var gaugeValue,totalPop,PopSq;
     require(["esri/map", "esri/layers/FeatureLayer","esri/layers/ArcGISTiledMapServiceLayer",
 			"esri/InfoTemplate","esri/dijit/Gauge","esri/plugins/FeatureLayerStatistics",
 			"esri/dijit/ColorInfoSlider","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol",
@@ -119,20 +122,23 @@
 			"dojox/charting/axis2d/Default","dojox/charting/action2d/Tooltip","dojox/charting/action2d/MoveSlice","dojox/charting/action2d/Highlight",
 			"dijit/layout/TabContainer", "dijit/layout/ContentPane","dojo/parser","dojox/charting/widget/Legend","esri/renderers/smartMapping",
 			"dojo/_base/array", "dojo/dom", "dojo/on","dojo/dom-construct","esri/dijit/Legend","dijit/form/Select", "esri/dijit/HomeButton",
-			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps","dojo/domReady!"], 
+			"dojo/store/Memory","dijit/TitlePane","esri/dijit/BasemapGallery","esri/arcgis/utils","esri/dijit/Geocoder","esri/dijit/Basemap","esri/basemaps",
+			"esri/symbols/SimpleMarkerSymbol","dojo/domReady!"], 
 	function(Map,FeatureLayer,ArcGISTiledMapServiceLayer,InfoTemplate,Gauge,FeatureLayerStatistics,ColorInfoSlider,
 				 SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, Color, LocateButton,Pie,Chart,Default,
 				Tooltip,MoveSlice,Highlight, TabContainer, ContentPane,parser,PieLegend,smartMapping,array,dom,on,
-				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps) {
+				domConstruct,Legend,Select, HomeButton, Memory,TitlePane,BasemapGallery, arcgisUtils ,Geocoder,Basemap,esriBasemaps,
+				SimpleMarkerSymbol) {
 				 
     parser.parse();
 	var gauge;
 	var currentStatistic = "natural-breaks";
 	var currentField = "MED_AGE";
-	var basemap = "gray",
+	var basemap = "gray";
+	var med_test = "MED_AGE";
 	//////////////////////////////////////////// Create Map ///////////////////////////////////////////////
 	map = new Map("mapDiv", {
-		center: [-56.049, 38.485],
+		center: [-86.049, 38.485],
 		zoom: 3,
 		basemap: "gray"
     });
@@ -166,15 +172,53 @@
 		geocoderMenu: true
 	}, "search");
 	geocoder.startup();
-	 dom.byId("search_input").placeholder = "Search for address";
+	dom.byId("search_input").placeholder = "Search for address";
+	var addressSymbol = new SimpleMarkerSymbol(
+        SimpleMarkerSymbol.STYLE_CIRCLE, 15, 
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID, 
+            new Color([0, 0, 255, 0.5]), 8), 
+          new Color([0, 0, 255])
+    );
+	
+	geocoder.on("select", function (evt){
+		map.graphics.clear();
+		var point = evt.result.feature.geometry;
+		var graphic = new Graphic(point, addressSymbol);
+		map.graphics.add(graphic);
+		map.infoWindow.setTitle("Adress");
+        map.infoWindow.setContent(evt.result.name);
+        map.infoWindow.show(evt.result.feature.geometry);
+        map.infoWindow.resize(180, 100);
+	});
+	
+	geocoder.on("clear", function(){
+		map.graphics.clear();
+		map.infoWindow.hide();
+	});
 	//////////////////////////////////////////// Create Locate Button ///////////////////////////////////////////////
 	var geoLocate = new LocateButton({
 		map: map,
-		highlightLocation: false,
+		highlightLocation: true,
 		scale: 100000
 		}, "LocateButton"
 	);
 	geoLocate.startup();
+	
+	geoLocate.on("locate", function(evt){
+		map.graphics.clear();
+		var point = evt.graphic.geometry;
+		var graphic = new Graphic(point, addressSymbol);
+		map.graphics.add(graphic);
+		map.infoWindow.setTitle("Geo Locate");
+        map.infoWindow.setContent("Found you!");
+		map.infoWindow.show(point);
+		map.infoWindow.resize(180, 100);
+	});
+	
+	map.infoWindow.on("hide", function(){
+		map.graphics.clear();
+	});
 	//////////////////////////////////////////// Create Home Button ///////////////////////////////////////////////
 	var home = new HomeButton({
         map: map
@@ -241,7 +285,7 @@
 	
 	stateCensus.on("load",function(){
 		updateSmartMappingState();
-		createGauge();
+		//createGauge();
 	});
 	
 	countyCensus.on("load",function(){
@@ -293,7 +337,7 @@
 	};
 	//stateCensus.on("load",createGauge);
 	
-	function createGauge(stateCensus){
+	function createGauge(){
 		var gaugeParams = {
 			"caption": "2010 Median Age",
 			//"maxDataValue": 60,
@@ -304,12 +348,17 @@
 		gauge = new Gauge(gaugeParams, "gaugeDiv");
         gauge.startup();
     };
+	createGauge();
 	///////////////////////// STATE CENSUS ///////////////////////////////////////////////////////////////////
 	stateCensus.on("click", function(evt){
 		map.graphics.clear();
 		//var med_inc = evt.graphic.attributes.MEDHINC_CY;
 		var med_age = evt.graphic.attributes.MED_AGE;
 		var state = evt.graphic.attributes.STATE_NAME;
+		totalPop = evt.graphic.attributes.POP2000;
+		PopSq = evt.graphic.attributes.POP00_SQMI;
+		HH = evt.graphic.attributes.HOUSEHOLDS;
+		otherStats();
 		document.getElementById('chartTitle').innerHTML = state;
 		gauge.set("value", med_age);
 		gauge.set("dataLabel", state);
@@ -423,8 +472,8 @@
 	chart3.addAxis("x");
 	chart3.addAxis("y", {vertical: true});
 	chart3.addSeries("Series A", [
-		{y: 3, text: "Male",  color: "blue",  stroke: "black", tooltip: "MALES"},
-		{y: 3, text: "Female",  color: "red",  stroke: "black", tooltip: "FEMALE"}
+		{y:  138053563, text: "Male",  color: "blue",  stroke: "black", tooltip: "138,053,563"},
+		{y:  143368343, text: "Female",  color: "red",  stroke: "black", tooltip: "143,368,343"}
 		]);
 	var anim10c = new Tooltip(chart3, "default");
 	var anim10a = new MoveSlice(chart3, "default");
@@ -474,14 +523,14 @@
 	chart2.addAxis("y", {vertical: true});
 	//chart2.setTheme(Tom);
 	chart2.addSeries("Series A", [
-		{y: 3,  text: "White",   color: "pink",  stroke: "black", tooltip: "AGE_UNDER5"},
-		{y: 3, text: "Black",   color: "red",   stroke: "black", tooltip: "AGE_5_17"},
-		{y: 4, text: "AI/AN", color: "green", stroke: "black", tooltip: "AGE_18_21"},
-		{y: 5,  text: "Asian", color: "blue",  stroke: "black", tooltip: "AGE_22_29"},
-		{y: 6,text: "NH/PI", color: "white", stroke: "black", tooltip: "AGE_30_39"},
-		{y: 5, text: "Other",   color: "yellow",  stroke: "black", tooltip: "AGE_40_49"},
-		{y: 4,  text: "Multi Race",   color: "purple",  stroke: "black", tooltip: "AGE_50_64"},
-		{y: 3,  text: "Hispanic",  color: "orange",  stroke: "black", tooltip: "AGE_65_UP"}
+		{y: 211460626,  text: "White",   color: "pink",  stroke: "black", tooltip: "211,460,626"},
+		{y: 34658190, text: "Black",   color: "red",   stroke: "black", tooltip: "34,658,190"},
+		{y: 2475956 , text: "AI/AN", color: "green", stroke: "black", tooltip: "24,75,956"},
+		{y: 10242998,  text: "Asian", color: "blue",  stroke: "black", tooltip: "10,242,998"},
+		{y: 87441, text: "NH/PI", color: "white", stroke: "black", tooltip: "87,441"},
+		{y: 9804847, text: "Other",   color: "yellow",  stroke: "black", tooltip: "9,804,847"},
+		{y: 6826228,  text: "Multi Race",   color: "purple",  stroke: "black", tooltip: "6,826,228"},
+		{y: 22354059,  text: "Hispanic",  color: "orange",  stroke: "black", tooltip: "22,354,059"}
 		]);
 	var anim10c = new Tooltip(chart2, "default");
 	var anim10a = new MoveSlice(chart2, "default");
@@ -528,6 +577,12 @@
 		]);
 		chart3.render();
 	};
+	
+	function otherStats(){
+		document.getElementById('StatName').innerHTML = "Total population: " + totalPop;
+		document.getElementById('StatPopSQ').innerHTML = "Population per square mile: " + PopSq;
+	};
+		
 	///////////////////////////////////// Create the Legend ///////////////////////////////////////////////////////////////////////////////
 	 function createLegend(map, whichLayer, currentField ) {
             //If applicable, destroy previous legend
@@ -571,6 +626,7 @@
 		name: "select",
 		options: [
 			{ label: "Median Age", value: "MED_AGE", selected: true  },
+			{ label: "Population per SqMile", value: "POP00_SQMI"},
 			{ label: "White", value: "WHITE"},
 			{ label: "Black", value: "BLACK"},
 			{ label: "Native American", value: "AMERI_ES" },
@@ -582,6 +638,7 @@
 		]
 	    },"CensusSelect");
 	fieldSelect.startup();
+	
 	////////////////////////////////// Create Statistic Select ///////////////////////////////////////////////////////////////////////////////////////////////	
 	var statisticSelect = new Select({
 		name: "select",
@@ -650,7 +707,7 @@
 		 <div id="statisticSelect"></div>
 	</div>
 	<div id="chart">
-	<span id="chartTitle" style='text-align:center;'>Click on Map to get stats</span>
+	<span id="chartTitle" >Click on Map to get stats</span>
 		<div data-dojo-type="dijit/layout/TabContainer"style="width: 410px; height: 380px">
 			<div data-dojo-type="dijit/layout/ContentPane" title="Age" data-dojo-props="selected:true"style="width: 400px; height: 300px">
 				<div id="agechart"></div>
@@ -662,8 +719,10 @@
 			<div data-dojo-type="dijit/layout/ContentPane" title="Gender" data-dojo-props="selected:false"style="width: 400px; height: 300px">
 				<div id="genderchart"></div>
 			</div>
-			<div data-dojo-type="dijit/layout/ContentPane" title="Statistics" data-dojo-props="selected:false"style="width: 400px; height: 300px">
-				<!--<div id="demochart"></div>-->
+			<div data-dojo-type="dijit/layout/ContentPane" title="Other Statistics" data-dojo-props="selected:false"style="width: 400px; height: 300px !important; text-align:left !important">
+				<span id="StatName">Click on Map to get more statistics</span>
+				<br></br>
+				<span id="StatPopSQ" >Click on Map to get more statistics</span>
 			</div>
 
 			
@@ -678,6 +737,5 @@
           </div>
         </div>
 </div>
->>>>>>> origin/master
 </body>
 </html>
