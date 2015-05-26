@@ -1,8 +1,13 @@
 $(document).ready(function() {
     $("#notready").fadeOut(5000);
-	$( "#a" ).click(function( event ) {
- 
-        alert( "Thanks for visiting!" );
-		 });
+	$('.bxslider').bxSlider({
+		  auto: true,
+		  autoControls: true,
+          pause: 4000,
+          slideMargin: 20
+	
+	});
+	
+
  
 });
