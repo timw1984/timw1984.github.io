@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html> 
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples 
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Location, Location, Location...</title>
+
+    <link rel="stylesheet" href="http://js.arcgis.com/3.11//dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.11/esri/css/esri.css" />
+    <style>
+           html, body { height: 100%; width: 100%; margin: 0; padding: 0; } 
+    #map { 
+        padding: 0;
+        border: solid 2px #666;
+        margin: 0 5px 5px 5px;
+    }
+	#HomeButton {
+		position: absolute;
+		top: 95px;
+		left: 20px;
+		z-index: 50;
+    }
+	#LocateButton {
+		position: absolute;
+		top: 140px;
+		left: 20px;
+		z-index: 80;
+    }
+	#search {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        top: 20px;
+        left: 74px;
+    }
+    #header {
+        border: solid 2px #666;
+        color: #666;
+        font-family: sans-serif;
+        font-size: 1.1em;
+        height: auto;
+        margin: 5px;
+        overflow: hidden;
+        padding: 10px 0 10px 20px;
+        text-align:left; 
+    }
+	#LeftPane {
+		border: solid 2px #666;
+		width:15%;
+		margin: 0 5px 5px 5px;
+	}
+    .roundedCorners {
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+		border-radius: 5px;
+    }
+    .map .tooltip {
+        background-color: white;
+        border: 1px solid #7EABCD;
+        border-radius: 4px 4px 4px 4px;
+        font-size: 9pt;
+        padding: 5px;
+        position: absolute;
+        width: 100px;
+        z-index: 9999;
+    }
+    </style>
+    
+    <script src="http://js.arcgis.com/3.11/"></script>
+    <script>
+    var map, Long, Lat, Latdegrees, Latminutes, Latseconds;
+	var Longdegrees, Longminutes, Longseconds;
+	var degrees, minutes, seconds, m;
+	var LocPoint, graphic, NGfunction, point;
+    require([
+        "esri/map", "esri/tasks/locator", "esri/graphic",
+        "esri/geometry/webMercatorUtils", "esri/dijit/Scalebar",
+        "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol", "esri/dijit/BasemapGallery",
+        "esri/InfoTemplate", "esri/Color", "esri/geometry/Point", "dojo/on", "dojo/dom-construct", "dojo/dom-style", "dojo/_base/window",
+        "dojo/number", "dojo/parser", "dojo/dom", "dijit/registry", "dijit/form/TextBox","esri/dijit/Geocoder","esri/dijit/HomeButton",
+		"esri/dijit/LocateButton", "dojo/_base/array", "dijit/form/Button", 
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dojo/domReady!"
+    ], function(
+        Map, Locator, Graphic, webMercatorUtils, Scalebar, SimpleMarkerSymbol, SimpleLineSymbol, BasemapGallery,
+        InfoTemplate, Color, Point, on, domConstruct, domStyle, win,
+        number, parser, dom, registry, TextBox, Geocoder, HomeButton, LocateButton, array
+    ) {
+	
+	parser.parse();
+		
+	//Create Map
+    map = new Map("map", { 
+        basemap: "streets", 
+        center: [-80.734, 28.297],
+        zoom: 14
+    });
+	
+	//Create Scalebar
+	var scalebar = new Scalebar({
+        map: map,
+        scalebarUnit: "dual"
+        });
+		
+	//Create Basemap Gallery
+	var basemapGallery = new BasemapGallery({
+       showArcGISBasemaps: true,
+       map: map
+	}, "basemapGallery");
+	basemapGallery.startup();
+		
+	//Graphic for the found location
+	var symbol = new SimpleMarkerSymbol(
+        SimpleMarkerSymbol.STYLE_CIRCLE, 15, 
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID, 
+            new Color([0, 0, 255, 0.5]), 8), 
+          new Color([0, 0, 255])
+    );
+
+	//Create Home Button
+	var home = new HomeButton({
+		map: map
+	}, "HomeButton");
+	home.startup();
+	  
+	//Create Locate Button
+	geoLocate = new LocateButton({
+		map: map,
+		symbol:symbol
+	}, "LocateButton");
+	geoLocate.startup();
+	
+	//If your position has been found run this
+	geoLocate.on("locate", function (evt){
+		map.graphics.clear();
+		locator.locationToAddress(evt.graphic.geometry, 100);
+		Gridlocator.locationToAddress(evt.graphic.geometry, 100);
+		Lat = evt.graphic.geometry.y;
+		Long = evt.graphic.geometry.x;
+		LatTextBox.set("value",Lat);
+		LongTextBox.set("value",Long);
+		DMSLat ();
+		DMSLong();			
+	});
+
+	//Create Geocoder using ESRI geocoding service. 
+	//To use your own, uncomment the additional lines and use your own geocoder URL
+	var geocoder = new Geocoder ({
+		map:map,
+		autoComplete: true,
+		//arcgisGeocoder: false,
+		//geocoders: [ {
+			//url:"http://YourGeocoderServiceURL/GeocodeServer",
+			//outfields:"*"
+		//}],
+		geocoderMenu: true
+	}, "search");
+	geocoder.startup();
+	
+	//If an address has been found run this
+	geocoder.on("select", showLocation);
+			
+	function showLocation(evt) {
+		map.graphics.clear();	
+        point = evt.result.feature.geometry;
+        graphic = new Graphic(point, symbol);
+		LocPoint = webMercatorUtils.webMercatorToGeographic(point);
+		LatTextBox.set("value",LocPoint.y);
+		LongTextBox.set("value",LocPoint.x);
+		Lat = LocPoint.y;
+		Long = LocPoint.x;
+		DMSLat();
+		DMSLong();
+		Gridlocator.locationToAddress(LocPoint, 100);	
+        map.graphics.add(graphic);
+        map.infoWindow.setTitle("Search Result");
+        map.infoWindow.setContent(evt.result.name);
+        map.infoWindow.show(evt.result.feature.geometry);
+        map.infoWindow.resize(180, 100);
+    };
+		
+    //Create the map tooltip  
+    var tip = "Click the map or fill in Lat/Long, to get an address!";
+    var tooltip = domConstruct.create("div", { "class": "tooltip", "innerHTML": tip }, map.container);
+      
+    domStyle.set(tooltip, "position", "fixed");
+
+	var toolFunc = map.on("mouse-move", function(evt){
+		var px, py;        
+        if (evt.clientX || evt.pageY) {
+            px = evt.clientX;
+            py = evt.clientY;
+        } else {
+            px = evt.clientX + win.body().scrollLeft - win.body().clientLeft;
+            py = evt.clientY + win.body().scrollTop - win.body().clientTop;
+        }
+
+        tooltip.style.display = "none";
+        domStyle.set(tooltip, { left: (px + 15) + "px", top: (py) + "px" });
+
+        tooltip.style.display = "";
+	});
+    map.on( "mouse-out", function(evt){
+        tooltip.style.display = "none";
+    });
+                
+    var locator = new Locator("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer");
+	var Gridlocator = new Locator("http://serverapps101.esri.com/arcgis/rest/services/MGRS/GeocodeServer");
+
+    var infoTemplate = new InfoTemplate("Location", "Address: ${Address}");
+		
+	//If an address has been found run this code
+    locator.on("location-to-address-complete", locateMe);
+	Gridlocator.on("location-to-address-complete", locateMeGrid); 	
+	
+	function locateMe(evt) {
+        if (evt.address.address) {
+            var address = evt.address.address;
+            LocPoint = webMercatorUtils.geographicToWebMercator(evt.address.location);
+            //this service returns geocoding results in geographic - convert to web mercator to display on map
+            // var location = webMercatorUtils.geographicToWebMercator(evt.location);
+            graphic = new Graphic(LocPoint, symbol, address, infoTemplate);
+            map.graphics.add(graphic);
+            
+            map.infoWindow.setTitle("Result");
+            map.infoWindow.setContent("<b>Address:</b> "  + evt.address.address.Address + "<br></br>" + "<b>City:</b> " + evt.address.address.City + "<br></br>" + 
+			"<b>Country:</b> " + evt.address.address.CountryCode );
+			//map.infoWindow.setContent(evt.address.address);
+            
+            //display the info window with the address information
+            map.infoWindow.resize(250,100);
+            map.infoWindow.show(LocPoint, map.getInfoWindowAnchor(LocPoint));
+            map.centerAndZoom(LocPoint,15);
+            domConstruct.destroy(tooltip);
+        } 
+    };
+	
+	function locateMeGrid(evt){
+		registry.byId("GridTextBoxDiv").set("value",evt.address.address.MGRS);
+	};
+		
+	//If no address has been found
+    locator.on("error", function(evt){
+		graphic = new Graphic(LocPoint, symbol);
+		map.graphics.add(graphic);
+		map.infoWindow.resize(200,100);
+		map.infoWindow.setTitle("Result");
+		map.infoWindow.setContent("No Address has been found");
+		map.infoWindow.show(LocPoint, map.getInfoWindowAnchor(LocPoint));
+		map.centerAndZoom(LocPoint,15);
+	});
+
+	//When user clicks on map, find the address
+	map.on("click", clickLoc);
+		
+	function clickLoc(evt) {
+        map.graphics.clear();
+		map.infoWindow.hide();
+        locator.locationToAddress(webMercatorUtils.webMercatorToGeographic(evt.mapPoint), 100);
+		Gridlocator.locationToAddress(webMercatorUtils.webMercatorToGeographic(evt.mapPoint), 100);			
+		LocPoint = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+		LatTextBox.set("value",LocPoint.y);
+		LongTextBox.set("value",LocPoint.x);
+		Lat = LocPoint.y;
+		Long = LocPoint.x;
+		DMSLat();
+		DMSLong();
+    };
+		
+	//Text Boxes
+    var LongTextBox = new TextBox({
+        placeHolder: "-80.7352016",
+        value:"",
+        intermediateChanges:true
+    },"LongTextBoxDiv");
+        
+    var LatTextBox = new TextBox({
+        placeHolder: "28.2952617",
+        value:"",
+        intermediateChanges:true
+    },"LatTextBoxDiv");
+	
+	var GridTextBox = new TextBox({
+        placeHolder: "17RNM2400031000",
+        value:"",
+        intermediateChanges:true
+    },"GridTextBoxDiv");
+		
+	//When the popup is closed remove the graphic
+	map.infoWindow.on("hide", function (){
+		map.graphics.clear();
+	});
+		
+	on(registry.byId("latlong"), "click", getaddress);
+        
+	//Use Lat and Long textbox to get address
+    function getaddress(){
+        Lat = LatTextBox.get("value");
+		Long = LongTextBox.get("value");
+			if ((Lat == "") && (Long == "")) {
+				alert("Please fill in Latitude and Longitude");
+			} else if (Lat == ""){
+				alert("Please fill in Latitude");
+			} else if (Long == ""){
+				alert("Please fill in Longitude");
+			} else {
+				DMSLat();
+				DMSLong();
+				LocPoint = new Point([Long,Lat]);
+				Gridlocator.locationToAddress(LocPoint, 100);
+				locator.locationToAddress(LocPoint , 100);
+				map.graphics.clear();
+			}
+    }
+		
+	//Transform Decimal Degrees into Degrees Minutes Seconds
+	function DMSLat (){
+		if (Lat > 0) {
+			Latdegrees = Math.floor(Lat);
+			m = (Lat-Latdegrees)*60;
+			Latminutes = Math.floor(m);
+			Latseconds = (m - Latminutes)*60;
+		} else {
+			Latdegrees = Math.ceil(Lat);
+			m = Math.abs((Lat - Latdegrees)*60);
+			Latminutes = Math.floor(m);
+			Latseconds = (m - Latminutes)*60;
+		}		
+		registry.byId("LatMinTextBox").set("value",Latminutes);
+		registry.byId("LatDegTextBox").set("value",Latdegrees);
+		registry.byId("LatSecTextBox").set("value",Latseconds);
+	};
+		
+	function DMSLong (){
+		if (Long > 0) {
+			Longdegrees = Math.floor(Long);
+			m = (Long - Longdegrees)*60;
+			Longminutes = Math.floor(m);
+			Longseconds = (m - Longminutes)*60;
+		} else {
+			Longdegrees = Math.ceil(Long);
+			m = Math.abs((Long - Longdegrees)*60);
+			Longminutes = Math.floor(m);
+			Longseconds = (m - Longminutes)*60;
+		}			
+		registry.byId("LongMinTextBox").set("value",Longminutes);
+		registry.byId("LongDegTextBox").set("value",Longdegrees);
+		registry.byId("LongSecTextBox").set("value",Longseconds);
+	};
+		
+	//Use Degrees Minutes Seconds to get address	
+	on(registry.byId("dms"), "click", getaddressdms);
+		
+	function getaddressdms () {
+		Latdegrees = Number(registry.byId("LatDegTextBox").get("value"));
+		Latminutes = registry.byId("LatMinTextBox").get("value");
+		Latseconds = registry.byId("LatSecTextBox").get("value");
+		LatDMS();
+        Longdegrees = registry.byId("LongDegTextBox").get("value");
+		Longminutes = registry.byId("LongMinTextBox").get("value");
+		Longseconds = registry.byId("LongSecTextBox").get("value");
+		LongDMS();
+        LocPoint = new Point([Long,Lat]);
+		locator.locationToAddress(LocPoint , 100);
+		Gridlocator.locationToAddress(LocPoint, 100);
+		LatTextBox.set("value",Lat);
+		LongTextBox.set("value",Long);
+		map.graphics.clear();			
+	};
+			
+	//Transform Degrees Minutes Seconds into Decimal Degrees
+	function LatDMS (){
+		if (Latdegrees > 0) {
+			Lat = (Number(Latdegrees) +((Latminutes / 60.0) + (Latseconds / 3600.0)));
+		} else {
+			Lat = (Number(Latdegrees) -((Latminutes / 60.0) + (Latseconds / 3600.0)));
+		}
+	};
+		
+	function LongDMS (){
+		if (Longdegrees > 0) {
+			Long = (Number(Longdegrees) +((Longminutes / 60.0) + (Longseconds / 3600.0)));
+		} else {
+			Long = (Number(Longdegrees) -((Longminutes / 60.0) + (Longseconds / 3600.0)));
+		}
+	};
+	
+	//Use USNG/MGRS box to get address
+	on(registry.byId("grid"), "click", setgrid);
+	
+	function setgrid(){
+		GridPoint = registry.byId("GridTextBoxDiv").get("value");
+		var gridnmb = {MGRS:GridPoint};
+        Gridlocator.addressToLocations(gridnmb);
+		map.graphics.clear();
+    };
+	
+	Gridlocator.on("address-to-locations-complete", locateMeGridAddress);
+	
+	function locateMeGridAddress(evt){    
+		FoundPointAr = evt.addresses;
+		FoundPoint = FoundPointAr[0];
+		LocPoint = FoundPoint.location;
+		locator.locationToAddress(LocPoint , 100);	
+		Lat = LocPoint.y;
+		Long = LocPoint.x;
+		DMSLat();
+		DMSLong();
+		LatTextBox.set("value",Lat);
+		LongTextBox.set("value",Long);
+		map.graphics.clear();
+    }
+    
+	//Clear Button
+	on(registry.byId("clear"), "click", clearAll);
+    
+	function clearAll(){
+
+        array.forEach(registry.byId('LeftPane').getDescendants(), function(formWidget) {
+		formWidget.attr('value', null);
+  
+        });
+    }
+        	
+      });
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false, liveSplitters:true" 
+         style="width:100%; height:100%;">
+      <div id="header" class="roundedCorners" 
+           data-dojo-type="dijit/layout/ContentPane" 
+           data-dojo-props="region:'top'">
+		Location, Location, Location...    
+      </div>
+      <div id="map" class="roundedCorners" 
+           data-dojo-type="dijit/layout/ContentPane" 
+           data-dojo-props="region:'center'">
+		 <div id="search"></div>
+		 <div id="HomeButton"></div>
+		 <div id="LocateButton"></div>
+		 <div style="position:absolute; right:20px; top:20px; z-Index:999;">
+		  <div data-dojo-type="dijit/TitlePane" 
+             data-dojo-props="title:'Switch Basemap', closable:false, open:false">
+				<div data-dojo-type="dijit/layout/ContentPane" style="width:380px; height:280px; overflow:auto;">
+					<div id="basemapGallery"></div>
+				</div>
+		   </div>
+		 </div>
+      </div>
+	   <div id="LeftPane" class="roundedCorners" 
+           data-dojo-type="dijit/layout/ContentPane" 
+           data-dojo-props="splitter:true, region:'left'">
+				Latitude:<div></div> <input id="LatTextBoxDiv" />
+				<br><br>
+				Longitude:<div></div> <input id="LongTextBoxDiv" />
+				<br><br>
+				<button id="latlong" data-dojo-type="dijit.form.Button" type="button" data-dojo-attach-point="button">Get Location</button> 
+				<br><br>
+				<br><br>
+				Latitude: Degrees, Minutes, Seconds
+				<div></div>
+				<input id="LatDegTextBox" data-dojo-type="dijit/form/TextBox" value="" data-dojo-props="intermediateChanges:true, placeHolder:'28'" style="width: 3em;"></input>
+				<input id="LatMinTextBox" data-dojo-type="dijit/form/TextBox" value="" data-dojo-props="intermediateChanges:true, placeHolder:'17'" style="width: 3em;"></input>
+				<input id="LatSecTextBox" data-dojo-type="dijit/form/TextBox" value="" data-dojo-props="intermediateChanges:true, placeHolder:'43.7598'" style="width: 4em;"></input>
+				<br><br>
+				Longitude: Degrees, Minutes, Seconds
+				<div></div>
+				<input id="LongDegTextBox" data-dojo-type="dijit/form/TextBox" value="" data-dojo-props="intermediateChanges:true, placeHolder:'-80'" style="width: 3em;"></input>
+				<input id="LongMinTextBox" data-dojo-type="dijit/form/TextBox" value="" data-dojo-props="intermediateChanges:true, placeHolder:'43'" style="width: 3em;"></input>
+				<input id="LongSecTextBox" data-dojo-type="dijit/form/TextBox" value="" data-dojo-props="intermediateChanges:true, placeHolder:'38.607'" style="width: 4em;"></input>
+				<br><br>
+				<button id="dms" data-dojo-type="dijit.form.Button" type="button" data-dojo-attach-point="button">Get Location</button> 
+				<br><br>
+				<br><br>
+				USNG / MGRS:<div></div><input id="GridTextBoxDiv"/>
+				<br><br>
+				<button id="grid" data-dojo-type="dijit.form.Button" type="button" data-dojo-attach-point="button">Get Location</button> 
+				<br><br>
+                <br><br>
+                <button id="clear" data-dojo-type="dijit.form.Button" type="button" data-dojo-attach-point="button">Clear All</button> 
+      </div>
+    </div>
+  </body>
+</html>
