@@ -5,10 +5,9 @@ $(document).ready(function() {
 		  auto: true,
 		  autoControls: true,
           pause: 4000,
-          slideMargin: 20
+          slideMargin: 20,
+		  captions: true
 	
 	});
 	
-
- 
 });
