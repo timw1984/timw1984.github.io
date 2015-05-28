@@ -85,8 +85,8 @@ var
   //////Replace the following line with the jsapi you prefer after download the app,
   //////including the comment
 
-  //apiUrl=http://js.arcgis.com/3.12;
-  apiUrl='http://e911wksb070q22/arcgis_js_api/library/3.12/3.12/';
+  apiUrl=http://js.arcgis.com/3.12;
+  //apiUrl='http://e911wksb070q22/arcgis_js_api/library/3.12/3.12/';
 
 
   //////////////////////////////////////////////////////////////
