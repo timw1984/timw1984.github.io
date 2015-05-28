@@ -1,0 +1,5 @@
+{
+  "configText": "Just a test",
+  "AddressURL": "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
+  "GridURL": "http://serverapps101.esri.com/arcgis/rest/services/MGRS/GeocodeServer"
+}
