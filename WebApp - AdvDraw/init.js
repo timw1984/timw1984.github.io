@@ -82,13 +82,13 @@ var ie = (function() {
 
     dojoConfig.locale = dojoConfig.locale.toLowerCase();
     window._setRTL(dojoConfig.locale);
-
+	var Urlit = "//js.arcgis.com/3.12/";
 
     resources = resources.concat([
-      window.apiUrl + 'dojo/resources/dojo.css',
-      window.apiUrl + 'dijit/themes/claro/claro.css',
-      window.apiUrl + 'esri/css/esri.css',
-      window.apiUrl + 'dojox/layout/resources/ResizeHandle.css',
+      Urlit + 'dojo/resources/dojo.css',
+      Urlit + 'dijit/themes/claro/claro.css',
+      Urlit + 'esri/css/esri.css',
+      Urlit + 'dojox/layout/resources/ResizeHandle.css',
       window.path + 'jimu.js/css/jimu.css'
     ]);
 
