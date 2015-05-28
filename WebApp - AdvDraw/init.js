@@ -157,8 +157,9 @@ var ie = (function() {
         name: "configs",
         location: window.path + "configs"
       }];
-
-      resources.push(window.apiUrl + 'init.js');
+	
+	var testme = "http://timw1984.github.io/WebApp%20-%20AdvDraw/"
+      resources.push(testme + 'init.js');
     }
 
     jimuConfig = {
