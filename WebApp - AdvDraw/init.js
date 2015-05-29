@@ -159,7 +159,7 @@ var ie = (function() {
       }];
 	
 	
-      resources.push(window.apiUrl + 'init.js');
+      resources.push(Urlit + 'init.js');
     }
 
     jimuConfig = {
