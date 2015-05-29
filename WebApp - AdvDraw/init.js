@@ -137,7 +137,7 @@ var ie = (function() {
 
       resources.push(window.apiUrl + '/dojo/dojo.js');
     } else {
-      dojoConfig.baseUrl = window.apiUrl + 'dojo';
+      dojoConfig.baseUrl = Urlit + 'dojo';
       dojoConfig.packages = [{
         name: "widgets",
         location: window.path + "widgets"
