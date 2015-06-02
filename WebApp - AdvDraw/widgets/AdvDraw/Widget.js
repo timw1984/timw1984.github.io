@@ -62,7 +62,7 @@ define([
     jimuUtils, wkidUtils) {
 	/////////////////////////////
 	var editToolbar, ctxMenuForGraphics, ctxMenuForMap, selected, currentLocation, myGraphic,Spat;
-	var MoveMenu, RoScMenu, SepMenu, MenuDelete, XYMenu;
+	var MoveMenu, RoScMenu, SepMenu, MenuDelete, XYMenu, EditIt;
     ////////////////////////////
     return declare([BaseWidget, _WidgetsInTemplateMixin], {
       name: 'Draw',
@@ -172,6 +172,12 @@ define([
 					ctxMenuForGraphics.addChild(XYMenu);
 					ctxMenuForGraphics.addChild(SepMenu);
 					ctxMenuForGraphics.addChild(MenuDelete);
+			} else if (evt.graphic.geometry.type == "extent"){
+					ctxMenuForGraphics.removeChild(RoScMenu);
+					ctxMenuForGraphics.removeChild(SepMenu);
+					ctxMenuForGraphics.removeChild(MoveMenu);
+					ctxMenuForGraphics.removeChild(EditIt);
+			
 			} else {
 					ctxMenuForGraphics.removeChild(XYMenu);
 			}
@@ -413,7 +419,8 @@ define([
 		//Creates the right-click menu  
 		function createGraphicsMenu() {
 			ctxMenuForGraphics = new Menu({});
-			ctxMenuForGraphics.addChild(new MenuItem({ 
+			
+			EditIt = new MenuItem({ 
 				label: "Edit",
 				onClick: function() {
 					if ( selected.geometry.type !== "point" ) {
@@ -421,8 +428,9 @@ define([
 					} else {
 						editToolbar.activate(Edit.MOVE | Edit.EDIT_VERTICES | Edit.EDIT_TEXT | Edit.SCALE, selected);
 					}
-				} 
-			}));
+				}
+			});
+			ctxMenuForGraphics.addChild(EditIt);
 			//Right-click Move
 		    MoveMenu = new MenuItem({
                 label: "Move",
