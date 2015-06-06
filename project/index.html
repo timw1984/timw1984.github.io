@@ -127,20 +127,31 @@
 			} else {
 				var currentDiv = currentLayer;
 				var LegendLayers = [{
-					layer: hazard,
-                    title: "Hazard",
+					layer: ft1,
+                    title: "Inundation from Sea Level Rise (1ft)",
+					collapse: true
+					//slider: true
+                },{
+					layer: ft2,
+                    title: "Inundation from Sea Level Rise (2ft)",
 					collapse: true
                 },{
-					layer: radar,
-                    title: "Radar",
-                    collapsed: true, 
-                    slider: true,
-					noLegend: true					
+					layer: ft3,
+                    title: "Inundation from Sea Level Rise (3ft)",
+					collapse: true
                 },{
-					layer: gauge,
-                    title: "Gauge",
-					collapse: true,
-                }, {
+					layer: ft4,
+                    title: "Inundation from Sea Level Rise (4ft)",
+					collapse: true
+                },{
+					layer: ft5,
+                    title: "Inundation from Sea Level Rise (5ft)",
+					collapse: true
+                },{
+					layer: ft6,
+                    title: "Inundation from Sea Level Rise (6ft)",
+					collapse: true
+                },{
 					layer: county,
                     title: "County",
 					collapse: true,
