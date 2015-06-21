@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <!--The viewport meta tag is used to improve the presentation and behavior of the samples
+    on iOS devices-->
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Map Template</title>
+
+  <link rel="stylesheet" href="http://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+
+  <style>
+
+    html, body {
+		height: 99%;
+		width: 99%;
+		margin: 1px;
+		overflow: hidden;
+		padding: 0px;
+		background: #071122 url("http://us.battle.net/hearthstone/static/images/body-content-bg.jpg") 50% 0 repeat-y;
+    }
+	
+	.claro .dijitSplitContainer-dijitContentPane, .claro .dijitBorderContainer-dijitContentPane {
+		background-color: transparent;
+		border: 2px solid;
+		border-image: url(images/border.png) stretch;
+	}
+	
+	#Header{
+		overflow:hidden;
+		height: auto;
+		padding: 0px;
+		margin: 0px;
+	
+	}
+	.simpleGeocoder .esriGeocoderHasValue .esriGeocoderReset {
+		cursor:url('cursor/select.cur'), default;
+	}
+	.simpleGeocoder .esriGeocoder .esriGeocoderSearch {
+		cursor:url('cursor/select.cur'), default;
+	}
+	.simpleGeocoder .esriGeocoder input {
+		cursor:url('cursor/select.cur'), default;
+	}
+	.simpleGeocoder .esriGeocoder{
+		cursor:url('cursor/select.cur'), default;
+	}
+	.esriSimpleSlider .esriSimpleSliderVertical:hover {
+		cursor:url('cursor/select.cur'), default;
+	}
+	.esriSimpleSliderDecrementButton {
+		cursor:url('cursor/select.cur'), default;
+	}
+	.esriSimpleSlider div:hover {
+		cursor:url('cursor/select.cur'), default;
+	}
+	.map .logo-med {
+		cursor:url('cursor/select.cur'), default;
+	}
+    #leftPane {
+		width: 20%;
+		border: 30px solid transparent;
+		border-image: url(images/border2.png) 30 round;
+		behavior: url(pie/PIE.htc);
+    }
+	 #rightPane {
+		width: 15%;
+		border: 30px solid transparent;
+		border-image: url(images/border2.png) 30 round;
+		behavior: url(pie/PIE.htc);
+    }
+	.esriSimpleSlider div {
+		cursor:url('cursor/select.cur'), default;
+	}
+	#search {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        top: 28px;
+        left: 74px;
+    }
+	#HomeButton {
+		position: absolute;
+		top: 100px;
+		left: 27px;
+		z-index: 50;
+    }
+	#Locate {
+		position: absolute;
+		top: 145px;
+		left: 27px;
+		z-index: 50;
+    }
+	.HomeButton .home {
+		background-color: white;
+		background-image: url("images/home.png");
+		border: 1px solid #57585A;
+		cursor:url('cursor/select.cur'), default;
+	}
+	.HomeButton .home:hover {
+		background-color: lightgray;
+		border: 1px solid #57585A;
+	}
+	.LocateButton .zoomLocateButton {
+		background-color: white;
+		background-image: url("images/locate.png");
+		border: 1px solid #57585A;
+		cursor:url('cursor/select.cur'), default;
+	}
+	.LocateButton .zoomLocateButton:hover {
+		background-color: lightgray;
+		border: 1px solid #57585A;
+	}
+	#map{
+		border-image-slice: 68 60 85 65;
+		border-image-width: 20px 20px 20px 20px;
+		border-image-outset: 4px 10px 5px 10px;
+		border-image-repeat: stretch stretch;
+		border-image-source: url(images/mapborder.png);
+		behavior: url(pie/PIE.htc);
+	}
+
+
+  </style>
+
+  <script src="http://js.arcgis.com/3.13/"></script>
+  <script>
+    var map;
+    require([
+      "esri/map", "esri/layers/FeatureLayer", "esri/dijit/HomeButton","esri/dijit/LocateButton", "esri/graphic",
+      "dojo/_base/array", "dojo/parser", "esri/dijit/Geocoder", "esri/symbols/PictureMarkerSymbol", "dojo/i18n!esri/nls/jsapi",
+      "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+    ], function(
+      Map, FeatureLayer, HomeButton,LocateButton,Graphic,
+      arrayUtils, parser, Geocoder,PictureMarkerSymbol, esriBundle
+    ) {
+      parser.parse();
+	  
+	  esriBundle.widgets.homeButton.home.title = "Full Extent";
+	  esriBundle.widgets.locateButton.locate.title = "Find my Location";
+
+      map = new Map("map", {
+        basemap: "dark-gray", //The following are valid options: "streets" , "satellite" , "hybrid", "topo", "gray", "dark-gray", "oceans", "national-geographic", "terrain" and "osm"
+        center: [-96.53, 38.374],
+        zoom: 4
+      });
+	  
+	 var pictureMarkerSymbol = new PictureMarkerSymbol('/images/Yellow.png', 25, 25);
+	  
+	 var myGeocoder = {
+		url: "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
+		name: "World Geocoder",
+		placeholder: "search for an address..."
+	 };
+	 var geocoder = new Geocoder({
+		map: map,
+		autoComplete: true,
+		arcgisGeocoder: myGeocoder
+	 },"search");
+	 geocoder.startup();
+	 
+	 var home = new HomeButton({
+        map: map
+      }, "HomeButton");
+     home.startup();
+	  
+	 var locateButton = new LocateButton({
+		map: map,
+		symbol: pictureMarkerSymbol,
+		scale: 120000
+	 }, "Locate");
+	 locateButton.startup();
+
+     var hearth = new FeatureLayer("http://services.arcgis.com/Cbfl85ofqLpgmdCN/arcgis/rest/services/FiresideGatherings/FeatureServer/0", {
+        mode: FeatureLayer.MODE_SNAPSHOT,
+        outFields:["*"]
+     });
+	  
+      map.addLayer(hearth);
+	  
+	  map.on("click", function (){
+		locateButton.clear();
+		map.graphics.clear();
+	  });
+	  
+	  home.on("home", function (){
+		locateButton.clear();
+		map.graphics.clear();
+	  });
+	  
+	  geocoder.on("select", function(evt){
+		var pt = evt.result.feature.geometry;
+		var GeocoderGraphic = new Graphic(pt,pictureMarkerSymbol);
+		map.graphics.add(GeocoderGraphic);
+	  
+	});
+	
+	map.on("mouse-over", function(){
+		map.setMapCursor("url('cursor/normal.cur'),auto");
+	})
+	hearth.on("mouse-over", function(){
+		map.setMapCursor("url('cursor/select.cur'),auto");
+	})
+	hearth.on("mouse-out", function(){
+		map.setMapCursor("url('cursor/normal.cur'),auto");
+	})
+	
+
+	  
+    });
+  </script>
+</head>
+
+<body class="claro">
+
+<div id="content"
+     data-dojo-type="dijit/layout/BorderContainer"
+     data-dojo-props="design:'headline', gutters:true"
+     style="width: 100%; height: 100%; margin: 0;">
+
+  <div id="leftPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'left'">
+	   
+	   This is a Test!
+
+  </div>
+   <div id="rightPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'right'">
+	   
+	   This is a Test!
+
+  </div>
+    <div id="Header"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'top'">
+	   <img src="images/hearthstone2.png" alt="hearth" style="width:100%;height:100%;">
+
+  </div>
+  <div id="map"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'center'"
+       style="overflow:hidden;">
+
+		<div id ="search"></div>
+		<div id="HomeButton"></div>
+		<div id="Locate"></div>
+
+	</div>
+  </div>
+   
+</div>
+</body>
+
+</html>
