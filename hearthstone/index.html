@@ -59,15 +59,20 @@
 		cursor:url('cursor/select.cur'), default;
 	}
     #leftPane {
-		width: 20%;
-		border: 30px solid transparent;
+	width:20%;
+		border-image-slice: 30 30 30 30;
+		border-image-width: 20px 20px 20px 20px;
+		border-image-outset: 0px 0px 0px 0px;
+		border-image-repeat: stretch stretch; 
 		border-image: url(images/border2.png) 30 round;
 		behavior: url(pie/PIE.htc);
     }
 	 #rightPane {
 		width: 15%;
-		border: 30px solid transparent;
-		border-image: url(images/border2.png) 30 round;
+		border-image-slice: 30 30 30 30;
+		border-image-width: 20px 20px 20px 20px;
+		border-image-outset: 0px 0px 0px 0px;
+		border-image-repeat: stretch stretch; 
 		behavior: url(pie/PIE.htc);
     }
 	.esriSimpleSlider div {
