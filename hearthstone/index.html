@@ -126,20 +126,44 @@
 		border-image-source: url(images/mapborder.png);
 		behavior: url(pie/PIE.htc);
 	}
-
+	p.serif {
+		font-family: "Times New Roman";
+	}
+	#FirTitle{
+		align-content: center;
+	}
+	#AmBut {
+		max-width:100%;
+		max-height:100%;
+	}
+	#SAmBut {
+		max-width:100%;
+		max-height:100%;
+	}
+	#EuBut {
+		max-width:100%;
+		max-height:100%;
+	}
+	#AsBut {
+		max-width:100%;
+		max-height:100%;
+	}
 
   </style>
 
   <script src="http://js.arcgis.com/3.13/"></script>
+
   <script>
     var map;
     require([
-      "esri/map", "esri/layers/FeatureLayer", "esri/dijit/HomeButton","esri/dijit/LocateButton", "esri/graphic",
+      "esri/map", "esri/layers/FeatureLayer", "esri/dijit/HomeButton","esri/dijit/LocateButton", "esri/graphic", "esri/geometry/Extent",
       "dojo/_base/array", "dojo/parser", "esri/dijit/Geocoder", "esri/symbols/PictureMarkerSymbol", "dojo/i18n!esri/nls/jsapi",
+	  "esri/SpatialReference","dojo/dom-attr","dojo/on",
       "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
     ], function(
-      Map, FeatureLayer, HomeButton,LocateButton,Graphic,
-      arrayUtils, parser, Geocoder,PictureMarkerSymbol, esriBundle
+      Map, FeatureLayer, HomeButton,LocateButton,Graphic,Extent,
+      arrayUtils, parser, Geocoder,PictureMarkerSymbol, esriBundle,
+	  SpatialReference,domAttr,on
     ) {
       parser.parse();
 	  
@@ -212,6 +236,52 @@
 		map.setMapCursor("url('cursor/normal.cur'),auto");
 	})
 	
+	var AmLink =  dojo.byId("AmBut");
+	on(AmLink, "click", function(evt){
+		amer = new Extent(-14935397.94,1377805.62 ,  -6129852.28,7248169.39, new SpatialReference({ wkid:102100 }));
+		map.setExtent(amer);
+	})
+
+	var SALink =  dojo.byId("SAmBut");
+	on(SALink , "click", function(evt){
+		souam = new Extent(-13291696.09,-8366998.24,4319395.23,3373729.30, new SpatialReference({ wkid:102100 }));
+		map.setExtent(souam);
+	});
+	var EUlink =  dojo.byId("EuBut");
+	on(EUlink , "click", function(evt){
+		euro = new Extent(-2147788.86,3647679.61,6657756.80,9518043.38, new SpatialReference({ wkid:102100 }));
+		map.setExtent(euro);
+	});
+	var Aslink =  dojo.byId("AsBut");
+	on(Aslink , "click", function(evt){
+		asia = new Extent(5415196.47,-2790152.66,23026287.79,8950574.89, new SpatialReference({ wkid:102100 }));
+		map.setExtent(asia);
+		//domAttr.set(Aslink, "src", "images/buttonNA.png");
+	});
+	on(Aslink , "mouseover", function(evt){
+		domAttr.set(Aslink, "src", "images/buttonAsSe.png");
+	});
+	on(Aslink , "mouseout", function(evt){
+		domAttr.set(Aslink, "src", "images/buttonAs.png");
+	});
+	on(AmLink, "mouseover", function(evt){
+		domAttr.set(AmLink, "src", "images/buttonNASe.png");
+	});
+	on(AmLink , "mouseout", function(evt){
+		domAttr.set(AmLink, "src", "images/buttonNA.png");
+	});
+	on(EUlink, "mouseover", function(evt){
+		domAttr.set(EUlink, "src", "images/buttonEuSe.png");
+	});
+	on(EUlink , "mouseout", function(evt){
+		domAttr.set(EUlink, "src", "images/buttonEu.png");
+	});
+	on(SALink, "mouseover", function(evt){
+		domAttr.set(SALink, "src", "images/buttonSaSe.png");
+	});
+	on(SALink , "mouseout", function(evt){
+		domAttr.set(SALink, "src", "images/buttonSA.png");
+	});
 
 	  
     });
@@ -228,15 +298,20 @@
   <div id="leftPane"
        data-dojo-type="dijit/layout/ContentPane"
        data-dojo-props="region:'left'">
+	   <div id="FirTitle"> <p class="serif">Fire Side Gathering</p> </div>
+	   <div id="Date"> 02.21.84 </div>
+	   <div id="Location"> this is the location </div>
 	   
-	   This is a Test!
 
   </div>
    <div id="rightPane"
        data-dojo-type="dijit/layout/ContentPane"
        data-dojo-props="region:'right'">
 	   
-	   This is a Test!
+	   <input type="image" src="images/buttonNA.png" name="saveForm" class="btTxt submit" id="AmBut" />
+	   <input type="image" src="images/buttonSA.png" name="saveForm" class="btTxt submit" id="SAmBut" />
+	   <input type="image" src="images/buttonEu.png" name="saveForm" class="btTxt submit" id="EuBut" />
+	   <input type="image" src="images/buttonAs.png" name="saveForm" class="btTxt submit" id="AsBut" />
 
   </div>
     <div id="Header"
