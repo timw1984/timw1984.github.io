@@ -176,7 +176,7 @@
         zoom: 4
       });
 	  
-	 var pictureMarkerSymbol = new PictureMarkerSymbol('/images/Yellow.png', 25, 25);
+	 var pictureMarkerSymbol = new PictureMarkerSymbol('images/Yellow.png', 25, 25);
 	  
 	 var myGeocoder = {
 		url: "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
@@ -244,7 +244,7 @@
 
 	var SALink =  dojo.byId("SAmBut");
 	on(SALink , "click", function(evt){
-		souam = new Extent(-13291696.09,-8366998.24,4319395.23,3373729.30, new SpatialReference({ wkid:102100 }));
+		souam = new Extent(-15122225.56,-8639524.59,2488865.76,3101202.95, new SpatialReference({ wkid:102100 }));
 		map.setExtent(souam);
 	});
 	var EUlink =  dojo.byId("EuBut");
