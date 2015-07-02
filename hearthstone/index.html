@@ -100,7 +100,7 @@
     }
 	.HomeButton .home {
 		background-color: white;
-		background-image: url("images/home.png");
+		background-image: url("images/hearth.png");
 		border: 1px solid #57585A;
 		cursor:url('cursor/select.cur'), default;
 	}
@@ -110,7 +110,7 @@
 	}
 	.LocateButton .zoomLocateButton {
 		background-color: white;
-		background-image: url("images/locate.png");
+		background-image: url("images/tracking.png");
 		border: 1px solid #57585A;
 		cursor:url('cursor/select.cur'), default;
 	}
@@ -158,17 +158,17 @@
     require([
       "esri/map", "esri/layers/FeatureLayer", "esri/dijit/HomeButton","esri/dijit/LocateButton", "esri/graphic", "esri/geometry/Extent",
       "dojo/_base/array", "dojo/parser", "esri/dijit/Geocoder", "esri/symbols/PictureMarkerSymbol", "dojo/i18n!esri/nls/jsapi",
-	  "esri/SpatialReference","dojo/dom-attr","dojo/on",
+	  "esri/SpatialReference","dojo/dom-attr","dojo/on", "esri/renderers/SimpleRenderer","esri/layers/GraphicsLayer",
       "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
     ], function(
       Map, FeatureLayer, HomeButton,LocateButton,Graphic,Extent,
       arrayUtils, parser, Geocoder,PictureMarkerSymbol, esriBundle,
-	  SpatialReference,domAttr,on
+	  SpatialReference,domAttr,on,SimpleRenderer,GraphicsLayer
     ) {
       parser.parse();
 	  
-	  esriBundle.widgets.homeButton.home.title = "Full Extent";
-	  esriBundle.widgets.locateButton.locate.title = "Find my Location";
+	 esriBundle.widgets.homeButton.home.title = "Home Extent";
+	 esriBundle.widgets.locateButton.locate.title = "Track my Location";
 
       map = new Map("map", {
         basemap: "dark-gray", //The following are valid options: "streets" , "satellite" , "hybrid", "topo", "gray", "dark-gray", "oceans", "national-geographic", "terrain" and "osm"
@@ -177,6 +177,9 @@
       });
 	  
 	 var pictureMarkerSymbol = new PictureMarkerSymbol('images/Yellow.png', 25, 25);
+	 
+	 var layerMarkerSymbol = new PictureMarkerSymbol('images/hearthlayer.png', 30, 30);
+	 var layerMarkerSymbolhover = new PictureMarkerSymbol('images/hearthlayer.png', 35, 35);
 	  
 	 var myGeocoder = {
 		url: "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
@@ -206,6 +209,10 @@
         mode: FeatureLayer.MODE_SNAPSHOT,
         outFields:["*"]
      });
+	
+	 var featureRend = new SimpleRenderer(layerMarkerSymbol);
+	 
+	 hearth.setRenderer(featureRend);
 	  
       map.addLayer(hearth);
 	  
@@ -226,13 +233,26 @@
 	  
 	});
 	
+	var hGraphics = new GraphicsLayer({id:"highlights"});
+	map.addLayer(hGraphics);
+	
 	map.on("mouse-over", function(){
 		map.setMapCursor("url('cursor/normal.cur'),auto");
 	})
-	hearth.on("mouse-over", function(){
+	hearth.on("mouse-over", function(e){
+		hGraphics.clear();
+		hGraphics.add(new Graphic(e.graphic.geometry,layerMarkerSymbolhover));
 		map.setMapCursor("url('cursor/select.cur'),auto");
+		var featureRendhover = new SimpleRenderer(layerMarkerSymbol);
 	})
 	hearth.on("mouse-out", function(){
+		map.setMapCursor("url('cursor/normal.cur'),auto");
+	});
+	hGraphics.on("mouse-over", function(){
+		map.setMapCursor("url('cursor/select.cur'),auto");
+	});
+	hGraphics.on("mouse-out", function(){
+		hGraphics.clear();
 		map.setMapCursor("url('cursor/normal.cur'),auto");
 	})
 	
@@ -282,6 +302,13 @@
 	on(SALink , "mouseout", function(evt){
 		domAttr.set(SALink, "src", "images/buttonSA.png");
 	});
+	
+	 hearth.on("click", function (evt) {
+	 map.setMapCursor("url(cursor/select.cur),auto");
+		console.log(evt);
+		dojo.byId("att1").innerHTML = evt.graphic.attributes.Ctry;
+		//html.set(dom.byId("att1"), "yubu");
+	 });
 
 	  
     });
