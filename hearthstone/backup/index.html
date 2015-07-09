@@ -148,36 +148,7 @@
 		max-width:100%;
 		max-height:100%;
 	}
-	.claro .dijitDialogTitleBar {
-	  border: transparent;
-	  background-color: rgba(171, 214, 255, 0);
-	    background-image: linear-gradient(rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 100%);
-	
-	}
-	.claro .dijitDialogPaneContent {
-		  background: rgba(255, 255, 255, 0);
-		  border-top: 1px solid rgba(117, 157, 192, 0);
-	}
-	.claro .dijitDialog {
-		  border: 1px solid rgba(117, 157, 192, 0);
-		    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0);
-			box-shadow: 0 1px 5px rgba(0, 0, 0, 0);
-	}
-	.claro .dijitDialogCloseIcon {
-	   background: url(""); 
-	}
-	.titles {
-		font-family: "Comic Sans MS";
-		font-weight: bold;
-		text-align: center;
-		font-size: 130%;
-		border-bottom: 1px solid gray;
-	}
-	.field{
-		font-family: "Comic Sans MS";
-		text-align: center;
-		font-size: 80%;
-	}
+
   </style>
 
   <script src="http://js.arcgis.com/3.13/"></script>
@@ -305,9 +276,9 @@
 	})
 	hearth.on("mouse-over", function(e){
 		hGraphics.clear();
-		//hGraphics.add(new Graphic(e.graphic.geometry,layerMarkerSymbolhover));
+		hGraphics.add(new Graphic(e.graphic.geometry,layerMarkerSymbolhover));
 		map.setMapCursor("url('cursor/select.cur'),auto");
-		//var featureRendhover = new SimpleRenderer(layerMarkerSymbol);
+		var featureRendhover = new SimpleRenderer(layerMarkerSymbol);
 	})
 	hearth.on("mouse-out", function(){
 		map.setMapCursor("url('cursor/normal.cur'),auto");
@@ -368,12 +339,9 @@
 	});
 	
 	 hearth.on("click", function (evt) {
-	 //map.setMapCursor("url(cursor/select.cur),auto");
+	 map.setMapCursor("url(cursor/select.cur),auto");
 		console.log(evt);
-		dojo.byId("Date").innerHTML = evt.graphic.attributes.DATE;
-		dojo.byId("Location").innerHTML = evt.graphic.attributes.LOCATION + "<p></p>" + evt.graphic.attributes.ADDRESS  ;
-		dojo.byId("Activity").innerHTML = evt.graphic.attributes.ACTIVITIES;
-		dojo.byId("Who").innerHTML = evt.graphic.attributes.AGE;
+		dojo.byId("att1").innerHTML = evt.graphic.attributes.Ctry;
 		//html.set(dom.byId("att1"), "yubu");
 	 });
 
@@ -392,15 +360,10 @@
   <div id="leftPane"
        data-dojo-type="dijit/layout/ContentPane"
        data-dojo-props="region:'left'">
-	   <div id="DateTitle" class="titles"> Date</div>
-	   <div id="Date" class="field"> 02.21.84 </div>
-	   <div></div>
-	   <div id="LocationTitle" class="titles"> Location</div>
-	   <div id="Location" class="field"> this is the location </div>
-	   <div id="ActivityTitle" class="titles"> Activities</div>
-	   <div id="Activity" class="field"> These are the activities </div>
-	   <div id="WhoTitle" class="titles"> Who's invited</div>
-	   <div id="Who" class="field"> I am invited</div>
+	   <div id="FirTitle"> <p class="serif">Fire Side Gathering</p> </div>
+	   <div id="Date"> 02.21.84 </div>
+	   <div id="Location"> this is the location </div>
+	   
 
   </div>
    <div id="rightPane"
