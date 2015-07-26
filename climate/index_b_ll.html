@@ -71,63 +71,15 @@
 	   var At_6ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/14", {
         mode: FeatureLayer.MODE_ONDEMAND,
         outFields:["*"],
-		visible: false
+		visible: true
       });
-	   var At_5ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/12", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_4ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/10", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_3ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/8", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_2ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/6", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_1ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/1", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_6ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/15", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_5ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/13", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_4ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/11", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_3ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/9", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_2ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/7", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	     var Go_1ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/5", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
+	
+	  					var queryTask6 = new QueryTask("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/14");
+					var queryTask5 = new QueryTask("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/12");
+					var queryTask4 = new QueryTask("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/10");
+					var queryTask3 = new QueryTask("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/8");
+					var queryTask2 = new QueryTask("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/6");
+					var queryTask1 = new QueryTask("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/4");
 	  
 
       //add the legend
@@ -162,7 +114,7 @@
 			map.setExtent(NewLayer.fullExtent);
       });
 
-      map.addLayers([SeaLevel,LegendFeature,At_6ft,At_5ft,At_4ft,At_3ft,At_2ft,At_1ft]);
+      map.addLayers([SeaLevel,LegendFeature]);
 	  		var myButton = new Button({
 				label: "Add Layer",
 				onClick: function(){
@@ -234,21 +186,23 @@
 					});  
 
 					mp.spatialReference = NewLayer.graphics[0].geometry.spatialReference;
-					//var queryTask = new QueryTask("http://gis.brevardcounty.us/gissrv/rest/services/Base_Map/General_WKID102100/MapServer/5");
+
+	
 					var query = new Query();
 			
 						console.log(selectedCity);
 
 					//query.geometry = allPoints[0].geometry;
 					query.geometry = mp;
+					query.returnGeometry = true;
 					//query.spatialRelationship = Query.SPATIAL_REL_CROSSES;
-					//queryTask.execute(query);
-					At_6ft.selectFeatures(query);
-					At_5ft.selectFeatures(query);
-					At_4ft.selectFeatures(query);
-					At_3ft.selectFeatures(query);
-					At_2ft.selectFeatures(query);
-					At_1ft.selectFeatures(query);
+					queryTask1.execute(query,showresults1);
+					queryTask2.execute(query,showresults2);
+					queryTask3.execute(query,showresults3);
+					queryTask4.execute(query,showresults4);
+					queryTask5.execute(query,showresults5);
+					queryTask6.execute(query,showresults6);
+
 			
 
 				
@@ -256,24 +210,114 @@
 				
 		}, "progButtonNode2").startup();
 		
-				At_6ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_5ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_4ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_3ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_2ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_1ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
+		function showresults1(featureSet){
+			  var resultFeatures = featureSet.features;
+
+  //Loop through each feature returned
+  for (var i=0, il=resultFeatures.length; i<il; i++) {
+    //Get the current feature from the featureSet.
+    //Feature is a graphic
+    var graphic = resultFeatures[i];
+    graphic.setSymbol(symbol);
+
+    //Set the infoTemplate.
+
+
+    //Add graphic to the map graphics layer.
+    map.graphics.add(graphic);
+  }
+	
+		}
+				function showresults2(featureSet){
+			  var resultFeatures = featureSet.features;
+
+  //Loop through each feature returned
+  for (var i=0, il=resultFeatures.length; i<il; i++) {
+    //Get the current feature from the featureSet.
+    //Feature is a graphic
+    var graphic = resultFeatures[i];
+    graphic.setSymbol(symbol);
+
+    //Set the infoTemplate.
+  
+
+    //Add graphic to the map graphics layer.
+    map.graphics.add(graphic);
+  }
+	
+		}
+				function showresults3(featureSet){
+			  var resultFeatures = featureSet.features;
+
+  //Loop through each feature returned
+  for (var i=0, il=resultFeatures.length; i<il; i++) {
+    //Get the current feature from the featureSet.
+    //Feature is a graphic
+    var graphic = resultFeatures[i];
+    graphic.setSymbol(symbol);
+
+    //Set the infoTemplate.
+   
+
+    //Add graphic to the map graphics layer.
+    map.graphics.add(graphic);
+  }
+	
+		}
+				function showresults4(featureSet){
+			  var resultFeatures = featureSet.features;
+
+  //Loop through each feature returned
+  for (var i=0, il=resultFeatures.length; i<il; i++) {
+    //Get the current feature from the featureSet.
+    //Feature is a graphic
+    var graphic = resultFeatures[i];
+    graphic.setSymbol(symbol);
+
+    //Set the infoTemplate.
+  
+
+    //Add graphic to the map graphics layer.
+    map.graphics.add(graphic);
+  }
+	
+		}
+				function showresults5(featureSet){
+			  var resultFeatures = featureSet.features;
+
+  //Loop through each feature returned
+  for (var i=0, il=resultFeatures.length; i<il; i++) {
+    //Get the current feature from the featureSet.
+    //Feature is a graphic
+    var graphic = resultFeatures[i];
+    graphic.setSymbol(symbol);
+
+    //Set the infoTemplate.
+  
+
+    //Add graphic to the map graphics layer.
+    map.graphics.add(graphic);
+  }
+	
+		}
+				function showresults6(featureSet){
+			  var resultFeatures = featureSet.features;
+
+  //Loop through each feature returned
+  for (var i=0, il=resultFeatures.length; i<il; i++) {
+    //Get the current feature from the featureSet.
+    //Feature is a graphic
+    var graphic = resultFeatures[i];
+    graphic.setSymbol(symbol);
+
+    //Set the infoTemplate.
+ 
+
+    //Add graphic to the map graphics layer.
+    map.graphics.add(graphic);
+  }
+	
+		}
 		
 
     });

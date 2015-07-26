@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>NOAA</title>
+	<link rel="stylesheet" href="https://js.arcgis.com/3.12/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.13/esri/css/esri.css"/>
+	<link rel="stylesheet" type="text/css" href="https://timw1984.github.io/agsjs/css/agsjs.css" />
+
+    <style>
+    html, body{
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 1px;
+        font-family: helvetica, arial, sans-serif;
+        font-size: 90%;
+		overflow: hidden;
+    }
+    #borderContainer {
+		width: 100%;
+		height: 100%;
+    }
+	#leftPane {
+      width: 20%;
+    }
+	#bottomPane {
+		width: 100%;
+    }
+	#centerPane {
+		width: 100%;
+		height: 100%;
+    }
+	#map {
+		width: 100%;
+		height: 100%;
+    }
+    </style>
+	<script type="text/javascript">
+
+                  var dojoConfig = { 
+                    paths:	{
+                            agsjs: 'https://timw1984.github.io/agsjs' 
+							}
+                  };
+                             
+     </script>
+
+    <script src="https://js.arcgis.com/3.13/"></script>
+    <script>
+      var map;
+      require(["esri/map", "esri/layers/ArcGISTiledMapServiceLayer", "dojo/parser", "agsjs/dijit/TOC","dojo/_base/connect","dojo/dom", "dojo/parser","dojo/on", "dojo/_base/Color","dijit/form/Button","esri/layers/FeatureLayer","dojo/dom-construct",
+			"dijit/layout/BorderContainer","dijit/layout/ContentPane","dijit/layout/AccordionContainer","dijit/layout/ContentPane", "dijit/layout/AccordionContainer","dijit/form/TextBox","dojo/domReady!"], 
+	  function(Map,ArcGISTiledMapServiceLayer, parser,TOC,connect,  dom, parser, on,Color, Button, FeatureLayer,domConstruct) {
+	  
+		parser.parse();
+        map = new Map("map", {
+          basemap: "topo",  
+          center: [-95.45, 37.75],
+          zoom: 4
+        });
+		var county, toc,currentLayer,currentDiv,previouseDiv;
+		var click = 0;
+		var AddedLayer = "";
+		var ft6 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/14",{
+			visible: false
+			});
+		var ft5 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/12",{
+			visible: false
+			});
+		var ft4 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/10",{
+			visible: false
+			});
+		var ft3 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/8",{
+			visible: false
+			});
+		var ft2 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/16",{
+			visible: false
+			});
+		var ft1 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer",{
+			visible: false
+			});
+
+		
+		map.addLayers([ft6,ft5,ft4,ft3,ft2,ft1] );
+
+		map.on('layers-add-result', legenddoit);
+
+		function legenddoit(evt){
+		if ( AddedLayer == "") {
+			var LegendLayers = [{
+					layer: ft1,
+                    title: "Inundation from Sea Level Rise (1ft)",
+					collapse: true
+					//slider: true
+                },{
+					layer: ft2,
+                    title: "Inundation from Sea Level Rise (2ft)",
+					collapse: true
+                },{
+					layer: ft3,
+                    title: "Inundation from Sea Level Rise (3ft)",
+					collapse: true
+                },{
+					layer: ft4,
+                    title: "Inundation from Sea Level Rise (4ft)",
+					collapse: true
+                },{
+					layer: ft5,
+                    title: "Inundation from Sea Level Rise (5ft)",
+					collapse: true
+                },{
+					layer: ft6,
+                    title: "Inundation from Sea Level Rise (6ft)",
+					collapse: true
+                }];
+				//radar.setVisibleLayers([0]);
+			//gauge.setVisibleLayers([0]);
+			//hazard.setVisibleLayers([0]);
+
+			toc = new TOC({
+				map: map,
+                layerInfos: LegendLayers
+            }, 'tocDiv');
+            toc.startup();
+			} else {
+				var currentDiv = currentLayer;
+				var LegendLayers = [{
+					layer: hazard,
+                    title: "Hazard",
+					collapse: true
+                },{
+					layer: radar,
+                    title: "Radar",
+                    collapsed: true, 
+                    slider: true,
+					noLegend: true					
+                },{
+					layer: gauge,
+                    title: "Gauge",
+					collapse: true,
+                }, {
+					layer: county,
+                    title: "County",
+					collapse: true,
+                }];
+				toc2 = new TOC({
+				map: map,
+                layerInfos: LegendLayers
+            }, currentDiv );
+            toc2.startup();
+			
+			}
+			
+			
+        };
+	var myButton = new Button({
+			label: "Click me!",
+			onClick: function(){
+				click += 1;
+				previouseDiv = currentDiv;
+				previouseLayer = currentLayer;
+				currentLayer = "layer" + click;
+				//console.log(currentLayer);
+				if (county !== undefined){
+					//console.log(county);
+					map.removeLayer(county);
+				}
+				currentDiv = "<div id=" + currentLayer +">";
+				NeededValue = dom.byId("myURL").value;
+				//console.log(NeededValue);
+				county = new FeatureLayer(NeededValue,{
+					outFields: ['*']
+				});
+				var MyName = county.name;
+				map.addLayers([county]);
+				AddedLayer = "Gotem";
+				if (currentLayer == "layer1"){
+					domConstruct.place(currentDiv  + "<div>", 'tocDiv',"replace");
+				} else {
+				domConstruct.place(currentDiv + "<div>", previouseLayer,"replace");
+				}
+					}		
+    }, "progButtonNode").startup();
+      });
+    </script>
+  </head>
+
+  <body class ="claro">
+	<div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:true, liveSplitters:true">
+		<div id="centerPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
+			<div id="map">
+			</div>
+		</div>
+		<div id="bottomPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'bottom'">
+		 <label for="firstname">Add a layer:</label>
+			<input type="text" name="myURL" value="http://gis.brevardcounty.us/gissrv/rest/services/Base_Map/General_WKID102100/MapServer/5"
+    data-dojo-type="dijit/form/TextBox"
+    data-dojo-props="trim:true, propercase:true" id="myURL" />
+	<button id="progButtonNode" type="button"></button><div id="result1"></div>
+		</div>
+		<div id="leftPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'leading'">
+			<div data-dojo-type="dijit/layout/AccordionContainer" style="height: 300px;">
+				<div data-dojo-type="dijit/layout/ContentPane" title="Legend" selected="true">
+				<div id ="LegendInHere">
+				  <div id="tocDiv">
+				</div>
+                </div>
+
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Pane 2">
+				<div id="tocDiv2">
+                </div>
+				</div>
+			</div>
+		</div>
+	</div>	
+  </body>
+</html>
