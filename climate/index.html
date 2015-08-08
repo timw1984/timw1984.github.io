@@ -110,7 +110,25 @@
 		
     .file-upload { height: 1.8em; }
     .file-upload,
-    .file-upload span {	width: 8em; }	
+    .file-upload span {	width: 8em; }
+  h1 {
+			border-bottom: 1px solid #ddd;
+			color: #28639C;
+			font-size: 16px;
+			font-weight: bold;
+			}	
+			  h2 {
+			border-bottom: 1px solid #ddd;
+			color: #28639C;
+			font-size: 16px;
+			font-weight: bold;
+			}
+			  h3 {
+			border-bottom: 1px solid #ddd;
+			color: #28639C;
+			font-size: 16px;
+			font-weight: bold;
+			}
       
 
 
@@ -952,10 +970,18 @@
 
 				</div>
 				<div data-dojo-type="dijit/layout/ContentPane" title="Add Your Data">
+				<h1> Drag and Drop Service</h1>
 				 <p style="padding:4px;"><span>Drag and drop a map services url or a csv file with latitude/longitude information
-          from windows explorer to the map.</span>
-    </p>
-
+						from windows explorer to the map.</span>
+				</p>
+				 <p>
+				 
+	 http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Miami_Test_Data/FeatureServer/0
+				
+				</p>
+				<h2> Drag and Drop CVS</h2>
+				Drag and drop a csv file with latitude/longitude information
+						from windows explorer to the map.
 
 
     <span id="status"></span>
@@ -969,14 +995,15 @@
       <b>Longitude fields:</b> lon, long, longitude, x, xcenter
       <br />
 	  <p style='padding:4px;'>I have prepared a cvs file which you can download by clicking the following link:
-      <a target="_blank" href="data/Infrastructure.csv">Test CVS</a> </p>
-	<div>
-	 http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Miami_Test_Data/FeatureServer/0
-	</div>
+      <a target="_blank" href="Data/Infrastructure.csv">Test CVS</a> </p>
+	
 	 
     </p>
 	<p>		
+	<h3> Add a shapefile</h3>
 	<div> You are also able to add a zipped shapefile. Just click the following button and navigate to your zipped shapefile.</div>
+	</p>
+	<p>
 					<form enctype="multipart/form-data" method="post" id="uploadForm">
 						<div class="field">
 							<label class="file-upload">
