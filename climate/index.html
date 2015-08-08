@@ -1,53 +1,789 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <!--The viewport meta tag is used to improve the presentation and behavior of the samples
-    on iOS devices-->
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
-  <title>Map with legend</title>
+  <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>NOAA</title>
+	<link rel="stylesheet" href="https://js.arcgis.com/3.12/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.13/esri/css/esri.css"/>
+	<link rel="stylesheet" type="text/css" href="https://timw1984.github.io/agsjs/css/agsjs.css" />
 
-  <link rel="stylesheet" href="http://js.arcgis.com/3.14/dijit/themes/claro/claro.css">
-  <link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css">
-
-  <style>
-    html, body {
-      height: 97%;
-      width: 98%;
-      margin: 1%;
+    <style>
+    html, body{
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 1px;
+        font-family: helvetica, arial, sans-serif;
+        font-size: 90%;
+		overflow: hidden;
     }
-
-    #rightPane {
+    #borderContainer {
+		width: 100%;
+		height: 100%;
+    }
+	#leftPane {
       width: 20%;
-    }
-
-    #legendPane {
-      border: solid #97DCF2 1px;
     }
 	#bottomPane {
 		width: 100%;
     }
-  </style>
-
-  <script src="http://js.arcgis.com/3.14/"></script>
-  <script>
-    var map, NewLayer,legendDijit,legend,selectedCity;
-  require(["esri/map", "esri/geometry/Multipoint","esri/dijit/Legend","dojo/_base/array","esri/layers/ArcGISTiledMapServiceLayer", "dojo/parser", "dojo/_base/connect","dojo/dom", "dojo/parser","dojo/on", "dojo/_base/Color","dijit/form/Button","esri/layers/FeatureLayer","dojo/dom-construct",
-			"esri/config","esri/tasks/query","esri/tasks/QueryTask","esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol","esri/symbols/SimpleMarkerSymbol","esri/geometry/geometryEngine",
-			"dojo/dom", "dojo/on","dojo/dom-construct", "esri/tasks/GeometryService","esri/tasks/ProjectParameters",
-			"dijit/layout/BorderContainer","dijit/layout/ContentPane","dijit/layout/AccordionContainer","dijit/layout/ContentPane","dijit/layout/AccordionContainer","dijit/form/TextBox","dojo/domReady!"], 
-	  function(Map,Multipoint,Legend,arrayUtils,ArcGISTiledMapServiceLayer, parser,connect,  dom, parser, on,Color, Button, FeatureLayer,domConstruct,
-	  esriConfig,Query,QueryTask,SimpleLineSymbol,SimpleFillSymbol,SimpleMarkerSymbol,geometryEngine,dom,on,domConstruct,GeometryService,ProjectParameters) {
-      parser.parse();
-	  var NewLayerTest = "no",
-
-      map = new Map("map", {
-        basemap:"dark-gray",
-       center: [-95.45, 37.75],
-          zoom: 4
-      });
+	#mapCanvas {
+		width: 100%;
+		height: 100%;
+    }
+	#map {
+		width: 100%;
+		height: 100%;
+    }
+	   #HomeButton {
+      position: absolute;
+      top: 98px;
+      left: 27px;
+      z-index: 50;
+    }
+	  #search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 27px;
+         left: 74px;
+      }
+	
+      #legendWrapper{
+         position: absolute;
+         font-family: arial;
+		 display: none;
+         margin: 5px;
+         padding: 10px;
+         z-index: 40;
+         background: #fff;
+         color: #444;
+         right: 30px;
+         top: 30px;
+         box-shadow: 0 0 5px #888;
+      }
 	  
-	  var symbol = new SimpleMarkerSymbol(
+	      .file-upload {
+    	overflow: hidden;
+    	display: inline-block;
+    	position: relative;	
+    	vertical-align: middle;
+    	text-align: center;
+    	border: 2px solid #666666;
+    	background: #444444;
+    	-moz-border-radius: 6px;
+    	-webkit-border-radius: 6px;
+    	border-radius: 6px;
+      color: #fff;
+      text-shadow: 0px 2px 3px #555;
+      cursor:pointer;
+	  }
+	     .file-upload:hover { 
+    	background-color: #454545;
+    	}
+
+    
+    .file-upload input {
+    	position: absolute;
+    	top: 0;
+    	left: 0;
+    	margin: 0;
+    	font-size: 50px;
+    	opacity: 0;
+    	filter: alpha(opacity=0);
+      z-index:2;
+    	}
+    
+    .file-upload strong { 
+    	font: normal 1.0em arial,sans-serif; 
+    	}	
+    	
+    .file-upload span {
+    	position: absolute;
+    	top: 0;
+    	left: 0;
+    	display: inline-block;
+
+    	padding-top: .45em;
+    	}
+		
+    .file-upload { height: 1.8em; }
+    .file-upload,
+    .file-upload span {	width: 8em; }	
+      
+
+
+    </style>
+	<script type="text/javascript">
+
+                  var dojoConfig = { 
+                    paths:	{
+                            agsjs: 'https://timw1984.github.io/agsjs' 
+							}
+                  };
+                             
+     </script>
+
+    <script src="https://js.arcgis.com/3.13/"></script>
+    <script>
+      var map;
+      require(["esri/map", "esri/geometry/Multipoint","dojo/_base/array","esri/layers/ArcGISTiledMapServiceLayer", 
+	  "dojo/parser", "agsjs/dijit/TOC","dojo/_base/connect","dojo/dom", "dojo/parser","dojo/on", "dojo/_base/Color","dijit/form/Button","esri/layers/FeatureLayer","dojo/dom-construct",
+			"esri/config","esri/tasks/query","esri/tasks/QueryTask","esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol","esri/symbols/SimpleMarkerSymbol",
+			"esri/geometry/geometryEngine",  "esri/config","esri/renderers/SimpleRenderer","esri/domUtils","esri/graphic","esri/InfoTemplate","esri/request","esri/urlUtils",
+			"dojo/sniff","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/layers/ArcGISDynamicMapServiceLayer","esri/symbols/PictureMarkerSymbol","esri/dijit/Legend",
+			"dojo/json","dojo/_base/lang","dojox/data/CsvStore","dojox/encoding/base64", "esri/geometry/scaleUtils","esri/dijit/InfoWindowLite","esri/dijit/HomeButton","esri/dijit/Search","dijit/Dialog",
+			"dijit/layout/BorderContainer","dijit/layout/ContentPane","dijit/layout/AccordionContainer","dijit/layout/ContentPane", "dijit/layout/AccordionContainer","dijit/form/TextBox","dojo/domReady!"], 
+	  function(Map,Multipoint,arrayUtils,ArcGISTiledMapServiceLayer, parser,TOC,connect,  dom, parser, on,Color, Button, FeatureLayer,domConstruct,
+	  esriConfig,Query,QueryTask,SimpleLineSymbol,SimpleFillSymbol,SimpleMarkerSymbol,geometryEngine,
+	  esriConfig,SimpleRenderer,domUtils,Graphic,InfoTemplate,request,urlUtils,sniff,Point,webMercatorUtils,ArcGISDynamicMapServiceLayer,PictureMarkerSymbol,Legend,
+	  JSON,lang,CsvStore,base64,scaleUtils,InfoWindowLite,HomeButton,Search) {
+	  
+	  parser.parse();
+	  
+	  var featureLayer = "No";
+	  var myLegendName,legend;
+	  var portalUrl = "http://www.arcgis.com";
+	  
+	  var NewLayer, toc,currentLayer,currentDiv,previouseDiv, toc2;
+	  var selectedCity = [];
+	  var click = 0;
+	  var AddedLayer = "";
+	  		///////////////////////// Create the Map //////////////////////////////////////////////////////////////
+	  map = new Map("mapCanvas", {
+          basemap: "dark-gray",  
+          center: [-95.45, 37.75],
+          zoom: 4
+        });
+		
+      var home = new HomeButton({
+        map: map
+      }, "HomeButton");
+      home.startup();
+
+    var s = new Search({
+            map: map
+         }, "search");
+         s.startup();
+	 
+		
+		///////////////////////////////////////////////////////////// ADD SHAPEFILE //////////////////////////////////////////////////////////
+		on(dom.byId("uploadForm"), "change", function (event) {
+			if (dom.byId('uploadForm').innerHTML == ""){
+				console.log("Empty");
+			} else {
+				var fileName = event.target.value.toLowerCase();
+
+				if (sniff("ie")) { 
+				var arr = fileName.split("\\");
+				fileName = arr[arr.length - 1];
+				}
+				if (fileName.indexOf(".zip") !== -1) {
+					generateFeatureCollection(fileName);
+				}
+				else {
+					dom.byId('upload-status').innerHTML = '<p style="color:red">Add shapefile as .zip file</p>';
+				}
+			}
+          });
+		  
+		 function generateFeatureCollection (fileName) {
+			if (featureLayer == "No"){
+				console.log("No layer yet");;
+			} else {
+				map.removeLayer(featureLayer);
+			}
+            var name = fileName.split(".");
+			AddedLayer = "Got it";
+            //Chrome and IE add c:\fakepath to the value - we need to remove it
+            //See this link for more info: http://davidwalsh.name/fakepath
+            name = name[0].replace("c:\\fakepath\\", "");
+
+            dom.byId('upload-status').innerHTML = '<b>Loading </b>' + name;
+
+            //Define the input params for generate see the rest doc for details
+            //http://www.arcgis.com/apidocs/rest/index.html?generate.html
+            var params = {
+              'name': name,
+              'targetSR': map.spatialReference,
+              'maxRecordCount': 1000,
+              'enforceInputFileSizeLimit': true,
+              'enforceOutputJsonSizeLimit': true
+            };
+
+            //generalize features for display Here we generalize at 1:40,000 which is approx 10 meters
+            //This should work well when using web mercator.
+            var extent = scaleUtils.getExtentForScale(map, 40000);
+            var resolution = extent.getWidth() / map.width;
+            params.generalize = true;
+            params.maxAllowableOffset = resolution;
+            params.reducePrecision = true;
+            params.numberOfDigitsAfterDecimal = 0;
+
+            var myContent = {
+              'filetype': 'shapefile',
+              'publishParameters': JSON.stringify(params),
+              'f': 'json',
+              'callback.html': 'textarea'
+            };
+
+            //use the rest generate operation to generate a feature collection from the zipped shapefile
+            request({
+              url: portalUrl + '/sharing/rest/content/features/generate',
+              content: myContent,
+              form: dom.byId('uploadForm'),
+              handleAs: 'json',
+              load: lang.hitch(this, function (response) {
+                if (response.error) {
+                  errorHandler(response.error);
+                  return;
+                }
+                var layerName = response.featureCollection.layers[0].layerDefinition.name;
+                dom.byId('upload-status').innerHTML = '<b>Loaded: </b>' + layerName;
+                addShapefileToMap(response.featureCollection);
+              }),
+              error: lang.hitch(this, errorHandler)
+            });
+          }
+		   function errorHandler (error) {
+            dom.byId('upload-status').innerHTML =
+            "<p style='color:red'>" + error.message + "</p>";
+          }
+
+          function addShapefileToMap (featureCollection) {
+            //add the shapefile to the map and zoom to the feature collection extent
+            //If you want to persist the feature collection when you reload browser you could store the collection in
+            //local storage by serializing the layer using featureLayer.toJson()  see the 'Feature Collection in Local Storage' sample
+            //for an example of how to work with local storage.
+            var fullExtent;
+            var layers = [];
+			///////////////////////////////////
+			
+	
+	
+			//////////////////////////////////////////	
+
+            arrayUtils.forEach(featureCollection.layers, function (layer) {
+              var infoTemplate = new InfoTemplate("Details", "${*}");
+              featureLayer = new FeatureLayer(layer, {
+                infoTemplate: infoTemplate
+              });
+              //associate the feature with the popup on click to enable highlight and zoom to
+              featureLayer.on('click', function (event) {
+                map.infoWindow.setFeatures([event.graphic]);
+              });
+              //change default symbol if desired. Comment this out and the layer will draw with the default symbology
+              changeRenderer(featureLayer);
+             // fullExtent = fullExtent ?
+               // fullExtent.union(featureLayer.fullExtent) : featureLayer.fullExtent;
+             // layers.push(NewLayer);
+            });
+			var MyName = featureLayer.name;
+            map.addLayers([featureLayer]);
+			//////////////////////////////
+	
+			////////////////////////////	
+            //map.setExtent(fullExtent.expand(1.25), true);
+
+            dom.byId('upload-status').innerHTML = "";
+			TestDom = dom.byId('uploadForm');
+			console.log("test");
+			TestDom[0].value = "";
+			//dom.byId('uploadForm').innerHTML = "";
+          }
+
+          function changeRenderer (layer) {
+            //change the default symbol for the feature collection for polygons and points
+            var symbol = null;
+            switch (layer.geometryType) {
+              case 'esriGeometryPoint':
+                symbol = new PictureMarkerSymbol({
+                  'angle': 0,
+                  'xoffset': 0,
+                  'yoffset': 0,
+                  'type': 'esriPMS',
+                  'url': 'http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png',
+                  'contentType': 'image/png',
+                  'width': 20,
+                  'height': 20
+                });
+                break;
+              case 'esriGeometryPolygon':
+                symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                  new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new Color([112, 112, 112]), 1), new Color([136, 136, 136, 0.25]));
+                break;
+            }
+            if (symbol) {
+              layer.setRenderer(new SimpleRenderer(symbol));
+            }
+          }
+		 /////////////////////////////////////////////// DRAG AND DROP ///////////////////////////////////////////////////////////////////////
+		     var latFieldStrings = ["lat", "latitude", "y", "ycenter"];
+    var longFieldStrings = ["lon", "long", "longitude", "x", "xcenter"];
+
+    //specfiy cors enabled server and proxy for backup
+    esriConfig.defaults.io.corsEnabledServers.push("serverapi.arcgisonline.com");
+    esriConfig.defaults.io.proxyUrl = 'http://serverapi.arcgisonline.com/proxy/proxy.ashx';
+
+   
+
+    setupDropZone();
+
+
+    map.infoWindow.resize(275, 175);
+
+    function setupDropZone () {
+
+      if (!window.File || !window.FileReader) {
+        
+       
+        return;
+      }
+
+      var mapCanvas = dom.byId("mapCanvas");
+
+      on(mapCanvas, "dragenter", function (event) {
+        event.preventDefault();
+      });
+
+      on(mapCanvas, "dragover", function (event) {
+        event.preventDefault();
+      });
+      on(mapCanvas, "drop", handleDrop);
+    }
+
+    function handleDrop (event) {
+	  if (featureLayer == "No"){
+		console.log("No layer yet");;
+	  } else {
+		map.removeLayer(featureLayer);
+	  }
+      console.log("Drop: ", event);
+      event.preventDefault();
+
+      var dataTransfer = event.dataTransfer,
+        files = dataTransfer.files,
+        types = dataTransfer.types;
+
+      // File drop?
+      if (files && files.length === 1) {
+        console.log("[ FILES ]");
+        var file = files[0]; // that's right I'm only reading one file
+        console.log("type = ", file.type);
+        if (file.type.indexOf("image/") !== -1) {
+          console.log("Can't handle image");
+        }
+        else if (file.name.indexOf(".csv") !== -1) {
+          handleCSV(file);
+        }
+      }
+
+      // Textual drop?
+      else if (types) {
+        console.log("[ TYPES ]");
+        console.log("  Length = ", types.length);
+        arrayUtils.forEach(types, function (type) {
+          if (type) {
+            console.log("  Type: ", type);
+            console.log("  Data: ", dataTransfer.getData(type));
+          }
+        });
+
+        // We're looking for URLs only.
+        var url;
+        arrayUtils.some(types, function (type) {
+          if (type.indexOf("text/uri-list") !== -1) {
+            url = dataTransfer.getData("text/uri-list");
+            return true;
+          }
+          else if (type.indexOf("text/x-moz-url") !== -1) {
+            url = dataTransfer.getData("text/plain");
+            return true;
+          }
+          else if (type.indexOf("text/plain") !== -1) {
+            url = dataTransfer.getData("text/plain");
+            url = url.replace(/^\s+|\s+$/g, "");
+            if (url.indexOf("http") === 0) {
+              return true;
+            }
+          }
+          return false;
+        });
+
+        if (url) {
+          url = url.replace(/^\s+|\s+$/g, "");
+          // Check if this URL is a google search result.
+          // If so, parse it and extract the actual URL
+          // to the search result
+          if (url.indexOf("www.google.com/url") !== -1) {
+            var obj = urlUtils.urlToObject(url);
+            if (obj && obj.query && obj.query.url) {
+              url = obj.query.url;
+            }
+          }
+
+          if (url.match(/MapServer\/?$/i)) {
+            // ArcGIS Server Map Service?
+            handleMapServer(url);
+          }
+          else if (url.match(/(Map|Feature)Server\/\d+\/?$/i)) {
+            // ArcGIS Server Map/Feature Service Layer?
+            handleFeatureLayer(url);
+          }
+
+        }
+      }
+    }
+
+    function handleMapServer (url) {
+		if (featureLayer == "No"){
+				console.log("No layer yet");;
+			} else {
+				map.removeLayer(featureLayer);
+			}
+      console.log("Processing MS: ", url);
+      featureLayer = new ArcGISDynamicMapServiceLayer(url, {
+        opacity: 0.75
+      });
+	  AddedLayer = "Got it";
+      map.addLayers([featureLayer]);
+    }
+
+    function handleFeatureLayer (url) {
+		if (featureLayer == "No"){
+				console.log("No layer yet");;
+			} else {
+				map.removeLayer(featureLayer);
+			}
+      console.log("Processing FL: ", url);
+      featureLayer = new FeatureLayer(url, {
+        opacity: 0.75,
+        mode: FeatureLayer.MODE_ONDEMAND,
+        infoTemplate: new InfoTemplate(null, "${*}")
+      });
+	  AddedLayer = "Got it";
+      map.addLayers([featureLayer]);
+    }
+
+
+    function handleCSV (file) {
+			if (featureLayer == "No"){
+				console.log("No layer yet");;
+			} else {
+				map.removeLayer(featureLayer);
+			}
+	  myLegendName = file.name.substring(0, file.name.length - 4);
+      console.log("Processing CSV: ", file, ", ", file.name, ", ", file.type, ", ", file.size);
+      if (file.data) {
+        var decoded = bytesToString(base64.decode(file.data));
+        processCSVData(decoded);
+      }
+      else {
+        var reader = new FileReader();
+        reader.onload = function () {
+          console.log("Finished reading CSV data");
+          processCSVData(reader.result);
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    var bytesToString = function (b) {
+      console.log("bytes to string");
+      var s = [];
+      arrayUtils.forEach(b, function (c) {
+        s.push(String.fromCharCode(c));
+      });
+      return s.join("");
+    };
+
+    function processCSVData (data) {
+      var newLineIndex = data.indexOf("\n");
+      var firstLine = lang.trim(data.substr(0, newLineIndex)); //remove extra whitespace, not sure if I need to do this since I threw out space delimiters
+      var separator = getSeparator(firstLine);
+      var csvStore = new CsvStore({
+        data: data,
+        separator: separator
+      });
+
+      csvStore.fetch({
+        onComplete: function (items) {
+          var objectId = 0;
+          var featureCollection = generateFeatureCollectionTemplateCSV(csvStore, items);
+          var popupInfo = generateDefaultPopupInfo(featureCollection);
+          var infoTemplate = new InfoTemplate(buildInfoTemplate(popupInfo));
+          var latField, longField;
+          var fieldNames = csvStore.getAttributes(items[0]);
+          arrayUtils.forEach(fieldNames, function (fieldName) {
+            var matchId;
+            matchId = arrayUtils.indexOf(latFieldStrings,
+              fieldName.toLowerCase());
+            if (matchId !== -1) {
+              latField = fieldName;
+            }
+
+            matchId = arrayUtils.indexOf(longFieldStrings,
+              fieldName.toLowerCase());
+            if (matchId !== -1) {
+              longField = fieldName;
+            }
+          });
+
+          // Add records in this CSV store as graphics
+          arrayUtils.forEach(items, function (item) {
+            var attrs = csvStore.getAttributes(item),
+              attributes = {};
+            // Read all the attributes for  this record/item
+            arrayUtils.forEach(attrs, function (attr) {
+              var value = Number(csvStore.getValue(item, attr));
+              attributes[attr] = isNaN(value) ? csvStore.getValue(item, attr) : value;
+            });
+
+            attributes["__OBJECTID"] = objectId;
+            objectId++;
+
+            var latitude = parseFloat(attributes[latField]);
+            var longitude = parseFloat(attributes[longField]);
+
+            if (isNaN(latitude) || isNaN(longitude)) {
+              return;
+            }
+
+            var geometry = webMercatorUtils
+              .geographicToWebMercator(new Point(longitude, latitude));
+            var feature = {
+              "geometry": geometry.toJson(),
+              "attributes": attributes
+            };
+            featureCollection.featureSet.features.push(feature);
+          });
+
+          featureLayer = new FeatureLayer(featureCollection, {
+            infoTemplate: infoTemplate,
+            id: 'csvLayer'
+          });
+          featureLayer.__popupInfo = popupInfo;
+		  AddedLayer = "Got it";
+          map.addLayers([featureLayer]);
+          zoomToData(featureLayer);
+        },
+        onError: function (error) {
+          console.error("Error fetching items from CSV store: ", error);
+        }
+      });
+    }
+
+    function generateFeatureCollectionTemplateCSV (store, items) {
+      //create a feature collection for the input csv file
+      var featureCollection = {
+        "layerDefinition": null,
+        "featureSet": {
+          "features": [],
+          "geometryType": "esriGeometryPoint"
+        }
+      };
+      featureCollection.layerDefinition = {
+        "geometryType": "esriGeometryPoint",
+        "objectIdField": "__OBJECTID",
+        "type": "Feature Layer",
+		"name": myLegendName,
+        "typeIdField": "",
+        "drawingInfo": {
+          "renderer": {
+            "type": "simple",
+            "symbol": {
+              "type": "esriPMS",
+              "url": "http://static.arcgis.com/images/Symbols/Basic/RedSphere.png",
+              "contentType": "image/png",
+              "width": 15,
+              "height": 15
+            }
+          }
+        },
+        "fields": [
+          {
+            "name": "__OBJECTID",
+            "alias": "__OBJECTID",
+            "type": "esriFieldTypeOID",
+            "editable": false,
+            "domain": null
+          }
+        ],
+        "types": [],
+        "capabilities": "Query"
+      };
+
+      var fields = store.getAttributes(items[0]);
+      arrayUtils.forEach(fields, function (field) {
+        var value = store.getValue(items[0], field);
+        var parsedValue = Number(value);
+        if (isNaN(parsedValue)) { //check first value and see if it is a number
+          featureCollection.layerDefinition.fields.push({
+            "name": field,
+            "alias": field,
+            "type": "esriFieldTypeString",
+            "editable": true,
+            "domain": null
+          });
+        }
+        else {
+          featureCollection.layerDefinition.fields.push({
+            "name": field,
+            "alias": field,
+            "type": "esriFieldTypeDouble",
+            "editable": true,
+            "domain": null
+          });
+        }
+      });
+      return featureCollection;
+    }
+
+    function generateDefaultPopupInfo (featureCollection) {
+      var fields = featureCollection.layerDefinition.fields;
+      var decimal = {
+        'esriFieldTypeDouble': 1,
+        'esriFieldTypeSingle': 1
+      };
+      var integer = {
+        'esriFieldTypeInteger': 1,
+        'esriFieldTypeSmallInteger': 1
+      };
+      var dt = {
+        'esriFieldTypeDate': 1
+      };
+      var displayField = null;
+      var fieldInfos = arrayUtils.map(fields,
+        lang.hitch(this, function (item) {
+          if (item.name.toUpperCase() === "NAME") {
+            displayField = item.name;
+          }
+          var visible = (item.type !== "esriFieldTypeOID" &&
+                         item.type !== "esriFieldTypeGlobalID" &&
+                         item.type !== "esriFieldTypeGeometry");
+          var format = null;
+          if (visible) {
+            var f = item.name.toLowerCase();
+            var hideFieldsStr = ",stretched value,fnode_,tnode_,lpoly_,rpoly_,poly_,subclass,subclass_,rings_ok,rings_nok,";
+            if (hideFieldsStr.indexOf("," + f + ",") > -1 ||
+                f.indexOf("area") > -1 || f.indexOf("length") > -1 ||
+                f.indexOf("shape") > -1 || f.indexOf("perimeter") > -1 ||
+                f.indexOf("objectid") > -1 || f.indexOf("_") == f.length - 1 ||
+                f.indexOf("_i") == f.length - 2) {
+              visible = false;
+            }
+            if (item.type in integer) {
+              format = {
+                places: 0,
+                digitSeparator: true
+              };
+            }
+            else if (item.type in decimal) {
+              format = {
+                places: 2,
+                digitSeparator: true
+              };
+            }
+            else if (item.type in dt) {
+              format = {
+                dateFormat: 'shortDateShortTime'
+              };
+            }
+          }
+
+          return lang.mixin({}, {
+            fieldName: item.name,
+            label: item.alias,
+            isEditable: false,
+            tooltip: "",
+            visible: visible,
+            format: format,
+            stringFieldOption: 'textbox'
+          });
+        }));
+
+      var popupInfo = {
+        title: displayField ? '{' + displayField + '}' : '',
+        fieldInfos: fieldInfos,
+        description: null,
+        showAttachments: false,
+        mediaInfos: []
+      };
+      return popupInfo;
+    }
+
+    function buildInfoTemplate (popupInfo) {
+      var json = {
+        content: "<table>"
+      };
+
+      arrayUtils.forEach(popupInfo.fieldInfos, function (field) {
+        if (field.visible) {
+          json.content += "<tr><td valign='top'>" + field.label +
+                          ": <\/td><td valign='top'>${" + field.fieldName + "}<\/td><\/tr>";
+        }
+      });
+      json.content += "<\/table>";
+      return json;
+    }
+
+    function clearAll () {
+      map.graphics.clear();
+      var layerIds = map.graphicsLayerIds.slice(0);
+      layerIds = layerIds.concat(map.layerIds.slice(1));
+
+      arrayUtils.forEach(layerIds, function (layerId) {
+        map.removeLayer(map.getLayer(layerId));
+      });
+    }
+
+    function getSeparator (string) {
+      var separators = [",", "      ", ";", "|"];
+      var maxSeparatorLength = 0;
+      var maxSeparatorValue = "";
+      arrayUtils.forEach(separators, function (separator) {
+        var length = string.split(separator).length;
+        if (length > maxSeparatorLength) {
+          maxSeparatorLength = length;
+          maxSeparatorValue = separator;
+        }
+      });
+      return maxSeparatorValue;
+    }
+
+    function zoomToData (featureLayer) {
+      // Zoom to the collective extent of the data
+      var multipoint = new Multipoint(map.spatialReference);
+      arrayUtils.forEach(featureLayer.graphics, function (graphic) {
+        var geometry = graphic.geometry;
+        if (geometry) {
+          multipoint.addPoint({
+            x: geometry.x,
+            y: geometry.y
+          });
+        }
+      });
+
+      if (multipoint.points.length > 0) {
+        map.setExtent(multipoint.getExtent().expand(1.25), true);
+      }
+    }
+
+
+    function requestSucceeded (response) {
+      dom.byId("status").innerHTML = "";
+      handleCSV(response);
+    }
+
+    function requestFailed (error) {
+      dom.byId("status").innerHTML = 'Unable to upload';
+      console.log(JSON.stringify(error));
+    }
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    var symbol = new SimpleMarkerSymbol(
           SimpleMarkerSymbol.STYLE_CIRCLE, 
           12, 
           new SimpleLineSymbol(
@@ -58,271 +794,204 @@
           new Color([207, 34, 171, 0.5])
         );
 
-      var LegendFeature = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/16", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: true
-      });
-     var SeaLevel = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-		visible: true,
-		outFields:["*"]
-      });
-	   var At_6ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/14", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_5ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/12", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_4ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/10", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_3ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/8", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_2ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/6", {
-        mode: FeatureLayer.MODE_ONDEMAND,
-        outFields:["*"],
-		visible: false
-      });
-	   var At_1ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/1", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_6ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/15", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_5ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/13", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_4ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/11", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_3ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/9", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	   var Go_2ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/7", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	     var Go_1ft = new FeatureLayer("http://coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/CFEM_SeaLevelRise/MapServer/5", {
-        mode: FeatureLayer.MODE_SELECTION,
-        outFields:["*"],
-		visible: false
-      });
-	  
+		
+		var latFieldStrings = ["lat", "latitude", "y", "ycenter"];
+		var longFieldStrings = ["lon", "long", "longitude", "x", "xcenter"];
+		
+		esriConfig.defaults.io.corsEnabledServers.push("serverapi.arcgisonline.com");
+		esriConfig.defaults.io.proxyUrl = 'http://serverapi.arcgisonline.com/proxy/proxy.ashx';
 
-      //add the legend
-      map.on("layers-add-result", function (evt) {
+	//////////////////////////// Add Layers //////////////////////////////////////////////////////////
+		var ft6 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_6ft/MapServer",{
+			visible: false
+			});
 
-	         if (legend) {
+		var ft5 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_5ft/MapServer",{
+			visible: false
+			});
+		var ft4 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_4ft/MapServer",{
+			visible: false
+			});
+		var ft3 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_3ft/MapServer",{
+			visible: false
+			});
+		var ft2 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_2ft/MapServer",{
+			visible: false
+			});
+		var ft1 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer",{
+			visible: false,
+			});
+		map.addLayers([ft6,ft5,ft4,ft3,ft2,ft1] );
+
+		var queryTask = new QueryTask("http://gis.brevardcounty.us/gissrv/rest/services/Base_Map/General_WKID102100/MapServer/5");
+
+		/////////////////// Create the Legend ///////////////////////////////////////////////////////////////////////////////////
+		map.on('layers-add-result', legenddoit);
+		function legenddoit(evt){
+		if ( AddedLayer == "") {
+			var LegendLayers = [{
+					layer: ft1,
+                    title: "Inundation from Sea Level Rise (1ft)",
+					collapse: true,
+					slider: true
+                },{
+					layer: ft2,
+                    title: "Inundation from Sea Level Rise (2ft)",
+					slider: true
+					//collapse: true
+                },{
+					layer: ft3,
+                    title: "Inundation from Sea Level Rise (3ft)",
+					collapse: true,
+					slider: true
+                },{
+					layer: ft4,
+                    title: "Inundation from Sea Level Rise (4ft)",
+					collapse: true,
+					slider: true
+                },{
+					layer: ft5,
+                    title: "Inundation from Sea Level Rise (5ft)",
+					collapse: true,
+					slider: true
+                },{
+					layer: ft6,
+                    title: "Inundation from Sea Level Rise (6ft)",
+					collapse: true,
+					slider: true
+                }];
+
+			toc = new TOC({
+				map: map,
+                layerInfos: LegendLayers
+            }, 'tocDiv');
+            toc.startup();
+			} else {
+				createLegend(featureLayer);
+			}
+			//var addedExtent = evt.layers[0].layer.fullExtent;
+			//map.setExtent(addedExtent);
+			//map.setExtent(NewLayer.fullExtent);
+			console.log("test");
+ 
+
+		
+			
+        };
+		
+		/////////////////////// Create the Add Layer Button /////////////////////////////////
+		
+		
+	function zoomToData (featureLayer) {
+      // Zoom to the collective extent of the data
+      var multipoint = new Multipoint(map.spatialReference);
+      arrayUtils.forEach(featureLayer.graphics, function (graphic) {
+        var geometry = graphic.geometry;
+        if (geometry) {
+          multipoint.addPoint({
+            x: geometry.x,
+            y: geometry.y
+          });
+        }
+      });
+
+      if (multipoint.points.length > 0) {
+        map.setExtent(multipoint.getExtent().expand(1.25), true);
+      }
+    }
+
+	function createLegend(featureLayer) {
+            //If applicable, destroy previous legend
+            if (legend) {
                legend.destroy();
                domConstruct.destroy(dom.byId("legendDiv"));
-            }
+            } else {
+				domUtils.show(dom.byId('legendWrapper'));
+			}
+
+           // create a new div for the legend
             var legendDiv = domConstruct.create("div", {
                id: "legendDiv"
             }, dom.byId("legendWrapper"));
-			if (NewLayerTest == "here"){
-				if (NewLayer.fullExtent.spatialReference.wkid == 102100){
-					map.setExtent(NewLayer.fullExtent);
-				
-				}
-				var startLayer = [{layer: LegendFeature, title: "Sea Level"},{layer: NewLayer, title: NewLayer.name}]
-				legend = new Legend({
-					map: map,
-					layerInfos: startLayer
-				}, legendDiv);
-				legend.startup();
-			} else{
-			var startLayer = [{layer: LegendFeature, title: "Sea Level"}]
+
             legend = new Legend({
                map: map,
-               layerInfos: startLayer
+               layerInfos: [{
+                  layer: featureLayer,
+                  title: featureLayer.name
+            }]
             }, legendDiv);
             legend.startup();
-			}
-			map.setExtent(NewLayer.fullExtent);
-      });
-
-      map.addLayers([SeaLevel,LegendFeature,At_6ft,At_5ft,At_4ft,At_3ft,At_2ft,At_1ft]);
-	  		var myButton = new Button({
-				label: "Add Layer",
-				onClick: function(){
-				NewLayerTest = "here";
-
-				if (NewLayer !== undefined){
-					console.log(NewLayer);
-					map.removeLayer(NewLayer);
-					map.removeLayer(LegendFeature);
-					map.removeLayer(SeaLevel);
-				}
-				map.removeLayer(LegendFeature);
-				map.removeLayer(SeaLevel);
-				NeededValue = dom.byId("myURL").value;
-				NewLayer = new FeatureLayer(NeededValue,{
-					mode: FeatureLayer.MODE_ONDEMAND,
-					outFields: ['*']
-				});
-				map.addLayers([SeaLevel,NewLayer,LegendFeature]);
-				
-
-					//var query = new Query();
-
-				//query.where = "1=1";
-				
-			
-				
-
-				//ft6select.queryFeatures(query, selectInBuffer);
-		
-				//function selectInBuffer (evt){
-					///var feature; 
-					//var features = evt.features;  
-					//var inBuffer = [];
-					
-					   // for (var i = 0; i < features.length; i++) {  
-						//	feature = features[i];  
-							 
-             
-							//TODO: if the feature.geometry is point then buffer the point here               
-							//inBuffer.push(feature.geometry);             
-							         
-						//}  
-					
-					//console.log(evt);
-					//var query2 = new Query();   
-					//var tested = geometryEngine.union(inBuffer);
-					//query2.geometry = tested;
-					//console.log("tut");
-					
-					//NewLayer.queryFeatures(query2, function(results){             
-					//	console.log(results);
-					//});     
-					//}
+         }
 	
-		}	
-				
-		}, "progButtonNode").startup();
-		
-		var myButton2 = new Button({
-			label: "Analize",
-			onClick: function(){
-				selectedCity = [];
-				var allPoints = [];
-				var mp = new Multipoint();  
-					arrayUtils.map(NewLayer.graphics, function(gra){  
-						mp.addPoint(gra.geometry);  
-						allPoints.push(gra);
-					});  
+      });
+    </script>
+  </head>
 
-					mp.spatialReference = NewLayer.graphics[0].geometry.spatialReference;
-					//var queryTask = new QueryTask("http://gis.brevardcounty.us/gissrv/rest/services/Base_Map/General_WKID102100/MapServer/5");
-					var query = new Query();
-			
-						console.log(selectedCity);
-
-					//query.geometry = allPoints[0].geometry;
-					query.geometry = mp;
-					//query.spatialRelationship = Query.SPATIAL_REL_CROSSES;
-					//queryTask.execute(query);
-					At_6ft.selectFeatures(query);
-					At_5ft.selectFeatures(query);
-					At_4ft.selectFeatures(query);
-					At_3ft.selectFeatures(query);
-					At_2ft.selectFeatures(query);
-					At_1ft.selectFeatures(query);
-			
-
-				
-			}	
-				
-		}, "progButtonNode2").startup();
-		
-				At_6ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_5ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_4ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_3ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_2ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
-					At_1ft.on("selection-complete", function(evt){
-						console.log(evt);
-					});
+  <body class ="claro">
+	<div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:true, liveSplitters:true">
+		<div id="mapCanvas" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
+		<div id="HomeButton"></div>
+		<div id="search"></div>
 		
 
-    });
-  </script>
-</head>
+		 <div id="legendWrapper"></div>
+           
 
-<body class="claro">
-<!--[if IE 7]>
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
-<![endif]-->
-<div id="content"
-     data-dojo-type="dijit/layout/BorderContainer"
-     data-dojo-props="design:'headline', gutters:true"
-     style="width: 100%; height: 100%; margin: 0;">
-
-  <div id="rightPane"
-       data-dojo-type="dijit/layout/ContentPane"
-       data-dojo-props="region:'left'">
-
-    <div data-dojo-type="dijit/layout/AccordionContainer">
-      <div data-dojo-type="dijit/layout/ContentPane" id="legendPane"
-           data-dojo-props="title:'Legend', selected:true">
-		   <div id ="legendWrapper"> </div>
-        
-      </div>
-   <div data-dojo-type="dijit/layout/ContentPane" title="Analysis">
-				<div id="tocDiv2">
-				<button id="progButtonNode2" type="button"></button>
-                </div>
-				</div>
-    </div>
-  </div>
-  <div id="map"
-       data-dojo-type="dijit/layout/ContentPane"
-       data-dojo-props="region:'center'"
-       style="overflow:hidden;">
-  </div>
-  		<div id="bottomPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'bottom'">
-		 <label for="firstname">Add a layer:</label>
-			<input type="text" name="myURL" style="width: 50em;" value="http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Test_Infrastructure/FeatureServer/0"
-				data-dojo-type="dijit/form/TextBox"
-				data-dojo-props="trim:true, propercase:true" id="myURL" />
-			<button id="progButtonNode" type="button"></button><div id="result1"></div>
 		</div>
-</div>
-</body>
+		<div id="bottomPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'bottom'">
+	
+		</div>
+		<div id="leftPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'leading'">
+			<div data-dojo-type="dijit/layout/AccordionContainer" style="height: 300px;">
+				<div data-dojo-type="dijit/layout/ContentPane" title="Legend" selected="true">
+				<div id ="LegendInHere">
+				  <div id="tocDiv">
+				</div>
+                </div>
 
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Add Your Data">
+				 <p style="padding:4px;"><span>Drag and drop a map services url or a csv file with latitude/longitude information
+          from windows explorer to the map.</span>
+    </p>
+
+
+
+    <span id="status"></span>
+
+    
+    <p style='padding:4px;'>Note: The CSV file must store the location in fields with one of the following
+      names:
+      <br />
+      <b>Latitude fields:</b> lat, latitude, y, ycenter
+      <br />
+      <b>Longitude fields:</b> lon, long, longitude, x, xcenter
+      <br />
+	  <p style='padding:4px;'>I have prepared a cvs file which you can download by clicking the following link:
+      <a target="_blank" href="data/Infrastructure.csv">Test CVS</a> </p>
+	<div>
+	 http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Miami_Test_Data/FeatureServer/0
+	</div>
+	 
+    </p>
+	<p>		
+	<div> You are also able to add a zipped shapefile. Just click the following button and navigate to your zipped shapefile.</div>
+					<form enctype="multipart/form-data" method="post" id="uploadForm">
+						<div class="field">
+							<label class="file-upload">
+								<span><strong>Add Shapefile</strong></span>
+								<input type="file" name="file" id="inFile" />
+							</label>
+						</div>
+					</form>
+					<span class="file-upload-status" style="opacity:1;" id="upload-status"></span>
+					<div id="fileInfo">&nbsp;</div>
+	</p>
+
+				</div>
+			</div>
+		</div>
+	</div>	
+  </body>
 </html>
