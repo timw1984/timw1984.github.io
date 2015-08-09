@@ -146,14 +146,14 @@
     <script src="https://js.arcgis.com/3.13/"></script>
     <script>
       var map;
-      require(["esri/map", "esri/geometry/Multipoint","dojo/_base/array","esri/layers/ArcGISTiledMapServiceLayer", 
+      require(["esri/map", "esri/geometry/Multipoint","dojo/_base/array","esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery",
 	  "dojo/parser", "agsjs/dijit/TOC","dojo/_base/connect","dojo/dom", "dojo/parser","dojo/on", "dojo/_base/Color","dijit/form/Button","esri/layers/FeatureLayer","dojo/dom-construct",
 			"esri/config","esri/tasks/query","esri/tasks/QueryTask","esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol","esri/symbols/SimpleMarkerSymbol",
 			"esri/geometry/geometryEngine",  "esri/config","esri/renderers/SimpleRenderer","esri/domUtils","esri/graphic","esri/InfoTemplate","esri/request","esri/urlUtils",
 			"dojo/sniff","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/layers/ArcGISDynamicMapServiceLayer","esri/symbols/PictureMarkerSymbol","esri/dijit/Legend",
 			"dojo/json","dojo/_base/lang","dojox/data/CsvStore","dojox/encoding/base64", "esri/geometry/scaleUtils","esri/dijit/InfoWindowLite","esri/dijit/HomeButton","esri/dijit/Search","dijit/Dialog",
 			"dijit/layout/BorderContainer","dijit/layout/ContentPane","dijit/layout/AccordionContainer","dijit/layout/ContentPane", "dijit/layout/AccordionContainer","dijit/form/TextBox","dojo/domReady!"], 
-	  function(Map,Multipoint,arrayUtils,ArcGISTiledMapServiceLayer, parser,TOC,connect,  dom, parser, on,Color, Button, FeatureLayer,domConstruct,
+	  function(Map,Multipoint,arrayUtils,ArcGISTiledMapServiceLayer,BasemapGallery, parser,TOC,connect,  dom, parser, on,Color, Button, FeatureLayer,domConstruct,
 	  esriConfig,Query,QueryTask,SimpleLineSymbol,SimpleFillSymbol,SimpleMarkerSymbol,geometryEngine,
 	  esriConfig,SimpleRenderer,domUtils,Graphic,InfoTemplate,request,urlUtils,sniff,Point,webMercatorUtils,ArcGISDynamicMapServiceLayer,PictureMarkerSymbol,Legend,
 	  JSON,lang,CsvStore,base64,scaleUtils,InfoWindowLite,HomeButton,Search) {
@@ -180,10 +180,17 @@
       }, "HomeButton");
       home.startup();
 
-    var s = new Search({
+	  var s = new Search({
             map: map
          }, "search");
          s.startup();
+		 
+	 var basemapGallery = new BasemapGallery({
+        showArcGISBasemaps: true,
+        map: map
+      }, "basemapGallery");
+      basemapGallery.startup();
+
 	 
 		
 		///////////////////////////////////////////////////////////// ADD SHAPEFILE //////////////////////////////////////////////////////////
@@ -294,6 +301,7 @@
             });
 			var MyName = featureLayer.name;
             map.addLayers([featureLayer]);
+			zoomToData(featureLayer);
 			//////////////////////////////
 	
 			////////////////////////////	
@@ -478,6 +486,7 @@
       });
 	  AddedLayer = "Got it";
       map.addLayers([featureLayer]);
+	  zoomToData(featureLayer);
     }
 
 
@@ -766,23 +775,6 @@
       return maxSeparatorValue;
     }
 
-    function zoomToData (featureLayer) {
-      // Zoom to the collective extent of the data
-      var multipoint = new Multipoint(map.spatialReference);
-      arrayUtils.forEach(featureLayer.graphics, function (graphic) {
-        var geometry = graphic.geometry;
-        if (geometry) {
-          multipoint.addPoint({
-            x: geometry.x,
-            y: geometry.y
-          });
-        }
-      });
-
-      if (multipoint.points.length > 0) {
-        map.setExtent(multipoint.getExtent().expand(1.25), true);
-      }
-    }
 
 
     function requestSucceeded (response) {
@@ -834,9 +826,12 @@
 		var ft1 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer",{
 			visible: false,
 			});
-		map.addLayers([ft6,ft5,ft4,ft3,ft2,ft1] );
+		var veil = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/Data_Extent/MapServer/2",{
+			visible: true
+			});
+		map.addLayers([ft6,ft5,ft4,ft3,ft2,ft1,veil] );
 
-		var queryTask = new QueryTask("http://gis.brevardcounty.us/gissrv/rest/services/Base_Map/General_WKID102100/MapServer/5");
+		
 
 		/////////////////// Create the Legend ///////////////////////////////////////////////////////////////////////////////////
 		map.on('layers-add-result', legenddoit);
@@ -936,12 +931,41 @@
             }, legendDiv);
             legend.startup();
          }
-	
+		function init() {
+				dialogWelcome.show();
+			}
+			dojo.addOnLoad(init);
       });
     </script>
   </head>
 
   <body class ="claro">
+  		<div data-dojo-type="dijit/Dialog" data-dojo-id="dialogWelcome" title="Explore your neighborhood through the US Census" style="width: 900px ">
+        <table class="dijitDialogPaneContentArea">
+            <tr>
+                <td>
+                    <div id="divDialogMessage"><div><img src="http://i.imgur.com/WfmvFfU.png" alt="Census" style="align: center" ></div>
+					<br>
+					I created this application to explore the US Census beyond looking at the attribute table. My goal was to make the US Census as interactive for the user as possible. 
+					The Census is not only important for the US government, but also for US residents to discover their neighborhoods. 
+					<p>
+					Using 
+					<a class="one" href="http://www.esri.com/landing-pages/arcgis-online/smart-mapping" target="_blank">ESRI Smart Mapping</a> 
+					you are able to better visualize the data. You can use the interactive legend to adjust the layer render to 
+					better explore the data that interests you. You will be able to use an address locator or location button to find the area you are seeking.
+					To find out more about this map please follow this <a class="one" href="https://www.youtube.com/watch?v=1CRhbF7Ib1g&feature=youtu.be" target="_blank">link</a>.
+					<p>
+					Special thanks to ESRI and the US Census Bureau for making this data available.
+					</div>
+					<br>
+					<div><img src="http://i.imgur.com/3sKsT57.gif" alt="Census" style="align: center" ></div>
+                </td>
+            </tr>
+        </table>
+        <div class="dijitDialogPaneActionBar">
+            <button id="buttonClose" data-dojo-type="dijit/form/Button" type="button" style="align-content: center" onclick="dialogWelcome.onCancel();">Close</button>
+        </div>
+    </div>
 	<div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:true, liveSplitters:true">
 		<div id="mapCanvas" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
 		<div id="HomeButton"></div>
@@ -964,14 +988,15 @@
                 </div>
 
 				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Basemap" selected="false">
+				<div id="basemapGallery"></div>
+				</div>
 				<div data-dojo-type="dijit/layout/ContentPane" title="Add Your Data">
 				<h1> Drag and Drop Service</h1>
-				 <p style="padding:4px;"><span>Drag and drop a map services url or a csv file with latitude/longitude information
-						from windows explorer to the map.</span>
+				 <p style="padding:4px;"><span>Drag and drop a map services url to the map. You can drag and drop the following link to test this.</span>
 				</p>
 				 <p>
-				 
-	 http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Miami_Test_Data/FeatureServer/0
+				 <a target="_blank" href="http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Miami_Test_Data/FeatureServer/0">Test Service URL</a>
 				
 				</p>
 				<h2> Drag and Drop CVS</h2>
