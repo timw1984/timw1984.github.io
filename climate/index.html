@@ -146,14 +146,14 @@
     <script src="https://js.arcgis.com/3.13/"></script>
     <script>
       var map;
-      require(["esri/map", "esri/geometry/Multipoint","dojo/_base/array","esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery",
+      require(["esri/map", "esri/geometry/Multipoint","dojo/_base/array","esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery","esri/layers/KMLLayer",
 	  "dojo/parser", "agsjs/dijit/TOC","dojo/_base/connect","dojo/dom", "dojo/parser","dojo/on", "dojo/_base/Color","dijit/form/Button","esri/layers/FeatureLayer","dojo/dom-construct",
 			"esri/config","esri/tasks/query","esri/tasks/QueryTask","esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol","esri/symbols/SimpleMarkerSymbol",
 			"esri/geometry/geometryEngine",  "esri/config","esri/renderers/SimpleRenderer","esri/domUtils","esri/graphic","esri/InfoTemplate","esri/request","esri/urlUtils",
 			"dojo/sniff","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/layers/ArcGISDynamicMapServiceLayer","esri/symbols/PictureMarkerSymbol","esri/dijit/Legend",
 			"dojo/json","dojo/_base/lang","dojox/data/CsvStore","dojox/encoding/base64", "esri/geometry/scaleUtils","esri/dijit/InfoWindowLite","esri/dijit/HomeButton","esri/dijit/Search","dijit/Dialog",
 			"dijit/layout/BorderContainer","dijit/layout/ContentPane","dijit/layout/AccordionContainer","dijit/layout/ContentPane", "dijit/layout/AccordionContainer","dijit/form/TextBox","dojo/domReady!"], 
-	  function(Map,Multipoint,arrayUtils,ArcGISTiledMapServiceLayer,BasemapGallery, parser,TOC,connect,  dom, parser, on,Color, Button, FeatureLayer,domConstruct,
+	  function(Map,Multipoint,arrayUtils,ArcGISTiledMapServiceLayer,BasemapGallery, KMLLayer,parser,TOC,connect,  dom, parser, on,Color, Button, FeatureLayer,domConstruct,
 	  esriConfig,Query,QueryTask,SimpleLineSymbol,SimpleFillSymbol,SimpleMarkerSymbol,geometryEngine,
 	  esriConfig,SimpleRenderer,domUtils,Graphic,InfoTemplate,request,urlUtils,sniff,Point,webMercatorUtils,ArcGISDynamicMapServiceLayer,PictureMarkerSymbol,Legend,
 	  JSON,lang,CsvStore,base64,scaleUtils,InfoWindowLite,HomeButton,Search) {
@@ -824,12 +824,12 @@
 			visible: false
 			});
 		var ft1 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer",{
-			visible: false,
+			visible: true,
 			});
-		var veil = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/Data_Extent/MapServer/2",{
-			visible: true
-			});
-		map.addLayers([ft6,ft5,ft4,ft3,ft2,ft1,veil] );
+		var kmlUrl = "Data/coops-anoms-year.kml";
+		var kml = new KMLLayer(kmlUrl); 
+
+		map.addLayers([ft6,ft5,ft4,ft3,ft2,ft1,kml] );
 
 		
 
@@ -940,22 +940,18 @@
   </head>
 
   <body class ="claro">
-  		<div data-dojo-type="dijit/Dialog" data-dojo-id="dialogWelcome" title="Explore your neighborhood through the US Census" style="width: 900px ">
+  		<div data-dojo-type="dijit/Dialog" data-dojo-id="dialogWelcome" title="Prepare your infrastructure for future Sea Level rise caused by climate change" style="width: 900px ">
         <table class="dijitDialogPaneContentArea">
             <tr>
                 <td>
-                    <div id="divDialogMessage"><div><img src="http://i.imgur.com/WfmvFfU.png" alt="Census" style="align: center" ></div>
+                    <div id="divDialogMessage"><div><img src="images/noaa100.png" alt="Census" style="align: center" ></div>
 					<br>
-					I created this application to explore the US Census beyond looking at the attribute table. My goal was to make the US Census as interactive for the user as possible. 
-					The Census is not only important for the US government, but also for US residents to discover their neighborhoods. 
+					I created this application to make it easier for government, non-profits and for-profit companies to overlay their data with sea level raise data.
 					<p>
-					Using 
-					<a class="one" href="http://www.esri.com/landing-pages/arcgis-online/smart-mapping" target="_blank">ESRI Smart Mapping</a> 
-					you are able to better visualize the data. You can use the interactive legend to adjust the layer render to 
-					better explore the data that interests you. You will be able to use an address locator or location button to find the area you are seeking.
-					To find out more about this map please follow this <a class="one" href="https://www.youtube.com/watch?v=1CRhbF7Ib1g&feature=youtu.be" target="_blank">link</a>.
+					They are able to use a variety of data formats to add to this application. Even if you don't own ESRI products, all you need is a Latitude and Longitude CVS and you
+					can visualize your data.
 					<p>
-					Special thanks to ESRI and the US Census Bureau for making this data available.
+					Special thanks to ESRI and NOAA for making this data available.
 					</div>
 					<br>
 					<div><img src="http://i.imgur.com/3sKsT57.gif" alt="Census" style="align: center" ></div>
