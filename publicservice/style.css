@@ -56,6 +56,7 @@
     .templatePicker {
       border: none !important;
       height: 98% !important;
+	  overflow: hidden;
     }
     
     .esriAttributeInspector {
