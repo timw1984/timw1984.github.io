@@ -1,0 +1,101 @@
+    html,
+    body {
+      height: 97%;
+      width: 98%;
+    }
+    
+    #header {
+      padding-top: 4px;
+      padding-right: 15px;
+      background-color: #B3E3F2;
+      color: black;
+      font-size: 16pt;
+      text-align: center;
+      font-weight: 700;
+      height: 30px;
+      margin: 2px;
+    }
+    
+    .roundedCorners {
+      border: solid 2px #62BFDE;
+      border-radius: 3px;
+    }
+    
+    .shadow {
+      -webkit-box-shadow: 0 8px 6px -6px #999;
+      -moz-box-shadow: 0 8px 6px -6px #999;
+      box-shadow: 0 8px 6px -6px #999;
+    }
+    
+    .esriAttributeInspector .atiDeleteButton {
+      color: red !important;
+      position: absolute !important;
+      margin-right: 5px !important;
+      left: 77px;
+    }
+    
+    .titles {
+      color: blue;
+      text-align: center;
+      font-size: 20px;
+      border-bottom: 1px solid gray;
+    }
+    
+    .field {
+      font-family: "Times New Roman, Georgia, Serif";
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    #leftPane {
+      width: 300px;
+      color: #3C1700;
+      background-color: #FFF;
+    }
+    
+    .templatePicker {
+      border: none !important;
+      height: 98% !important;
+    }
+    
+    .esriAttributeInspector {
+      height: 100px;
+    }
+    
+    .esriAttributeInspector .atiLayerName {
+      display: none;
+    }
+    
+    .saveButton {
+      padding-left: 1px;
+      margin: 0px;
+      width: 16px;
+      height: 16px;
+      left: 50px;
+    }
+    
+    .esriAttributeInspector {
+      height: 300px;
+    }
+    
+    #HomeButton {
+      position: absolute;
+      top: 98px;
+      left: 27px;
+      z-index: 50;
+    }
+    
+    #search {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      top: 27px;
+      left: 74px;
+    }
+    
+    #LocateButton {
+      position: absolute;
+      top: 140px;
+      left: 27px;
+      z-index: 50;
+    }
