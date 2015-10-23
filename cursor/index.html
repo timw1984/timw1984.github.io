@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+   <title>Cursor</title>
+   <link rel="stylesheet" href="http://js.arcgis.com/3.14/dijit/themes/claro/claro.css">
+   <link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css">
+   <style>
+      html,
+      body,
+      #map {
+         height: 100%;
+         width: 100%;
+         margin: 0;
+         padding: 0;
+      }
+      #search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 20px;
+         left: 74px;
+      }
+	  .arcgisSearch .searchGroup .searchInput {
+		cursor:url('cursor/select.cur'), default;
+	  }
+	  .arcgisSearch .searchBtn {
+		cursor:url('cursor/select.cur'), default;
+	  }
+   </style>
+   <script src="http://js.arcgis.com/3.14/"></script>
+   <script>
+      require([
+        "esri/map",
+        "esri/dijit/Search",
+		"esri/layers/FeatureLayer",
+        "dojo/domReady!"
+      ], function (Map, Search, FeatureLayer) {
+         var map = new Map("map", {
+            basemap: "gray",
+            center: [-80.63, 28.063],
+			zoom: 10
+         });
+
+         var s = new Search({
+            map: map
+         }, "search");
+         s.startup();
+		 
+		var MyFeature = new FeatureLayer("http://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Major_Cities/FeatureServer/0", {
+			mode: FeatureLayer.MODE_ONDEMAND,
+			outFields:["*"]
+		});
+		
+		map.addLayer(MyFeature);
+		 
+		map.on("mouse-over", function () {
+			map.setMapCursor("url(cursor/normal.cur),auto");
+		});
+		
+		MyFeature.on("MouseOver", function (evt){
+			map.setMapCursor("url(cursor/select.cur),auto");
+		});
+		
+		MyFeature.on("MouseOut", function (evt){
+			map.setMapCursor("url(cursor/normal.cur),auto");
+		});
+
+      });
+   </script>
+</head>
+
+<body>
+   <div id="search"></div>
+   <div id="map"></div>
+</body>
+
+</html>
