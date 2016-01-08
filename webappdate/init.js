@@ -96,7 +96,7 @@ var ie = (function() {
       Urlit + 'dijit/themes/claro/claro.css',
       Urlit + 'esri/css/esri.css',
       Urlit + 'dojox/layout/resources/ResizeHandle.css',
-      Urlit + 'jimu.js/css/jimu-theme.css'
+      window.path + 'jimu.js/css/jimu-theme.css'
     ]);
 
     if (window.apiUrl.substr(window.apiUrl.length - 'arcgis-js-api/'.length,
