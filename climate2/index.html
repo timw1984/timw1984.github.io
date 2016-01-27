@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>Sea-Level Rise</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.15/dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" type="text/css" href="https://timw1984.github.io/agsjs/css/agsjs.css" />
+
+  <script type="text/javascript">
+    ////////////////////////// Thanks to Nianwei Liu for TOC widget ///////////////////////////////////
+	var dojoConfig = {
+      paths: {
+        agsjs: 'https://timw1984.github.io/agsjs'
+      }
+    };
+  </script>
+
+  <script src="https://js.arcgis.com/3.15/"></script>
+  <script>
+    var map;
+    require(["esri/map", "esri/geometry/Multipoint", "dojo/_base/array", "esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery","dijit/Dialog", "esri/dijit/LocateButton",
+        "dojo/parser", "agsjs/dijit/TOC", "dojo/_base/connect", "dojo/dom", "dojo/parser", "dojo/on", "dojo/_base/Color", "dijit/form/Button", "esri/layers/FeatureLayer", "dojo/dom-construct",
+        "esri/config", "esri/tasks/query", "esri/tasks/QueryTask", "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleMarkerSymbol",
+        "esri/geometry/geometryEngine", "esri/config", "esri/renderers/SimpleRenderer", "esri/domUtils", "esri/graphic", "esri/InfoTemplate", "esri/request", "esri/urlUtils",
+        "dojo/sniff", "esri/geometry/Point", "esri/geometry/webMercatorUtils", "esri/layers/ArcGISDynamicMapServiceLayer", "esri/symbols/PictureMarkerSymbol", "esri/dijit/Legend",
+        "dojo/json", "dojo/_base/lang", "dojox/data/CsvStore", "dojox/encoding/base64", "esri/geometry/scaleUtils", "esri/dijit/InfoWindowLite", "esri/dijit/HomeButton", "esri/dijit/Search", "dijit/Dialog",
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dijit/form/TextBox", "dojo/domReady!"
+      ],
+      function(Map, Multipoint, arrayUtils, ArcGISTiledMapServiceLayer, BasemapGallery,Dialog,LocateButton,
+		parser, TOC, connect, dom, parser, on, Color, Button, FeatureLayer, domConstruct,
+        esriConfig, Query, QueryTask, SimpleLineSymbol, SimpleFillSymbol, SimpleMarkerSymbol, geometryEngine,
+        esriConfig, SimpleRenderer, domUtils, Graphic, InfoTemplate, request, urlUtils, sniff, Point, webMercatorUtils, ArcGISDynamicMapServiceLayer, PictureMarkerSymbol, Legend,
+        JSON, lang, CsvStore, base64, scaleUtils, InfoWindowLite, HomeButton, Search) {
+
+        parser.parse();
+        var featureLayer = "No";
+        var myLegendName, legend;
+        var portalUrl = "http://www.arcgis.com";
+
+        var NewLayer, toc, currentLayer, currentDiv, previouseDiv, toc2;
+        var selectedCity = [];
+		var feauterLayerServer = "No";
+        var click = 0;
+        var AddedLayer = "";
+        ///////////////////////// Create the Map //////////////////////////////////////////////////////////////
+        map = new Map("mapCanvas", {
+          basemap: "dark-gray",
+          center: [-95.45, 37.75],
+          zoom: 4
+        });
+		///////////////////////// Add Home Button //////////////////////////////////////////////////////////////
+        var home = new HomeButton({
+          map: map
+        }, "HomeButton");
+        home.startup();
+		///////////////////////// Add Search //////////////////////////////////////////////////////////////
+        var s = new Search({
+          map: map
+        }, "search");
+        s.startup();
+		///////////////////////// Add Basemap Gallary//////////////////////////////////////////////////////////////
+        var basemapGallery = new BasemapGallery({
+          showArcGISBasemaps: true,
+          map: map
+        }, "basemapGallery");
+        basemapGallery.startup();
+		///////////////////////// Add Locate Button//////////////////////////////////////////////////////////////
+		var geoLocate = new LocateButton({
+			map: map
+		}, "LocateButton");
+		geoLocate.startup();
+
+        ///////////////////////////////////////////////////////////// ADD SHAPEFILE //////////////////////////////////////////////////////////
+        on(dom.byId("uploadForm"), "change", function(event) {
+          if (dom.byId('uploadForm').innerHTML == "") {
+            console.log("Empty");
+          } else {
+            var fileName = event.target.value.toLowerCase();
+
+            if (sniff("ie")) {
+              var arr = fileName.split("\\");
+              fileName = arr[arr.length - 1];
+            }
+            if (fileName.indexOf(".zip") !== -1) {
+              generateFeatureCollection(fileName);
+            } else {
+              dom.byId('upload-status').innerHTML = '<p style="color:red">Add shapefile as .zip file</p>';
+            }
+          }
+        });
+
+        function generateFeatureCollection(fileName) {
+          if (featureLayer == "No") {
+            console.log("No layer yet");;
+          } else {
+            map.removeLayer(featureLayer);
+          }
+          var name = fileName.split(".");
+          AddedLayer = "Got it";
+
+          name = name[0].replace("c:\\fakepath\\", "");
+
+          dom.byId('upload-status').innerHTML = '<b>Loading </b>' + name;
+
+          var params = {
+            'name': name,
+            'targetSR': map.spatialReference,
+            'maxRecordCount': 1000,
+            'enforceInputFileSizeLimit': true,
+            'enforceOutputJsonSizeLimit': true
+          };
+
+          var extent = scaleUtils.getExtentForScale(map, 40000);
+          var resolution = extent.getWidth() / map.width;
+          params.generalize = true;
+          params.maxAllowableOffset = resolution;
+          params.reducePrecision = true;
+          params.numberOfDigitsAfterDecimal = 0;
+
+          var myContent = {
+            'filetype': 'shapefile',
+            'publishParameters': JSON.stringify(params),
+            'f': 'json',
+            'callback.html': 'textarea'
+          };
+
+          request({
+            url: portalUrl + '/sharing/rest/content/features/generate',
+            content: myContent,
+            form: dom.byId('uploadForm'),
+            handleAs: 'json',
+            load: lang.hitch(this, function(response) {
+              if (response.error) {
+                errorHandler(response.error);
+                return;
+              }
+              var layerName = response.featureCollection.layers[0].layerDefinition.name;
+              dom.byId('upload-status').innerHTML = '<b>Loaded: </b>' + layerName;
+              addShapefileToMap(response.featureCollection);
+            }),
+            error: lang.hitch(this, errorHandler)
+          });
+        }
+
+        function errorHandler(error) {
+          dom.byId('upload-status').innerHTML =
+            "<p style='color:red'>" + error.message + "</p>";
+        }
+
+        function addShapefileToMap(featureCollection) {
+          var fullExtent;
+          var layers = [];
+
+          arrayUtils.forEach(featureCollection.layers, function(layer) {
+            var infoTemplate = new InfoTemplate("Details", "${*}");
+            featureLayer = new FeatureLayer(layer, {
+              infoTemplate: infoTemplate
+            });
+            featureLayer.on('click', function(event) {
+              map.infoWindow.setFeatures([event.graphic]);
+            });
+            changeRenderer(featureLayer);
+
+          });
+          var MyName = featureLayer.name;
+          map.addLayers([featureLayer]);
+          zoomToData(featureLayer);
+
+          dom.byId('upload-status').innerHTML = "";
+          TestDom = dom.byId('uploadForm');
+          console.log("test");
+          TestDom[0].value = "";
+        }
+
+        function changeRenderer(layer) {
+          var symbol = null;
+          switch (layer.geometryType) {
+            case 'esriGeometryPoint':
+              symbol = new PictureMarkerSymbol({
+                'angle': 0,
+                'xoffset': 0,
+                'yoffset': 0,
+                'type': 'esriPMS',
+                'url': 'http://static.arcgis.com/images/Symbols/Shapes/RedCircleLargeB.png',
+                'contentType': 'image/png',
+                'width': 15,
+                'height': 15
+              });
+              break;
+            case 'esriGeometryPolygon':
+              symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                  new Color([112, 112, 112]), 1), new Color([136, 136, 136, 0.25]));
+              break;
+          }
+          if (symbol) {
+            layer.setRenderer(new SimpleRenderer(symbol));
+          }
+        }
+        /////////////////////////////////////////////// DRAG AND DROP ///////////////////////////////////////////////////////////////////////
+        var latFieldStrings = ["lat", "latitude", "y", "ycenter"];
+        var longFieldStrings = ["lon", "long", "longitude", "x", "xcenter"];
+
+        //specfiy cors enabled server and proxy for backup
+        esriConfig.defaults.io.corsEnabledServers.push("serverapi.arcgisonline.com");
+        esriConfig.defaults.io.proxyUrl = 'http://serverapi.arcgisonline.com/proxy/proxy.ashx';
+
+        setupDropZone();
+
+        map.infoWindow.resize(275, 175);
+
+        function setupDropZone() {
+          if (!window.File || !window.FileReader) {
+            return;
+          }
+          var mapCanvas = dom.byId("mapCanvas");
+
+          on(mapCanvas, "dragenter", function(event) {
+            event.preventDefault();
+          });
+
+          on(mapCanvas, "dragover", function(event) {
+            event.preventDefault();
+          });
+          on(mapCanvas, "drop", handleDrop);
+        }
+
+        function handleDrop(event) {
+          if (featureLayer == "No") {
+            console.log("No layer yet");;
+          } else {
+            map.removeLayer(featureLayer);
+          }
+          console.log("Drop: ", event);
+          event.preventDefault();
+
+          var dataTransfer = event.dataTransfer,
+            files = dataTransfer.files,
+            types = dataTransfer.types;
+
+          // File drop?
+          if (files && files.length === 1) {
+            console.log("[ FILES ]");
+            var file = files[0];
+            console.log("type = ", file.type);
+            if (file.type.indexOf("image/") !== -1) {
+              console.log("Can't handle image");
+            } else if (file.name.indexOf(".csv") !== -1) {
+              handleCSV(file);
+            }
+          }
+
+          // Textual drop?
+          else if (types) {
+            console.log("[ TYPES ]");
+            console.log("  Length = ", types.length);
+            arrayUtils.forEach(types, function(type) {
+              if (type) {
+                console.log("  Type: ", type);
+                console.log("  Data: ", dataTransfer.getData(type));
+              }
+            });
+
+            var url;
+            arrayUtils.some(types, function(type) {
+              if (type.indexOf("text/uri-list") !== -1) {
+                url = dataTransfer.getData("text/uri-list");
+                return true;
+              } else if (type.indexOf("text/x-moz-url") !== -1) {
+                url = dataTransfer.getData("text/plain");
+                return true;
+              } else if (type.indexOf("text/plain") !== -1) {
+                url = dataTransfer.getData("text/plain");
+                url = url.replace(/^\s+|\s+$/g, "");
+                if (url.indexOf("http") === 0) {
+                  return true;
+                }
+              }
+              return false;
+            });
+
+            if (url) {
+              url = url.replace(/^\s+|\s+$/g, "");
+              if (url.indexOf("www.google.com/url") !== -1) {
+                var obj = urlUtils.urlToObject(url);
+                if (obj && obj.query && obj.query.url) {
+                  url = obj.query.url;
+                }
+              }
+
+              if (url.match(/MapServer\/?$/i)) {
+
+                handleMapServer(url);
+              } else if (url.match(/(Map|Feature)Server\/\d+\/?$/i)) {
+                handleFeatureLayer(url);
+              }
+            }
+          }
+        }
+
+        function handleMapServer(url) {
+          if (featureLayer == "No") {
+            console.log("No layer yet");;
+          } else {
+            map.removeLayer(featureLayer);
+          }
+          console.log("Processing MS: ", url);
+          featureLayer = new ArcGISDynamicMapServiceLayer(url, {
+            opacity: 0.75
+          });
+          AddedLayer = "Got it";
+		  feauterLayerServer = "yes";
+          map.addLayers([featureLayer]);
+        }
+
+        function handleFeatureLayer(url) {
+          if (featureLayer == "No") {
+            console.log("No layer yet");;
+          } else {
+            map.removeLayer(featureLayer);
+          }
+          console.log("Processing FL: ", url);
+          featureLayer = new FeatureLayer(url, {
+            opacity: 0.75,
+            mode: FeatureLayer.MODE_ONDEMAND,
+            infoTemplate: new InfoTemplate("Attributes", "${*}")
+          });
+          AddedLayer = "Got it";
+		  feauterLayerServer = "yes";
+          map.addLayers([featureLayer]);
+        }
+
+        function handleCSV(file) {
+          if (featureLayer == "No") {
+            console.log("No layer yet");;
+          } else {
+            map.removeLayer(featureLayer);
+          }
+          myLegendName = file.name.substring(0, file.name.length - 4);
+          console.log("Processing CSV: ", file, ", ", file.name, ", ", file.type, ", ", file.size);
+          if (file.data) {
+            var decoded = bytesToString(base64.decode(file.data));
+            processCSVData(decoded);
+          } else {
+            var reader = new FileReader();
+            reader.onload = function() {
+              console.log("Finished reading CSV data");
+              processCSVData(reader.result);
+            };
+            reader.readAsText(file);
+          }
+        }
+
+        var bytesToString = function(b) {
+          console.log("bytes to string");
+          var s = [];
+          arrayUtils.forEach(b, function(c) {
+            s.push(String.fromCharCode(c));
+          });
+          return s.join("");
+        };
+
+        function processCSVData(data) {
+          var newLineIndex = data.indexOf("\n");
+          var firstLine = lang.trim(data.substr(0, newLineIndex)); 
+          var separator = getSeparator(firstLine);
+          var csvStore = new CsvStore({
+            data: data,
+            separator: separator
+          });
+
+          csvStore.fetch({
+            onComplete: function(items) {
+              var objectId = 0;
+              var featureCollection = generateFeatureCollectionTemplateCSV(csvStore, items);
+              var popupInfo = generateDefaultPopupInfo(featureCollection);
+              var infoTemplate = new InfoTemplate(buildInfoTemplate(popupInfo));
+              var latField, longField;
+              var fieldNames = csvStore.getAttributes(items[0]);
+              arrayUtils.forEach(fieldNames, function(fieldName) {
+                var matchId;
+                matchId = arrayUtils.indexOf(latFieldStrings,
+                  fieldName.toLowerCase());
+                if (matchId !== -1) {
+                  latField = fieldName;
+                }
+
+                matchId = arrayUtils.indexOf(longFieldStrings,
+                  fieldName.toLowerCase());
+                if (matchId !== -1) {
+                  longField = fieldName;
+                }
+              });
+
+              arrayUtils.forEach(items, function(item) {
+                var attrs = csvStore.getAttributes(item),
+                  attributes = {};
+                arrayUtils.forEach(attrs, function(attr) {
+                  var value = Number(csvStore.getValue(item, attr));
+                  attributes[attr] = isNaN(value) ? csvStore.getValue(item, attr) : value;
+                });
+
+                attributes["__OBJECTID"] = objectId;
+                objectId++;
+
+                var latitude = parseFloat(attributes[latField]);
+                var longitude = parseFloat(attributes[longField]);
+
+                if (isNaN(latitude) || isNaN(longitude)) {
+                  return;
+                }
+
+                var geometry = webMercatorUtils
+                  .geographicToWebMercator(new Point(longitude, latitude));
+                var feature = {
+                  "geometry": geometry.toJson(),
+                  "attributes": attributes
+                };
+                featureCollection.featureSet.features.push(feature);
+              });
+
+              featureLayer = new FeatureLayer(featureCollection, {
+                infoTemplate: infoTemplate,
+                id: 'csvLayer'
+              });
+              featureLayer.__popupInfo = popupInfo;
+              AddedLayer = "Got it";
+              map.addLayers([featureLayer]);
+              zoomToData(featureLayer);
+            },
+            onError: function(error) {
+              console.error("Error fetching items from CSV store: ", error);
+            }
+          });
+        }
+
+        function generateFeatureCollectionTemplateCSV(store, items) {
+          var featureCollection = {
+            "layerDefinition": null,
+            "featureSet": {
+              "features": [],
+              "geometryType": "esriGeometryPoint"
+            }
+          };
+          featureCollection.layerDefinition = {
+            "geometryType": "esriGeometryPoint",
+            "objectIdField": "__OBJECTID",
+            "type": "Feature Layer",
+            "name": myLegendName,
+            "typeIdField": "",
+            "drawingInfo": {
+              "renderer": {
+                "type": "simple",
+                "symbol": {
+                  "type": "esriPMS",
+                  "url": "http://static.arcgis.com/images/Symbols/Basic/RedSphere.png",
+                  "contentType": "image/png",
+                  "width": 15,
+                  "height": 15
+                }
+              }
+            },
+            "fields": [{
+              "name": "__OBJECTID",
+              "alias": "__OBJECTID",
+              "type": "esriFieldTypeOID",
+              "editable": false,
+              "domain": null
+            }],
+            "types": [],
+            "capabilities": "Query"
+          };
+
+          var fields = store.getAttributes(items[0]);
+          arrayUtils.forEach(fields, function(field) {
+            var value = store.getValue(items[0], field);
+            var parsedValue = Number(value);
+            if (isNaN(parsedValue)) { //check first value and see if it is a number
+              featureCollection.layerDefinition.fields.push({
+                "name": field,
+                "alias": field,
+                "type": "esriFieldTypeString",
+                "editable": true,
+                "domain": null
+              });
+            } else {
+              featureCollection.layerDefinition.fields.push({
+                "name": field,
+                "alias": field,
+                "type": "esriFieldTypeDouble",
+                "editable": true,
+                "domain": null
+              });
+            }
+          });
+          return featureCollection;
+        }
+
+        function generateDefaultPopupInfo(featureCollection) {
+          var fields = featureCollection.layerDefinition.fields;
+          var decimal = {
+            'esriFieldTypeDouble': 1,
+            'esriFieldTypeSingle': 1
+          };
+          var integer = {
+            'esriFieldTypeInteger': 1,
+            'esriFieldTypeSmallInteger': 1
+          };
+          var dt = {
+            'esriFieldTypeDate': 1
+          };
+          var displayField = null;
+          var fieldInfos = arrayUtils.map(fields,
+            lang.hitch(this, function(item) {
+              if (item.name.toUpperCase() === "NAME") {
+                displayField = item.name;
+              }
+              var visible = (item.type !== "esriFieldTypeOID" &&
+                item.type !== "esriFieldTypeGlobalID" &&
+                item.type !== "esriFieldTypeGeometry");
+              var format = null;
+              if (visible) {
+                var f = item.name.toLowerCase();
+                var hideFieldsStr = ",stretched value,fnode_,tnode_,lpoly_,rpoly_,poly_,subclass,subclass_,rings_ok,rings_nok,";
+                if (hideFieldsStr.indexOf("," + f + ",") > -1 ||
+                  f.indexOf("area") > -1 || f.indexOf("length") > -1 ||
+                  f.indexOf("shape") > -1 || f.indexOf("perimeter") > -1 ||
+                  f.indexOf("objectid") > -1 || f.indexOf("_") == f.length - 1 ||
+                  f.indexOf("_i") == f.length - 2) {
+                  visible = false;
+                }
+                if (item.type in integer) {
+                  format = {
+                    places: 0,
+                    digitSeparator: true
+                  };
+                } else if (item.type in decimal) {
+                  format = {
+                    places: 2,
+                    digitSeparator: true
+                  };
+                } else if (item.type in dt) {
+                  format = {
+                    dateFormat: 'shortDateShortTime'
+                  };
+                }
+              }
+
+              return lang.mixin({}, {
+                fieldName: item.name,
+                label: item.alias,
+                isEditable: false,
+                tooltip: "",
+                visible: visible,
+                format: format,
+                stringFieldOption: 'textbox'
+              });
+            }));
+
+          var popupInfo = {
+            title: displayField ? '{' + displayField + '}' : '',
+            fieldInfos: fieldInfos,
+            description: null,
+            showAttachments: false,
+            mediaInfos: []
+          };
+          return popupInfo;
+        }
+
+        function buildInfoTemplate(popupInfo) {
+          var json = {
+            content: "<table>"
+          };
+
+          arrayUtils.forEach(popupInfo.fieldInfos, function(field) {
+            if (field.visible) {
+              json.content += "<tr><td valign='top'>" + field.label +
+                ": <\/td><td valign='top'>${" + field.fieldName + "}<\/td><\/tr>";
+            }
+          });
+          json.content += "<\/table>";
+          return json;
+        }
+
+        function clearAll() {
+          map.graphics.clear();
+          var layerIds = map.graphicsLayerIds.slice(0);
+          layerIds = layerIds.concat(map.layerIds.slice(1));
+
+          arrayUtils.forEach(layerIds, function(layerId) {
+            map.removeLayer(map.getLayer(layerId));
+          });
+        }
+
+        function getSeparator(string) {
+          var separators = [",", "      ", ";", "|"];
+          var maxSeparatorLength = 0;
+          var maxSeparatorValue = "";
+          arrayUtils.forEach(separators, function(separator) {
+            var length = string.split(separator).length;
+            if (length > maxSeparatorLength) {
+              maxSeparatorLength = length;
+              maxSeparatorValue = separator;
+            }
+          });
+          return maxSeparatorValue;
+        }
+
+        function requestSucceeded(response) {
+          dom.byId("status").innerHTML = "";
+          handleCSV(response);
+        }
+
+        function requestFailed(error) {
+          dom.byId("status").innerHTML = 'Unable to upload';
+          console.log(JSON.stringify(error));
+        }
+		
+        var symbol = new SimpleMarkerSymbol(
+          SimpleMarkerSymbol.STYLE_CIRCLE,
+          12,
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_NULL,
+            new Color([247, 34, 101, 0.9]),
+            1
+          ),
+          new Color([207, 34, 171, 0.5])
+        );
+
+        //////////////////////////// Add Layers //////////////////////////////////////////////////////////
+        var ft6 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_6ft/MapServer", {
+          visible: false
+        });
+
+        var ft5 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_5ft/MapServer", {
+          visible: false
+        });
+        var ft4 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_4ft/MapServer", {
+          visible: false
+        });
+        var ft3 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_3ft/MapServer", {
+          visible: false
+        });
+        var ft2 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_2ft/MapServer", {
+          visible: false
+        });
+        var ft1 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer", {
+          visible: true,
+        });
+
+        map.addLayers([ft6, ft5, ft4, ft3, ft2, ft1]);
+
+        /////////////////// Create the Legend ///////////////////////////////////////////////////////////////////////////////////
+        map.on('layers-add-result', legenddoit);
+
+        function legenddoit(evt) {
+          if (AddedLayer == "") {
+            var LegendLayers = [{
+              layer: ft1,
+              title: "Inundation from Sea Level Rise (1ft)",
+              collapse: true,
+              slider: true
+            }, {
+              layer: ft2,
+              title: "Inundation from Sea Level Rise (2ft)",
+              slider: true
+                //collapse: true
+            }, {
+              layer: ft3,
+              title: "Inundation from Sea Level Rise (3ft)",
+              collapse: true,
+              slider: true
+            }, {
+              layer: ft4,
+              title: "Inundation from Sea Level Rise (4ft)",
+              collapse: true,
+              slider: true
+            }, {
+              layer: ft5,
+              title: "Inundation from Sea Level Rise (5ft)",
+              collapse: true,
+              slider: true
+            }, {
+              layer: ft6,
+              title: "Inundation from Sea Level Rise (6ft)",
+              collapse: true,
+              slider: true
+            }];
+
+            toc = new TOC({
+              map: map,
+              layerInfos: LegendLayers
+            }, 'tocDiv');
+            toc.startup();
+          } else {
+            createLegend(featureLayer);
+          }
+		  if (feauterLayerServer == "yes"){
+		  
+		  map.setExtent(featureLayer.fullExtent)
+		  feauterLayerServer = "no"
+		  }
+        };
+
+		///////////////////////////////// Zoom to CVS/Shapefile Data /////////////////////////
+        function zoomToData(featureLayer) {
+          // Zoom to the collective extent of the data
+          var multipoint = new Multipoint(map.spatialReference);
+          arrayUtils.forEach(featureLayer.graphics, function(graphic) {
+            var geometry = graphic.geometry;
+            if (geometry) {
+              multipoint.addPoint({
+                x: geometry.x,
+                y: geometry.y
+              });
+            }
+          });
+
+          if (multipoint.points.length > 0) {
+            map.setExtent(multipoint.getExtent().expand(1.25), true);
+          }
+        }
+		////////////////////////////////// Create added Data Legend /////////////////////////
+        function createLegend(featureLayer) {
+          if (legend) {
+            legend.destroy();
+            domConstruct.destroy(dom.byId("legendDiv"));
+          } else {
+            domUtils.show(dom.byId('legendWrapper'));
+          }
+          var legendDiv = domConstruct.create("div", {
+            id: "legendDiv"
+          }, dom.byId("legendWrapper"));
+
+          legend = new Legend({
+            map: map,
+            layerInfos: [{
+              layer: featureLayer,
+              title: featureLayer.name
+            }]
+          }, legendDiv);
+          legend.startup();
+        }
+		////////////////////////////////// Show Starting Dialog /////////////////////////
+		map.on("load", function(){
+			dialogWelcome.show();		
+		});
+   
+      });
+  </script>
+</head>
+
+<body class="claro">
+  <div data-dojo-type="dijit/Dialog" data-dojo-id="dialogWelcome" title="Prepare your infrastructure for future Sea Level rise caused by climate change" style="width: 900px ">
+    <table class="dijitDialogPaneContentArea">
+      <tr>
+        <td>
+          <div id="divDialogMessage">
+            <br> One of the biggest effects of climate change, is the rising of the sea levels. Even a one foot rise can have a devastating effect to coastal cities and their surroundings.
+				 This will not only affect infrastructures, but also toxic materials that can contaminate the incoming water and subsequently human health.
+				 This application will assist the government, for-profit, and non-profit organizations, in understanding and planning for rising sea-levels.
+            <p>
+              In this application you will be able to overlay your data with sea-level rise data, which is created by NOAA and hosted through ESRI. You are able to add a wide variety of data.
+              <p>
+			   <ul>
+				<li>If you have data available through ArcGIS Server, you can just drag and drop it into the map.</li>
+				<li>If you have a zipped shapefile, you can use the add shapefile button.</li>
+				<li>If you don't own any ESRI products, you can create a CVS file, with Latitude and Longitude information, and drag and drop it into the map.</li>
+			 </ul> 
+			  <p>
+			  To find out more about this map please follow this <a class="one" href="https://youtu.be/quq7Uf82SWE" target="_blank">link</a>.
+			  <p>
+                Special thanks to ESRI and NOAA for making this data available.
+          </div>
+          <br>
+        
+        </td>
+      </tr>
+    </table>
+    <div class="dijitDialogPaneActionBar">
+      <button id="buttonClose" data-dojo-type="dijit/form/Button" type="button" style="align-content: center" onclick="dialogWelcome.onCancel();">Close</button>
+    </div>
+  </div>
+  <div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true">
+    <div id="mapCanvas" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
+      <div id="HomeButton"></div>
+      <div id="search"></div>
+      <div id="legendWrapper"></div>
+	  <div id="LocateButton"></div>
+
+    </div>
+    <div id="TopPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:false, region:'top'">
+		<div id="Title"> Sea-Level Rise and its Impact</div>
+    </div>
+    <div id="leftPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'leading'">
+      <div data-dojo-type="dijit/layout/AccordionContainer" style="height: 300px;">
+        <div data-dojo-type="dijit/layout/ContentPane" title="Legend" selected="true">
+          <div id="LegendInHere">
+            <div id="tocDiv">
+            </div>
+          </div>
+
+        </div>
+        <div data-dojo-type="dijit/layout/ContentPane" title="Basemap" selected="false">
+          <div id="basemapGallery"></div>
+        </div>
+        <div data-dojo-type="dijit/layout/ContentPane" title="Add Your Data">
+          <h1> Drag and Drop Service</h1>
+          <p style="padding:4px;"><span>Drag and drop a map services url to the map. You can drag and drop the following link to test this.</span>
+          </p>
+			<div></div>
+            <a target="_blank" href="http://geodata.epa.gov/arcgis/rest/services/OEI/FRS_INTERESTS/MapServer/9">Test Service URL</a>
+
+         
+          <h2> Drag and Drop CVS</h2> Drag and drop a csv file with latitude/longitude information from windows explorer to the map.
+          <span id="status"></span>
+          <p style='padding:4px;'>Note: The CSV file must store the location in fields with one of the following names:
+            <br />
+            <b>Latitude fields:</b> lat, latitude, y, ycenter
+            <br />
+            <b>Longitude fields:</b> lon, long, longitude, x, xcenter
+            <br />
+            <p style='padding:4px;'>I have prepared a cvs file which you can download by clicking the following link:
+              <a target="_blank" href="Data/Infrastructure.csv">Test CVS</a> </p>
+          </p>
+          <p>
+            <h3> Add a shapefile</h3>
+            <div> You are also able to add a zipped shapefile. Just click the following button and navigate to your zipped shapefile.</div>
+          </p>
+          <p>
+            <form enctype="multipart/form-data" method="post" id="uploadForm">
+              <div class="field">
+                <label class="file-upload">
+                  <span><strong>Add Shapefile</strong></span>
+                  <input type="file" name="file" id="inFile" />
+                </label>
+              </div>
+            </form>
+            <span class="file-upload-status" style="opacity:1;" id="upload-status"></span>
+            <div id="fileInfo">&nbsp;</div>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
