@@ -35,7 +35,7 @@
         esriConfig, Query, QueryTask, SimpleLineSymbol, SimpleFillSymbol, SimpleMarkerSymbol,Extent, geometryEngine,
         esriConfig, SimpleRenderer, domUtils, Graphic, InfoTemplate, request, urlUtils, sniff, Point, webMercatorUtils, ArcGISDynamicMapServiceLayer, PictureMarkerSymbol, Legend,
         JSON, lang, CsvStore, base64, scaleUtils, InfoWindowLite, HomeButton, Search) {
-		
+		esriConfig.defaults.io.corsDetection = false;
 		var busyIndicatorMap = busyIndicator.create({target: "mapCanvas", imageUrl: "http://loading.io/assets/img/hourglass.svg", backgroundOpacity: 0});
 		var lods = [ 	 {"level" : 10, "resolution" : 152.8740565701464, "scale" : 577790.554288},
 					 {"level" : 11, "resolution" : 76.4370282850732, "scale" : 288895.277144},
