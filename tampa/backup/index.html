@@ -22,7 +22,7 @@
   <script src="https://js.arcgis.com/3.15/"></script>
   <script>
     var map;
-    require(["esri/map", "esri/geometry/Multipoint", "dojo/_base/array", "esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery","dijit/Dialog", "esri/dijit/LocateButton","esri/dijit/util/busyIndicator",
+    require(["esri/map","dojox/grid/DataGrid","esri/SpatialReference","esri/layers/GraphicsLayer","dojo/data/ItemFileReadStore", "esri/geometry/Multipoint", "dojo/_base/array", "esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery","dijit/Dialog", "esri/dijit/LocateButton","esri/dijit/util/busyIndicator",
         "dojo/parser", "agsjs/dijit/TOC", "dojo/_base/connect", "dojo/dom", "dojo/parser", "dojo/on", "dojo/_base/Color", "dijit/form/Button", "esri/layers/FeatureLayer", "dojo/dom-construct",
         "esri/config", "esri/tasks/query", "esri/tasks/QueryTask", "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleMarkerSymbol","esri/geometry/Extent",
         "esri/geometry/geometryEngine", "esri/config", "esri/renderers/SimpleRenderer", "esri/domUtils", "esri/graphic", "esri/InfoTemplate", "esri/request", "esri/urlUtils",
@@ -30,13 +30,13 @@
         "dojo/json", "dojo/_base/lang", "dojox/data/CsvStore", "dojox/encoding/base64", "esri/geometry/scaleUtils", "esri/dijit/InfoWindowLite", "esri/dijit/HomeButton", "esri/dijit/Search", "dijit/Dialog",
         "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dijit/form/TextBox", "dojo/domReady!"
       ],
-      function(Map, Multipoint, arrayUtils, ArcGISTiledMapServiceLayer, BasemapGallery,Dialog,LocateButton,busyIndicator,
+      function(Map,DataGrid,SpatialReference, GraphicsLayer, ItemFileReadStore, Multipoint, arrayUtils, ArcGISTiledMapServiceLayer, BasemapGallery,Dialog,LocateButton,busyIndicator,
 		parser, TOC, connect, dom, parser, on, Color, Button, FeatureLayer, domConstruct,
         esriConfig, Query, QueryTask, SimpleLineSymbol, SimpleFillSymbol, SimpleMarkerSymbol,Extent, geometryEngine,
         esriConfig, SimpleRenderer, domUtils, Graphic, InfoTemplate, request, urlUtils, sniff, Point, webMercatorUtils, ArcGISDynamicMapServiceLayer, PictureMarkerSymbol, Legend,
         JSON, lang, CsvStore, base64, scaleUtils, InfoWindowLite, HomeButton, Search) {
-		
-		var busyIndicatorMap = busyIndicator.create({target: "mapCanvas", imageUrl: "http://loading.io/assets/img/hourglass.svg", backgroundOpacity: 0});
+		//esriConfig.defaults.io.corsDetection = false;
+		var busyIndicatorMap = busyIndicator.create({target: "mapCanvas", imageUrl: "http://www.iycr2014.org/__data/assets/image/0017/114164/processing.gif", backgroundOpacity: 0});
 		var lods = [ 	 {"level" : 10, "resolution" : 152.8740565701464, "scale" : 577790.554288},
 					 {"level" : 11, "resolution" : 76.4370282850732, "scale" : 288895.277144},
 					 {"level" : 12, "resolution" : 38.2185141425366, "scale" : 144447.638572},
@@ -46,7 +46,7 @@
 					 {"level" : 16, "resolution" : 2.38865713397468, "scale" : 9027.977411},
 					 {"level" : 17, "resolution" : 1.19432856685505, "scale" : 4513.988705},
 					 {"level" : 18, "resolution" : 0.597164283559817, "scale" : 2256.994353}];
-	  var iniExtent = new Extent({"xmin":-9257523.08 , "ymin": 3195373.87 , "xmax": -9119936.43, "ymax": 3287098.30, "spatialReference":{"wkid":102100}});
+	  var iniExtent = new Extent({"xmin":-9227691.19 ,"ymin":3173105.29 ,"xmax":-9090104.54 ,"ymax":3264829.72, "spatialReference":{"wkid":102100}});
 	    var symbol2 = new SimpleMarkerSymbol(
           SimpleMarkerSymbol.STYLE_CIRCLE, 
           12, 
@@ -58,6 +58,19 @@
           new Color([207, 34, 171, 0.5])
         );
         parser.parse();
+			  var Gridsymbol = new SimpleMarkerSymbol(
+          SimpleMarkerSymbol.STYLE_CIRCLE, 
+          16, 
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID, 
+            new Color([126, 222, 246]), 
+            1
+          ),
+          new Color([126, 222, 246,0.0])
+        );
+		var GridGraphic = new GraphicsLayer();
+		var ftselect;
+		var gridExists = "no";
         var featureLayer = "No";
         var myLegendName, legend;
         var portalUrl = "http://www.arcgis.com";
@@ -75,7 +88,7 @@
           extent:iniExtent,
          // zoom: 4
         });
-	
+		map.addLayer(GridGraphic);
 			map.on("extent-change", keepextent);
 		
 		function keepextent(extent, delta, levelChange, lod){
@@ -105,6 +118,165 @@
 		}, "LocateButton");
 		geoLocate.startup();
 
+			function getRadioValue() {
+					var radioObj = dojo.byId('myform');
+					var radioLength = radioObj.length;
+					for (var i=0; i<radioLength; i++){
+						if(radioObj[i].checked){
+							radioVal = i + 1;
+							console.log(radioVal);
+						}
+					}
+			
+				}
+				function whatisit (){
+					if (radioVal == 1){
+						console.log("It is 1")
+						ftselect = new FeatureLayer("http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/tampa1ft/FeatureServer/0",{
+							mode: FeatureLayer.MODE_ONDEMAND,
+							visible: true
+						});
+					} else if (radioVal == 2){
+						ftselect = new FeatureLayer("http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/tampa2ft/FeatureServer/0",{
+							mode: FeatureLayer.MODE_ONDEMAND,
+							visible: true
+						});
+						console.log("It is 2")
+					} else if (radioVal == 3){
+						ftselect = new FeatureLayer("http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/tampa3ft/FeatureServer/0",{
+							mode: FeatureLayer.MODE_ONDEMAND,
+							visible: true
+						});
+						console.log("It is 3")
+					} else if (radioVal == 4){
+						ftselect = new FeatureLayer("http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/tampa4ft/FeatureServer/0",{
+							mode: FeatureLayer.MODE_ONDEMAND,
+							visible: true
+						});
+						console.log("It is 4")
+					} else if (radioVal == 5){
+						ftselect = new FeatureLayer("http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/tampa5ft/FeatureServer/0",{
+							mode: FeatureLayer.MODE_ONDEMAND,
+							visible: true
+						});
+						console.log("It is 5")
+					} else {
+						ftselect = new FeatureLayer("http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Tampa6ft/FeatureServer/0",{
+							mode: FeatureLayer.MODE_ONDEMAND,
+							visible: true
+						});
+						console.log("It is 6")
+					}
+				};
+				var myButton2 = new Button({
+			label: "Analize",
+			disabled: true,			
+			onClick: function(){
+				busyIndicatorMap.show();
+				var currentzoom2 = map.getZoom();
+				getRadioValue();
+				whatisit();
+				var allPoints = [];
+				var mp = new Multipoint();
+				arrayUtils.map(featureLayer.graphics, function(gra){
+						mp.addPoint(gra.geometry);
+						allPoints.push(gra);
+					}); 
+			var myCenterPoint = new Point(-9183934.093, 3236559.781, new SpatialReference({ wkid: 102100 }));	
+			map.centerAndZoom(myCenterPoint,3).then(function(){	
+				map.addLayer(ftselect);
+				ftselect.on("update-end",function(){
+	
+						var query = new Query();
+						var intersector = ftselect.graphics[0].geometry;
+						featureLayer.setSelectionSymbol(symbol2);
+						query.geometry = intersector;
+						featureLayer.selectFeatures(query,FeatureLayer.SELECTION_NEW, function(evt){
+							console.log("selection done");
+						});
+					
+					featureLayer.on("selection-complete", function(evt){
+						//map.removeLayer(ftselect);
+						console.log(evt.features);
+						 var items = arrayUtils.map(evt.features, function (result) {
+							var graphic = result;
+							return result.attributes;
+						});
+						//foundFeature = evt[i].attributes.OBJECTID;
+						var data = {
+							identifier : "OBJECTID", //This field needs to have unique values
+							label : "Name", //Name field for display. Not pertinent to a grid but may be used elsewhere.
+							//items : LocationAr
+							items : items
+						};
+						
+						store = new ItemFileReadStore({
+							data : data
+						});
+						
+						 var layout = [];
+						//layout.push({name: foundFeature, field: lengths});
+						for (var i = 0; i < featureLayer.fields.length; i++) {
+							layout.push({name:featureLayer.fields[i].name , field:featureLayer.fields[i].name});
+						}
+						map.removeLayer(ftselect);
+						if (gridExists == "no") {
+							grid = new DataGrid({
+							store: store,
+							id: 'grid',
+							//autoHeight: 5, 
+							autoWidth: true,
+							structure: layout
+					
+						}, "grid");
+
+						//grid.setStore(store);
+						grid.startup();
+						//grid.setStore(store);
+						gridExists = "yes";
+						} else {
+							grid.setStore(store);
+						}
+						
+						grid.on("MouseOver", otherhandler);
+						function otherhandler(evt){
+							GridGraphic.clear();
+							var clickedTaxLotId = evt.grid.getItem(evt.rowIndex).OBJECTID;
+							var whatINeed = clickedTaxLotId;
+							var selectedTaxLot = arrayUtils.filter(featureLayer.getSelectedFeatures(), function (graphic) {
+								return ((graphic.attributes) && graphic.attributes.OBJECTID === clickedTaxLotId);
+							});
+							if ( selectedTaxLot.length ) {
+								GridGraphic.add(new Graphic(selectedTaxLot[0].geometry, Gridsymbol));
+			
+							}
+						}
+				
+						grid.on("MouseOut", outhandler);
+							function outhandler(){
+								GridGraphic.clear();
+							}
+							grid.on("rowclick", onRowClickHandler);
+				function onRowClickHandler(evt){
+					grid.rows.setOverRow(-1);
+					var myzoom = map.getZoom();
+					var clickedTaxLotId = evt.grid.getItem(evt.rowIndex).OBJECTID;
+			        var selectedTaxLot = arrayUtils.filter(featureLayer.getSelectedFeatures(), function (graphic) {
+						return ((graphic.attributes) && graphic.attributes.OBJECTID === clickedTaxLotId);
+					});
+					if ( selectedTaxLot.length ) {
+						map.centerAndZoom(selectedTaxLot[0].geometry,5);
+					}
+				}
+						
+						
+						busyIndicatorMap.hide();
+				
+					});
+				});
+				});
+			}
+			}, "progButtonNode2").startup();
    
         /////////////////////////////////////////////// DRAG AND DROP ///////////////////////////////////////////////////////////////////////
         var latFieldStrings = ["lat", "latitude", "y", "ycenter"];
@@ -232,12 +404,15 @@
           console.log("Processing FL: ", url);
           featureLayer = new FeatureLayer(url, {
             opacity: 0.75,
+			outFields:["*"],
             mode: FeatureLayer.MODE_ONDEMAND,
             infoTemplate: new InfoTemplate("Attributes", "${*}")
           });
           AddedLayer = "Got it";
 		  feauterLayerServer = "yes";
           map.addLayers([featureLayer]);
+		  //myButton2.setDisabled(false);
+		  dijit.byId("progButtonNode2").setAttribute('disabled', false);
         }
 
         function handleCSV(file) {
@@ -541,6 +716,10 @@
         var ft6 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_6ft/MapServer", {
           visible: false
         });
+		
+		 var areaofi = new ArcGISTiledMapServiceLayer("http://tiles.arcgis.com/tiles/vqwbMSNr6u29C7iq/arcgis/rest/services/AereaOfInterest/MapServer?token=ADFYjdWDCmWKv5FSQzr3mLME91OeC-CR4_wQi7EOjadfh4jYPGXqh5zlkniu14gjLXBe3ROmko0tQpsaHVSILkKqfcRV3RqikyAIgobqJ4e-xnFis8L0BdFoTBgJ02ToCdOcfWOj3cPe0bbpGH7e39AJogumFQC8H1mrfh8py13xQpFiRUROR_EV1MdgQG4_", {
+          visible: true
+        });
 
         var ft5 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_5ft/MapServer", {
           visible: false
@@ -562,7 +741,7 @@
 		//	visible: true
 		//});
 		//map.addLayer(ft6select);
-        map.addLayers([ft6, ft5, ft4, ft3, ft2, ft1]);
+        map.addLayers([ft6, ft5, ft4, ft3, ft2, ft1,areaofi]);
 
         /////////////////// Create the Legend ///////////////////////////////////////////////////////////////////////////////////
         map.on('layers-add-result', legenddoit);
@@ -656,42 +835,10 @@
           legend.startup();
         }
 		////////////////////////////////// Show Starting Dialog /////////////////////////
-		//map.on("load", function(){
-		//	dialogWelcome.show();		
-		//});
-		var myButton2 = new Button({
-			label: "Analize",
-			disabled: true,			
-			onClick: function(){
-				busyIndicatorMap.show();
-				var ft6select = new FeatureLayer("http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Tampa6ft/FeatureServer/0",{
-					mode: FeatureLayer.MODE_ONDEMAND,
-					visible: true
-				});
-				map.addLayer(ft6select);
-				ft6select.on("update-end",function(){
-					var allPoints = [];
-					
-					var mp = new Multipoint();
-					arrayUtils.map(featureLayer.graphics, function(gra){
-						mp.addPoint(gra.geometry);
-						allPoints.push(gra);
-					}); 
-					var query = new Query();
-					var intersector = ft6select.graphics[0].geometry;
-					featureLayer.setSelectionSymbol(symbol2);
-					query.geometry = intersector;
-					featureLayer.selectFeatures(query,FeatureLayer.SELECTION_NEW, function(evt){
-						console.log("selection done");
-					});
-					featureLayer.on("selection-complete", function(evt){
-						map.removeLayer(ft6select);
-						busyIndicatorMap.hide();
-				
-					});
-				});
-			}
-			}, "progButtonNode2").startup();
+		map.on("load", function(){
+			dialogWelcome.show();		
+		});
+
 			//myButton2.setDisabled(true); 
       });
   </script>
@@ -728,7 +875,7 @@
       <button id="buttonClose" data-dojo-type="dijit/form/Button" type="button" style="align-content: center" onclick="dialogWelcome.onCancel();">Close</button>
     </div>
   </div>
-  <div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true">
+  <div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:true, liveSplitters:true">
     <div id="mapCanvas" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
       <div id="HomeButton"></div>
       <div id="search"></div>
@@ -737,8 +884,11 @@
 
     </div>
     <div id="TopPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:false, region:'top'">
-		<div id="Title"> Sea-Level Rise and its Impact</div>
+		<div id="Title"> Sea-Level Rise and its Impact in Hillsborough County, Florida</div>
     </div>
+	  <div id="AttTable" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom', splitter:true" style=" height:100px;">
+	<div id ="grid" ></div>
+  </div>
     <div id="leftPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'leading'">
       <div data-dojo-type="dijit/layout/AccordionContainer" style="height: 300px;">
         <div data-dojo-type="dijit/layout/ContentPane" title="Legend" selected="true">
@@ -756,20 +906,31 @@
           <p style="padding:4px;"><span>Drag and drop a map services url to the map. You can drag and drop the following link to test this.</span>
           </p>
 			<div></div>
-            <a target="_blank" href="http://geodata.epa.gov/arcgis/rest/services/OEI/FRS_INTERESTS/MapServer/9">Test Service URL</a>
+            <a target="_blank" href="http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Oil_Sites/FeatureServer/0">Test Service URL</a>
 				<div id="tocDiv2">
-				 <p style="padding:4px;"><span>Once a service has been added, you are able to analize it.</span>
+				 <p style="padding:4px;"><span>Once a service (needs to be a feature layer) has been added, you are able to analize it.</span>
 				 </p>
-				<button id="progButtonNode2" type="button"></button>
+				
 			
 				
                 </div>
+					<form id="myform">
+					<input type="radio" data-dojo-type="dijit/form/RadioButton" name="sealevel" checked= true id="radioOne" value="test1"/> <label for="radioTwo">1ft Sea Level Rise Scenario</label> <br />
+					<input type="radio" data-dojo-type="dijit/form/RadioButton" name="sealevel" id="radioTwo" value="test2"/> <label for="radioTwo">2ft Sea Level Rise Scenario</label> <br />
+					<input type="radio" data-dojo-type="dijit/form/RadioButton" name="sealevel" id="radioThree" value="test3"/> <label for="radioTwo">3ft Sea Level Rise Scenario</label> <br />
+					<input type="radio" data-dojo-type="dijit/form/RadioButton" name="sealevel" id="radioFour" value="test4"/> <label for="radioTwo">4ft Sea Level Rise Scenario</label> <br />	
+					<input type="radio" data-dojo-type="dijit/form/RadioButton" name="sealevel" id="radioFive" value="test5"/> <label for="radioTwo">5ft Sea Level Rise Scenario</label> <br />
+					<input type="radio" data-dojo-type="dijit/form/RadioButton" name="sealevel" id="radioSix" value="test6"/> <label for="radioTwo">6ft Sea Level Rise Scenario</label> <br />
+				</form>	
+				<p></p>
+				<button id="progButtonNode2" type="button"></button>
          
    
           <p>
      
 
         </div>
+		
 		
       </div>
     </div>

@@ -146,3 +146,8 @@
       left: 27px;
       z-index: 50;
     }
+	#AttTable{
+			overflow-x: scroll;
+			overflow-y: hidden;
+			height: 20%;
+	}

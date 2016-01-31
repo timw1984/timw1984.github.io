@@ -22,7 +22,7 @@
   <script src="https://js.arcgis.com/3.15/"></script>
   <script>
     var map;
-    require(["esri/map", "esri/geometry/Multipoint", "dojo/_base/array", "esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery","dijit/Dialog", "esri/dijit/LocateButton","esri/dijit/util/busyIndicator",
+    require(["esri/map","dojox/grid/DataGrid","esri/SpatialReference","esri/layers/GraphicsLayer","dojo/data/ItemFileReadStore", "esri/geometry/Multipoint", "dojo/_base/array", "esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery","dijit/Dialog", "esri/dijit/LocateButton","esri/dijit/util/busyIndicator",
         "dojo/parser", "agsjs/dijit/TOC", "dojo/_base/connect", "dojo/dom", "dojo/parser", "dojo/on", "dojo/_base/Color", "dijit/form/Button", "esri/layers/FeatureLayer", "dojo/dom-construct",
         "esri/config", "esri/tasks/query", "esri/tasks/QueryTask", "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleMarkerSymbol","esri/geometry/Extent",
         "esri/geometry/geometryEngine", "esri/config", "esri/renderers/SimpleRenderer", "esri/domUtils", "esri/graphic", "esri/InfoTemplate", "esri/request", "esri/urlUtils",
@@ -30,13 +30,13 @@
         "dojo/json", "dojo/_base/lang", "dojox/data/CsvStore", "dojox/encoding/base64", "esri/geometry/scaleUtils", "esri/dijit/InfoWindowLite", "esri/dijit/HomeButton", "esri/dijit/Search", "dijit/Dialog",
         "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dijit/form/TextBox", "dojo/domReady!"
       ],
-      function(Map, Multipoint, arrayUtils, ArcGISTiledMapServiceLayer, BasemapGallery,Dialog,LocateButton,busyIndicator,
+      function(Map,DataGrid,SpatialReference, GraphicsLayer, ItemFileReadStore, Multipoint, arrayUtils, ArcGISTiledMapServiceLayer, BasemapGallery,Dialog,LocateButton,busyIndicator,
 		parser, TOC, connect, dom, parser, on, Color, Button, FeatureLayer, domConstruct,
         esriConfig, Query, QueryTask, SimpleLineSymbol, SimpleFillSymbol, SimpleMarkerSymbol,Extent, geometryEngine,
         esriConfig, SimpleRenderer, domUtils, Graphic, InfoTemplate, request, urlUtils, sniff, Point, webMercatorUtils, ArcGISDynamicMapServiceLayer, PictureMarkerSymbol, Legend,
         JSON, lang, CsvStore, base64, scaleUtils, InfoWindowLite, HomeButton, Search) {
 		//esriConfig.defaults.io.corsDetection = false;
-		var busyIndicatorMap = busyIndicator.create({target: "mapCanvas", imageUrl: "http://loading.io/assets/img/hourglass.svg", backgroundOpacity: 0});
+		var busyIndicatorMap = busyIndicator.create({target: "borderContainer", imageUrl: "./Data/ana2.gif", backgroundOpacity: 0});
 		var lods = [ 	 {"level" : 10, "resolution" : 152.8740565701464, "scale" : 577790.554288},
 					 {"level" : 11, "resolution" : 76.4370282850732, "scale" : 288895.277144},
 					 {"level" : 12, "resolution" : 38.2185141425366, "scale" : 144447.638572},
@@ -46,19 +46,31 @@
 					 {"level" : 16, "resolution" : 2.38865713397468, "scale" : 9027.977411},
 					 {"level" : 17, "resolution" : 1.19432856685505, "scale" : 4513.988705},
 					 {"level" : 18, "resolution" : 0.597164283559817, "scale" : 2256.994353}];
-	  var iniExtent = new Extent({"xmin":-9257523.08 , "ymin": 3195373.87 , "xmax": -9119936.43, "ymax": 3287098.30, "spatialReference":{"wkid":102100}});
+	  var iniExtent = new Extent({"xmin":-9227691.19 ,"ymin":3173105.29 ,"xmax":-9090104.54 ,"ymax":3264829.72, "spatialReference":{"wkid":102100}});
 	    var symbol2 = new SimpleMarkerSymbol(
           SimpleMarkerSymbol.STYLE_CIRCLE, 
           12, 
           new SimpleLineSymbol(
             SimpleLineSymbol.STYLE_NULL, 
-            new Color([247, 34, 101, 0.9]), 
+            new Color([246, 0, 0]), 
             1
           ),
-          new Color([207, 34, 171, 0.5])
+          new Color([246, 0, 0])
         );
         parser.parse();
-		var ftselect;
+		var Gridsymbol = new SimpleMarkerSymbol(
+          SimpleMarkerSymbol.STYLE_CIRCLE, 
+          16, 
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID, 
+            new Color([247, 247, 15]), 
+            2
+          ),
+          new Color([126, 222, 246,0.0])
+        );
+		var GridGraphic = new GraphicsLayer();
+		var ftselect, data;
+		var gridExists = "no";
         var featureLayer = "No";
         var myLegendName, legend;
         var portalUrl = "http://www.arcgis.com";
@@ -76,7 +88,7 @@
           extent:iniExtent,
          // zoom: 4
         });
-	
+		map.addLayer(GridGraphic);
 			map.on("extent-change", keepextent);
 		
 		function keepextent(extent, delta, levelChange, lod){
@@ -100,11 +112,8 @@
           map: map
         }, "basemapGallery");
         basemapGallery.startup();
-		///////////////////////// Add Locate Button//////////////////////////////////////////////////////////////
-		var geoLocate = new LocateButton({
-			map: map
-		}, "LocateButton");
-		geoLocate.startup();
+
+
 
 			function getRadioValue() {
 					var radioObj = dojo.byId('myform');
@@ -161,30 +170,152 @@
 			disabled: true,			
 			onClick: function(){
 				busyIndicatorMap.show();
+				var currentzoom2 = map.getZoom();
 				getRadioValue();
 				whatisit();
-				
-				map.addLayer(ftselect);
-				ftselect.on("update-end",function(){
-					var allPoints = [];
-					
-					var mp = new Multipoint();
-					arrayUtils.map(featureLayer.graphics, function(gra){
+				var allPoints = [];
+				var mp = new Multipoint();
+				arrayUtils.map(featureLayer.graphics, function(gra){
 						mp.addPoint(gra.geometry);
 						allPoints.push(gra);
 					}); 
-					var query = new Query();
-					var intersector = ftselect.graphics[0].geometry;
-					featureLayer.setSelectionSymbol(symbol2);
-					query.geometry = intersector;
-					featureLayer.selectFeatures(query,FeatureLayer.SELECTION_NEW, function(evt){
-						console.log("selection done");
-					});
-					featureLayer.on("selection-complete", function(evt){
+			var myCenterPoint = new Point(-9183934.093, 3236559.781, new SpatialReference({ wkid: 102100 }));	
+			map.centerAndZoom(myCenterPoint,3).then(function(){	
+				map.addLayer(ftselect);
+				ftselect.on("update-end",function(){
+	
+						var query = new Query();
+						var intersector = ftselect.graphics[0].geometry;
+						featureLayer.setSelectionSymbol(symbol2);
+						query.geometry = intersector;
+						featureLayer.selectFeatures(query,FeatureLayer.SELECTION_NEW, completerselection,errorselection);
+					
+					//featureLayer.on("selection-complete", function(evt){
+					function errorselection(evt){
+						console.log(evt);
 						map.removeLayer(ftselect);
 						busyIndicatorMap.hide();
+						dom.byId("status2").innerHTML = "Error, please try a different feature layer";
+					};
+					function completerselection(evt){
+						if (evt.length < 1){
+							dom.byId("status2").innerHTML = "No features are affected";
+							map.removeLayer(ftselect);
+							busyIndicatorMap.hide();
+						} else{
+						if (evt.length == 1){
+							dom.byId("status2").innerHTML = "1 feature is affected";
+						} else if (evt.length > 1) {
+							var howmany = evt.length;
+							dom.byId("status2").innerHTML = howmany + " " + "features are affected";
+						}
+						//map.removeLayer(ftselect);
+						console.log(evt);
+						 var items = arrayUtils.map(evt, function (result) {
+							var graphic = result;
+							return result.attributes;
+						});
+						var objorfid = [];
+						for (var i = 0; i < featureLayer.fields.length; i++) {
+							objorfid.push(featureLayer.fields[i].name);
+						}
+						console.log(objorfid);
+						
+						function testob (){
+							if (objorfid.indexOf('OBJECTID') > -1) {
+								data = {
+									identifier : "OBJECTID", //This field needs to have unique values
+									label : "Name", //Name field for display. Not pertinent to a grid but may be used elsewhere.
+									//items : LocationAr
+									items : items
+								};
+								console.log("OBJECTID")
+							} else {
+							    console.log("FID")
+								data = {
+									identifier : "OBJECTID", //This field needs to have unique values
+									label : "Name", //Name field for display. Not pertinent to a grid but may be used elsewhere.
+									//items : LocationAr
+									items : items
+								};
+								
+							}
+						};
+						testob();
+						//foundFeature = evt[i].attributes.OBJECTID;
+	
+						
+						store = new ItemFileReadStore({
+							data : data
+						});
+						
+						 var layout = [];
+						//layout.push({name: foundFeature, field: lengths});
+						for (var i = 0; i < featureLayer.fields.length; i++) {
+							layout.push({name:featureLayer.fields[i].name , field:featureLayer.fields[i].name});
+						}
+						map.removeLayer(ftselect);
+						if (gridExists == "no") {
+							grid = new DataGrid({
+							store: store,
+							id: 'grid',
+							//autoHeight: 5, 
+							autoWidth: true,
+							structure: layout
+					
+						}, "grid");
+
+						//grid.setStore(store);
+						grid.startup();
+						//grid.setStore(store);
+						gridExists = "yes";
+						} else {
+							grid.setStore(store);
+						}
+						
+						function otherhandler(evt){
+							GridGraphic.clear();
+							var clickedId = evt.grid.getItem(evt.rowIndex).OBJECTID;
+							var whatINeed = clickedId;
+							var selectedLot = arrayUtils.filter(featureLayer.getSelectedFeatures(), function (graphic) {
+								return ((graphic.attributes) && graphic.attributes.OBJECTID === clickedId);
+							});
+							if ( selectedLot.length ) {
+								GridGraphic.add(new Graphic(selectedLot[0].geometry, Gridsymbol));
+			
+							}
+						}
+						
+							function outhandler(){
+								GridGraphic.clear();
+							}
+						
+						grid.on("MouseOver", otherhandler);
+						
 				
-					});
+						grid.on("MouseOut", outhandler);
+						
+						function onRowClickHandler(evt){
+							grid.rows.setOverRow(-1);
+							var myzoom = map.getZoom();
+							var clickedTaxLotId = evt.grid.getItem(evt.rowIndex).OBJECTID;
+							var selectedTaxLot = arrayUtils.filter(featureLayer.getSelectedFeatures(), function (graphic) {
+								return ((graphic.attributes) && graphic.attributes.OBJECTID === clickedTaxLotId);
+							});
+							if ( selectedTaxLot.length ) {
+								map.centerAndZoom(selectedTaxLot[0].geometry,5);
+							}
+						}
+				
+							grid.on("rowclick", onRowClickHandler);
+		
+						
+						
+						busyIndicatorMap.hide();
+				}
+					};
+					
+				});
 				});
 			}
 			}, "progButtonNode2").startup();
@@ -422,7 +553,7 @@
               featureLayer.__popupInfo = popupInfo;
               AddedLayer = "Got it";
               map.addLayers([featureLayer]);
-              zoomToData(featureLayer);
+              //zoomToData(featureLayer);
             },
             onError: function(error) {
               console.error("Error fetching items from CSV store: ", error);
@@ -627,6 +758,10 @@
         var ft6 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_6ft/MapServer", {
           visible: false
         });
+		
+		 var areaofi = new ArcGISTiledMapServiceLayer("http://tiles.arcgis.com/tiles/vqwbMSNr6u29C7iq/arcgis/rest/services/AereaOfInterest/MapServer?token=ADFYjdWDCmWKv5FSQzr3mLME91OeC-CR4_wQi7EOjadfh4jYPGXqh5zlkniu14gjLXBe3ROmko0tQpsaHVSILkKqfcRV3RqikyAIgobqJ4e-xnFis8L0BdFoTBgJ02ToCdOcfWOj3cPe0bbpGH7e39AJogumFQC8H1mrfh8py13xQpFiRUROR_EV1MdgQG4_", {
+          visible: true
+        });
 
         var ft5 = new ArcGISTiledMapServiceLayer("http://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_5ft/MapServer", {
           visible: false
@@ -648,7 +783,7 @@
 		//	visible: true
 		//});
 		//map.addLayer(ft6select);
-        map.addLayers([ft6, ft5, ft4, ft3, ft2, ft1]);
+        map.addLayers([ft6, ft5, ft4, ft3, ft2, ft1,areaofi]);
 
         /////////////////// Create the Legend ///////////////////////////////////////////////////////////////////////////////////
         map.on('layers-add-result', legenddoit);
@@ -697,29 +832,11 @@
           }
 		  if (feauterLayerServer == "yes"){
 		  
-		  map.setExtent(featureLayer.fullExtent)
+		  //map.setExtent(featureLayer.fullExtent)
 		  feauterLayerServer = "no"
 		  }
         };
 
-		///////////////////////////////// Zoom to CVS/Shapefile Data /////////////////////////
-        function zoomToData(featureLayer) {
-          // Zoom to the collective extent of the data
-          var multipoint = new Multipoint(map.spatialReference);
-          arrayUtils.forEach(featureLayer.graphics, function(graphic) {
-            var geometry = graphic.geometry;
-            if (geometry) {
-              multipoint.addPoint({
-                x: geometry.x,
-                y: geometry.y
-              });
-            }
-          });
-
-          if (multipoint.points.length > 0) {
-            map.setExtent(multipoint.getExtent().expand(1.25), true);
-          }
-        }
 		////////////////////////////////// Create added Data Legend /////////////////////////
         function createLegend(featureLayer) {
           if (legend) {
@@ -759,16 +876,12 @@
           <div id="divDialogMessage">
             <br> One of the biggest effects of climate change, is the rising of the sea levels. Even a one foot rise can have a devastating effect to coastal cities and their surroundings.
 				 This will not only affect infrastructures, but also toxic materials that can contaminate the incoming water and subsequently human health.
-				 This application will assist the government, for-profit, and non-profit organizations, in understanding and planning for rising sea-levels.
+				 This application will assist local government, for-profit, and non-profit organizations, in understanding and planning for rising sea-levels.
             <p>
-              In this application you will be able to overlay your data with sea-level rise data, which is created by NOAA and hosted through ESRI. You are able to add a wide variety of data.
+              In this application you will be able to add a feature service, via drag and drop, and then analize it, to see how many features fall within the 
+				chosen sea level rise scenario.
               <p>
-			   <ul>
-				<li>If you have data available through ArcGIS Server, you can just drag and drop it into the map.</li>
-				<li>If you have a zipped shapefile, you can use the add shapefile button.</li>
-				<li>If you don't own any ESRI products, you can create a CVS file, with Latitude and Longitude information, and drag and drop it into the map.</li>
-			 </ul> 
-			  <p>
+
 			  To find out more about this map please follow this <a class="one" href="https://youtu.be/quq7Uf82SWE" target="_blank">link</a>.
 			  <p>
                 Special thanks to ESRI and NOAA for making this data available.
@@ -782,17 +895,19 @@
       <button id="buttonClose" data-dojo-type="dijit/form/Button" type="button" style="align-content: center" onclick="dialogWelcome.onCancel();">Close</button>
     </div>
   </div>
-  <div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true">
+  <div id="borderContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:true, liveSplitters:true">
     <div id="mapCanvas" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
       <div id="HomeButton"></div>
       <div id="search"></div>
       <div id="legendWrapper"></div>
-	  <div id="LocateButton"></div>
 
     </div>
     <div id="TopPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:false, region:'top'">
-		<div id="Title"> Sea-Level Rise and its Impact</div>
+		<div id="Title"> Sea-Level Rise and its Impact in Hillsborough County, Florida</div>
     </div>
+	  <div id="AttTable" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom', splitter:true" style=" height:100px;">
+	<div id ="grid" ></div>
+  </div>
     <div id="leftPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'leading'">
       <div data-dojo-type="dijit/layout/AccordionContainer" style="height: 300px;">
         <div data-dojo-type="dijit/layout/ContentPane" title="Legend" selected="true">
@@ -810,9 +925,9 @@
           <p style="padding:4px;"><span>Drag and drop a map services url to the map. You can drag and drop the following link to test this.</span>
           </p>
 			<div></div>
-            <a target="_blank" href="http://geodata.epa.gov/arcgis/rest/services/OEI/FRS_INTERESTS/MapServer/9">Test Service URL</a>
+            <a target="_blank" href="http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Oil_Sites/FeatureServer/0">Test Service URL</a>
 				<div id="tocDiv2">
-				 <p style="padding:4px;"><span>Once a service has been added, you are able to analize it.</span>
+				 <p style="padding:4px;"><span>Once a service (needs to be a feature layer) has been added, you are able to analize it.</span>
 				 </p>
 				
 			
@@ -827,13 +942,14 @@
 					<input type="radio" data-dojo-type="dijit/form/RadioButton" name="sealevel" id="radioSix" value="test6"/> <label for="radioTwo">6ft Sea Level Rise Scenario</label> <br />
 				</form>	
 				<p></p>
-				<button id="progButtonNode2" type="button"></button>
-         
-   
+				<button id="progButtonNode2" type="button"></button>	
+				<p></p>
+				<div id="status2"></div>
           <p>
      
 
         </div>
+		
 		
       </div>
     </div>
