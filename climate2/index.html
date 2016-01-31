@@ -326,6 +326,7 @@
           console.log("Processing FL: ", url);
           featureLayer = new FeatureLayer(url, {
             opacity: 0.75,
+			outFields:["*"],
             mode: FeatureLayer.MODE_ONDEMAND,
             infoTemplate: new InfoTemplate("Attributes", "${*}")
           });
