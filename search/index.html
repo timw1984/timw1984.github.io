@@ -19,17 +19,17 @@
 </head>
 <body>
 <!-- SEARCH -->
-<form action="http://timw1984.github.io/search" id="cse-search-box">
-  <div>
-    <input type="hidden" name="cx" value="partner-pub-6305302550519235:3967472706" />
-    <input type="hidden" name="cof" value="FORID:10" />
-    <input type="hidden" name="ie" value="UTF-8" />
-    <input type="text" name="q" size="55" />
-    <input type="submit" name="sa" value="Search" />
-  </div>
-</form>
+<script>
+(function() {
+  var cx = 'partner-pub-6305302550519235:3967472706'; // Insert your own Custom Search engine ID here
+  var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+  gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+})();
+</script>
 
-<script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=cse-search-box&amp;lang=en"></script>
+<!-- Place this tag where you want both of the search box and the search results to render -->
+<gcse:search></gcse:search>
 
 <!-- SEARCH RESULT -->
 
