@@ -21,6 +21,16 @@
 
   <script src="https://js.arcgis.com/3.15/"></script>
   <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-74080723-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  <script>
     var map;
     require(["esri/map","dojox/grid/DataGrid","esri/SpatialReference","esri/layers/GraphicsLayer","dojo/data/ItemFileReadStore", "esri/geometry/Multipoint", "dojo/_base/array", "esri/layers/ArcGISTiledMapServiceLayer", "esri/dijit/BasemapGallery","dijit/Dialog", "esri/dijit/LocateButton","esri/dijit/util/busyIndicator",
         "dojo/parser", "agsjs/dijit/TOC", "dojo/_base/connect", "dojo/dom", "dojo/parser", "dojo/on", "dojo/_base/Color", "dijit/form/Button", "esri/layers/FeatureLayer", "dojo/dom-construct",
