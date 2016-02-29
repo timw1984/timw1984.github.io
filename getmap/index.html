@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Get your map!</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.15/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css">
+
+  <style>
+    html, body {
+      height: 97%;
+      width: 98%;
+      margin: 1%;
+    }
+
+    #rightPane {
+      width: 20%;
+    }
+	#bottomPane {
+      height: 10%;
+    }
+
+    #legendPane {
+      border: solid #97DCF2 1px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.15/"></script>
+  <script>
+    var map, Lati, Longi, Zoom, mybase,useExtent, Extent,xmin,ymin,xmax,ymax;
+    require([
+      "esri/map", "esri/layers/FeatureLayer", "esri/SpatialReference", "esri/geometry/Extent",
+      "dojo/_base/array", "dojo/parser","esri/dijit/BasemapGallery", "dijit/form/CheckBox",
+      "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
+      "dijit/layout/AccordionContainer", "dojo/domReady!"
+    ], function(
+      Map, FeatureLayer, SpatialReference, Extent,
+      arrayUtils, parser, BasemapGallery, CheckBox
+    ) {
+      parser.parse();
+	  
+	  useExtent = "dont";
+	  
+      map = new Map("map", {
+        basemap:"topo",
+        center: [-96.53, 38.374],
+        zoom: 5
+      });
+	   var basemapGallery = new BasemapGallery({
+        map: map
+      }, "basemapGallery");
+	  
+      basemapGallery.startup();
+	  
+	  basemapGallery.on('load',function(){
+		//// Need to remove those basemaps since you can't initiate the map with them
+		basemapGallery.remove('basemap_0');
+		basemapGallery.remove('basemap_1');
+	  });  
+	  
+	  function startgetmap (){
+		mybase= map.getBasemap();
+		Zoom = map.getZoom();
+		Lati = parseFloat(map.extent.getCenter().getLatitude()).toFixed(4); 
+		Longi = parseFloat(map.extent.getCenter().getLongitude()).toFixed(4); 
+		if (useExtent == "doit"){
+		
+		} else {
+			document.getElementById("mymapcode").innerHTML = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+		}
+	  }
+	  
+	  function changegetmap (extent){
+		mybase = map.getBasemap();
+		xmin = extent.extent.xmin.toFixed(2);
+		ymin = extent.extent.ymin.toFixed(2);
+		xmax = extent.extent.xmax.toFixed(2);
+		ymax = extent.extent.ymax.toFixed(2);
+		Zoom = map.getZoom();
+		//Extent = 
+		Lati = parseFloat(map.extent.getCenter().getLatitude()).toFixed(4); 
+		Longi = parseFloat(map.extent.getCenter().getLongitude()).toFixed(4); 
+		if (useExtent == "doit"){
+			text1 = 'var initextent = new Extent(' + xmin + ", " + ymin + ", " + xmax + ", " + ymax + ", new SpatialReference({ wkid:102100}));";
+			document.getElementById("mymapcode").innerHTML = text1 + '<br></br>' + 'map = new Map("map", {basemap:"' + mybase + '", extent: initextent});';
+		} else {
+			document.getElementById("mymapcode").innerHTML = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+		}
+	  }
+	  
+	  function basemapchange(evt){
+		var basemap = basemapGallery.getSelected();
+		var basemapValue= basemap.title;
+		if (basemapValue == "Imagery"){
+			mybase = "satellite";
+		} else if (basemapValue == "Imagery with Labels"){
+			mybase = "hybrid";
+		} else if (basemapValue == "Streets"){
+			mybase = "streets";
+		} else if (basemapValue == "Topographic"){
+			mybase = "topo";
+		} else if (basemapValue == "Dark Gray Canvas"){
+			mybase = "dark-gray";
+		} else if (basemapValue == "Light Gray Canvas"){
+			mybase = "gray";
+		} else if (basemapValue == "National Geographic"){
+			mybase = "national-geographic";
+		} else if (basemapValue == "Terrain with Labels"){
+			mybase = "terrain";
+		} else if (basemapValue == "OpenStreetMap"){
+			mybase = "osm";
+		} else if (basemapValue == "Oceans"){
+			mybase = "oceans";
+		}
+		Zoom = map.getZoom();
+		//Lati = map.extent.getCenter().getLatitude();
+		Lati = parseFloat(map.extent.getCenter().getLatitude()).toFixed(4); 
+		//Longi = map.extent.getCenter().getLongitude();
+		Longi = parseFloat(map.extent.getCenter().getLongitude()).toFixed(4);
+		if (useExtent == "doit"){
+		
+		} else {
+			document.getElementById("mymapcode").innerHTML = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+		}
+	  }
+		
+		map.on("load", startgetmap);
+		map.on("extent-change", changegetmap);
+		basemapGallery.on("selection-change", basemapchange);
+		
+	/* var checkBox = new CheckBox({
+        name: "checkBox",
+        value: "agreed",
+        checked: false,
+        onChange: function(b){ console.log(b)
+					if (b){
+						useExtent = "doit";
+					} else {
+						useExtent = "dont";
+					}
+				}
+	 }, "checkBox").startup();
+		*/
+    });
+  </script>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-74080723-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+
+<body class="claro">
+<!--[if IE 7]>
+<style>
+  html, body {
+    margin: 0;
+  }
+</style>
+<![endif]-->
+<div id="content"
+     data-dojo-type="dijit/layout/BorderContainer"
+     data-dojo-props="design:'headline', gutters:true"
+     style="width: 100%; height: 100%; margin: 0;">
+
+  <div id="rightPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'right'">
+
+    <div data-dojo-type="dijit/layout/AccordionContainer">
+      <div data-dojo-type="dijit/layout/ContentPane" id="legendPane"
+           data-dojo-props="title:'Basemap', selected:true">
+			<div id="basemapGallery"></div>
+			<!-- <input id="checkBox" /> <label for="checkBox">Use extent instead of center</label> -->
+      </div>
+
+    </div>
+  </div>
+  <div id="bottomPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'bottom'">
+	   <div id="mymapcode"></div>
+  </div>	   
+  <div id="map"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'center'"
+       style="overflow:hidden;">
+  </div>
+</div>
+</body>
+
+</html>
