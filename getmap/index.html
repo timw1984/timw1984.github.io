@@ -35,13 +35,13 @@
       "esri/map", "esri/layers/FeatureLayer", "esri/SpatialReference", "esri/geometry/Extent",
       "dojo/_base/array", "dojo/parser","esri/dijit/BasemapGallery", "dijit/form/CheckBox", "esri/domUtils",  "esri/layers/ArcGISDynamicMapServiceLayer",
   "esri/layers/ArcGISImageServiceLayer",
-  "esri/layers/FeatureLayer","dojo/_base/array","dojo/on","dojo/dom",
+  "esri/layers/FeatureLayer","dojo/_base/array","dojo/on","dojo/dom", "dijit/form/Button",
       "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
       "dijit/layout/AccordionContainer", "dojo/domReady!"
     ], function(
       Map, FeatureLayer, SpatialReference, Extent,
       arrayUtils, parser, BasemapGallery, CheckBox,domUtils,ArcGISDynamicMapServiceLayer,
-    ArcGISImageServiceLayer, FeatureLayer,arrayUtils, on,dom
+    ArcGISImageServiceLayer, FeatureLayer,arrayUtils, on,dom,Button
     ) {
       parser.parse();
 	  
@@ -169,6 +169,7 @@
 			havealayer == "no";
 		}
 			console.log("Processing IS: ", url);
+			dijit.byId("progButtonNode").setAttribute('disabled', false);
        layer = new ArcGISImageServiceLayer(url, {
         opacity: 0.75
       });
@@ -181,6 +182,7 @@
 			map.removeLayer(layer);
 			havealayer == "no";
 		}
+		dijit.byId("progButtonNode").setAttribute('disabled', false);
       console.log("Processing FL: ", url);
        layer = new FeatureLayer(url, {
         opacity: 0.75,
@@ -195,6 +197,7 @@
 			map.removeLayer(layer);
 			havealayer == "no";
 		}
+		dijit.byId("progButtonNode").setAttribute('disabled', false);
       console.log("Processing MS: ", url);
        layer = new ArcGISDynamicMapServiceLayer(url, {
         opacity: 0.75
@@ -307,6 +310,16 @@
 			havealayer == "yes";
 			 map.setExtent(layer.fullExtent);
 		};
+		
+		 var myButton = new Button({
+        label: "Remove Service",
+		disabled: true,	
+        onClick: function(){
+            // Do something:
+            map.removeLayer(layer);
+			dijit.byId("progButtonNode").setAttribute('disabled', true);
+        }
+    }, "progButtonNode").startup();
     });
   </script>
   <script>
@@ -345,6 +358,7 @@
           </p>
 			<div></div>
             <a target="_blank" href="http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Miami_Test_Data/FeatureServer/0">Test Service URL</a>
+			<button id="progButtonNode" type="button"></button>
 			<p></p>
 			<div id="basemapGallery"></div>
 			<!-- <input id="checkBox" /> <label for="checkBox">Use extent instead of center</label> -->
