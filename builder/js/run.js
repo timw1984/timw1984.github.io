@@ -1,4 +1,6 @@
 // bring this thing to life...
+var thisitem = sessionStorage.getItem('maptext');
+	console.log(thisitem);
 require([
   "dojo/_base/array",
   "dojo/_base/declare",
@@ -90,7 +92,7 @@ require([
     var mids = formatters.mids(gm.esriSelection, gm.dojoSelection, pad); 
     var aliases = formatters.aliases(gm.esriSelection, gm.dojoSelection, pad); 
 
-    var updated = string.substitute(content, [mids, aliases]);
+    var updated = string.substitute(content, [mids, aliases,thisitem]);
     dom.byId("output").innerHTML = updated;
   }
 
