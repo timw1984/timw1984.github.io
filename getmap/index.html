@@ -30,7 +30,7 @@
 
   <script src="https://js.arcgis.com/3.15/"></script>
   <script>
-    var map, Lati, Longi, Zoom, mybase,useExtent, Extent,xmin,ymin,xmax,ymax, layer;
+    var map, Lati, Longi, Zoom, mybase,useExtent, Extent,xmin,ymin,xmax,ymax, layer, finaltext;
     require([
       "esri/map", "esri/layers/FeatureLayer", "esri/SpatialReference", "esri/geometry/Extent",
       "dojo/_base/array", "dojo/parser","esri/dijit/BasemapGallery", "dijit/form/CheckBox", "esri/domUtils",  "esri/layers/ArcGISDynamicMapServiceLayer",
@@ -49,7 +49,8 @@
 	  
 	  useExtent = "dont";
 	   setupDropZone();
-	       map = new Map("map", {
+	   finaltext =  'map = new Map("map", {basemap:"topo", center: [-96.53, 38.374], zoom: 5})';
+	  map = new Map("map", {
         basemap:"topo",
         center: [-96.53, 38.374],
         zoom: 5
@@ -228,7 +229,9 @@
 		if (useExtent == "doit"){
 		
 		} else {
-			document.getElementById("mymapcode").innerHTML = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+			finaltext = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+			document.getElementById("mymapcode").innerHTML = finaltext;
+			
 		}
 	  }
 	  
@@ -246,7 +249,8 @@
 			text1 = 'var initextent = new Extent(' + xmin + ", " + ymin + ", " + xmax + ", " + ymax + ", new SpatialReference({ wkid:102100}));";
 			document.getElementById("mymapcode").innerHTML = text1 + '<br></br>' + 'map = new Map("map", {basemap:"' + mybase + '", extent: initextent});';
 		} else {
-			document.getElementById("mymapcode").innerHTML = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+			finaltext = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+			document.getElementById("mymapcode").innerHTML = finaltext;
 		}
 	  }
 	  
@@ -282,7 +286,8 @@
 		if (useExtent == "doit"){
 		
 		} else {
-			document.getElementById("mymapcode").innerHTML = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+			 finaltext = 'map = new Map("map", {basemap:"' + mybase + '", center:[' + Longi + ', ' + Lati + '], zoom:' + Zoom + '});';
+			 document.getElementById("mymapcode").innerHTML = finaltext;
 		}
 	  }
 		
@@ -320,6 +325,15 @@
 			dijit.byId("progButtonNode").setAttribute('disabled', true);
         }
     }, "progButtonNode").startup();
+	
+	var myButton2 = new Button({
+        label: "Go to require",	
+        onClick: function(){
+            // Do something:
+			sessionStorage.setItem('maptext', finaltext);
+			window.open("http://timw1984.github.io/builder/");
+        }
+    }, "progButtonNode2").startup();
     });
   </script>
   <script>
@@ -371,6 +385,10 @@
        data-dojo-type="dijit/layout/ContentPane"
        data-dojo-props="region:'bottom'">
 	   <div id="mymapcode"></div>
+	   <p></p>
+	   <button id="progButtonNode2" type="button"></button>
+			
+	   
   </div>	   
   <div id="map"
        data-dojo-type="dijit/layout/ContentPane"
