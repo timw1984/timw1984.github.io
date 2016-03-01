@@ -30,25 +30,181 @@
 
   <script src="https://js.arcgis.com/3.15/"></script>
   <script>
-    var map, Lati, Longi, Zoom, mybase,useExtent, Extent,xmin,ymin,xmax,ymax;
+    var map, Lati, Longi, Zoom, mybase,useExtent, Extent,xmin,ymin,xmax,ymax, layer;
     require([
       "esri/map", "esri/layers/FeatureLayer", "esri/SpatialReference", "esri/geometry/Extent",
-      "dojo/_base/array", "dojo/parser","esri/dijit/BasemapGallery", "dijit/form/CheckBox",
+      "dojo/_base/array", "dojo/parser","esri/dijit/BasemapGallery", "dijit/form/CheckBox", "esri/domUtils",  "esri/layers/ArcGISDynamicMapServiceLayer",
+  "esri/layers/ArcGISImageServiceLayer",
+  "esri/layers/FeatureLayer","dojo/_base/array","dojo/on","dojo/dom",
       "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
       "dijit/layout/AccordionContainer", "dojo/domReady!"
     ], function(
       Map, FeatureLayer, SpatialReference, Extent,
-      arrayUtils, parser, BasemapGallery, CheckBox
+      arrayUtils, parser, BasemapGallery, CheckBox,domUtils,ArcGISDynamicMapServiceLayer,
+    ArcGISImageServiceLayer, FeatureLayer,arrayUtils, on,dom
     ) {
       parser.parse();
 	  
-	  useExtent = "dont";
+	  var havealayer = "no";
 	  
-      map = new Map("map", {
+	  useExtent = "dont";
+	   setupDropZone();
+	       map = new Map("map", {
         basemap:"topo",
         center: [-96.53, 38.374],
         zoom: 5
       });
+	  ///////////////////////////////////////////////////////////////////////////////////////////
+	  
+	function setupDropZone () {
+     
+      if (!window.File || !window.FileReader) {
+        domUtils.show(dom.byId('uploadForm'));
+        domUtils.show(dom.byId('msg'));
+        return;
+      }
+
+      var mapCanvas = dom.byId("map");
+      // Reference
+      // http://www.html5rocks.com/features/file
+      // http://www.html5rocks.com/tutorials/dnd/basics/
+      // https://developer.mozilla.org/En/DragDrop/Drag_Operations
+      on(mapCanvas, "dragenter", function (event) {
+        // If we don't prevent default behavior here, browsers will
+        // perform the default action for the file being dropped i.e,
+        // point the page to the file.
+        event.preventDefault();
+      });
+
+      on(mapCanvas, "dragover", function (event) {
+        event.preventDefault();
+      });
+      on(mapCanvas, "drop", handleDrop);
+    }
+	
+	function handleDrop (event) {
+      console.log("Drop: ", event);
+      event.preventDefault();
+
+      var dataTransfer = event.dataTransfer,
+        files = dataTransfer.files,
+        types = dataTransfer.types;
+
+      // File drop?
+      if (files && files.length === 1) {
+        console.log("[ FILES ]");
+        var file = files[0]; // that's right I'm only reading one file
+        console.log("type = ", file.type);
+        if (file.type.indexOf("image/") !== -1) {
+          handleImage(file, event.layerX, event.layerY);
+        }
+        else if (file.name.indexOf(".csv") !== -1) {
+          handleCSV(file);
+        }
+      }
+
+      // Textual drop?
+      else if (types) {
+        console.log("[ TYPES ]");
+        console.log("  Length = ", types.length);
+        arrayUtils.forEach(types, function (type) {
+          if (type) {
+            console.log("  Type: ", type);
+            console.log("  Data: ", dataTransfer.getData(type));
+          }
+        });
+
+        // We're looking for URLs only.
+        var url;
+        arrayUtils.some(types, function (type) {
+          if (type.indexOf("text/uri-list") !== -1) {
+            url = dataTransfer.getData("text/uri-list");
+            return true;
+          }
+          else if (type.indexOf("text/x-moz-url") !== -1) {
+            url = dataTransfer.getData("text/plain");
+            return true;
+          }
+          else if (type.indexOf("text/plain") !== -1) {
+            url = dataTransfer.getData("text/plain");
+            url = url.replace(/^\s+|\s+$/g, "");
+            if (url.indexOf("http") === 0) {
+              return true;
+            }
+          }
+          return false;
+        });
+
+        if (url) {
+          url = url.replace(/^\s+|\s+$/g, "");
+          // Check if this URL is a google search result.
+          // If so, parse it and extract the actual URL
+          // to the search result
+          if (url.indexOf("www.google.com/url") !== -1) {
+            var obj = urlUtils.urlToObject(url);
+            if (obj && obj.query && obj.query.url) {
+              url = obj.query.url;
+            }
+          }
+
+          if (url.match(/MapServer\/?$/i)) {
+            // ArcGIS Server Map Service?
+            handleMapServer(url);
+          }
+          else if (url.match(/(Map|Feature)Server\/\d+\/?$/i)) {
+            // ArcGIS Server Map/Feature Service Layer?
+            handleFeatureLayer(url);
+          }
+          else if (url.match(/ImageServer\/?$/i)) {
+            // ArcGIS Server Image Service?
+            handleImageService(url);
+          }
+        }
+      }
+    }
+	
+	function handleImageService (url) {
+		if (havealayer == "yes"){
+			map.removeLayer(layer);
+			havealayer == "no";
+		}
+			console.log("Processing IS: ", url);
+       layer = new ArcGISImageServiceLayer(url, {
+        opacity: 0.75
+      });
+      map.addLayers([layer]);
+	 
+    }
+	
+	function handleFeatureLayer (url) {
+		if (havealayer == "yes"){
+			map.removeLayer(layer);
+			havealayer == "no";
+		}
+      console.log("Processing FL: ", url);
+       layer = new FeatureLayer(url, {
+        opacity: 0.75,
+        mode: FeatureLayer.MODE_ONDEMAND
+        
+      });
+      map.addLayers([layer]);
+    }
+	
+	function handleMapServer (url) {
+		if (havealayer == "yes"){
+			map.removeLayer(layer);
+			havealayer == "no";
+		}
+      console.log("Processing MS: ", url);
+       layer = new ArcGISDynamicMapServiceLayer(url, {
+        opacity: 0.75
+      });
+      map.addLayers([layer]);
+    }
+
+	  ///////////////////////////////////////////////////////////////////////////////////////////
+	  
+ 
 	   var basemapGallery = new BasemapGallery({
         map: map
       }, "basemapGallery");
@@ -144,6 +300,13 @@
 				}
 	 }, "checkBox").startup();
 		*/
+		
+		map.on('layers-add-result', zoomto);
+		
+		function zoomto(evt){
+			havealayer == "yes";
+			 map.setExtent(layer.fullExtent);
+		};
     });
   </script>
   <script>
@@ -178,8 +341,14 @@
     <div data-dojo-type="dijit/layout/AccordionContainer">
       <div data-dojo-type="dijit/layout/ContentPane" id="legendPane"
            data-dojo-props="title:'Basemap', selected:true">
+		   <span>Drag and drop a map services url to the map. You can drag and drop the following link to test this.</span>
+          </p>
+			<div></div>
+            <a target="_blank" href="http://services1.arcgis.com/vqwbMSNr6u29C7iq/arcgis/rest/services/Miami_Test_Data/FeatureServer/0">Test Service URL</a>
+			<p></p>
 			<div id="basemapGallery"></div>
 			<!-- <input id="checkBox" /> <label for="checkBox">Use extent instead of center</label> -->
+			
       </div>
 
     </div>
