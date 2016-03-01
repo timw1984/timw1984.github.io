@@ -21,7 +21,7 @@ ${0}
 ${1}
       ) {
 
-$(2)       
+themappart     
 
       });
     &lt;/script&gt;

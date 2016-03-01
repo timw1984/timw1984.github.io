@@ -92,8 +92,9 @@ require([
     var mids = formatters.mids(gm.esriSelection, gm.dojoSelection, pad); 
     var aliases = formatters.aliases(gm.esriSelection, gm.dojoSelection, pad); 
 
-    var updated = string.substitute(content, [mids, aliases,thisitem]);
-    dom.byId("output").innerHTML = updated;
+    var updated = string.substitute(content, [mids, aliases]);
+	var finalupdate = updated.replace("themappart", thisitem);
+    dom.byId("output").innerHTML = finalupdate;
   }
 
   function updateTemplate(property, oldVal, newVal) {
