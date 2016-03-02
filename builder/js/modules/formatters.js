@@ -26,7 +26,7 @@ define([
       if ( d.length ) {
         // always put domReady at the end
         for ( var i = 0, il = d.length; i < il; i++ ) {
-          if ( d[i].id !== "dojo/domReady!" ) {
+          if ( d[i].id === "dojo/domReady!" ) {
             d.push(d.splice(i, 1)[0]);
             break;
           }
