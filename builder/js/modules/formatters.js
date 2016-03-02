@@ -66,7 +66,7 @@ define([
       }
 
       if ( formattedEsriAliases && formattedDojoAliases ) {
-        combined = formattedEsriAliases + "\n" + formattedDojoAliases;
+        combined = formattedEsriAliases + ",\n" + formattedDojoAliases;
       } else {
         combined = formattedEsriAliases || formattedDojoAliases;
       }
