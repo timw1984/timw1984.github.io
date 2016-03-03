@@ -16,10 +16,10 @@
       var map;
     
       require([ 
-	    mapreq
+	  mapreq
 ${0}
       ], function( 
-	    mapfun
+	  mapfun
 ${1}
       ) {
 
