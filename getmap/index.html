@@ -20,7 +20,10 @@
       width: 20%;
     }
 	#bottomPane {
-      height: 10%;
+      height: 8%;
+    }
+	#topPane {
+      height: 2%;
     }
 
     #legendPane {
@@ -389,7 +392,13 @@
 	   <button id="progButtonNode2" type="button"></button>
 			
 	   
-  </div>	   
+  </div>
+  <div id="topPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'top'">
+	   Created by Tim Witt, visit my <a target="_blank" href="http://timw1984.github.io">website</a></div>
+	   
+  	  
   <div id="map"
        data-dojo-type="dijit/layout/ContentPane"
        data-dojo-props="region:'center'"
