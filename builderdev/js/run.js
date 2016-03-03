@@ -96,18 +96,18 @@ require([
 		updated = string.substitute(content, [mids, aliases]);
 		var mapr = '"esri/map"';
 		var mapf = "Map";
-		updated.replace("mapreq", mapr);
-		updated.replace("mapfun", mapf);
+		updated.replace("mapreq", mapr).replace(("mapfun", mapf).replace("themappart", thisitem);
+		//updated.replace("mapfun", mapf);
 	} else {
 		updated = string.substitute(content, [mids, aliases]);
 		var mapr = '"esri/map,"';
 		var mapf = "Map,";
-		updated.replace("mapreq", mapr);
-		updated.replace("mapfun", mapf);
+		updated.replace("mapreq", mapr).replace(("mapfun", mapf).replace("themappart", thisitem);
+		//updated.replace("mapfun", mapf);
 	}
 
 	//var finalupdate = updated.replace("themappart", thisitem);
-    dom.byId("output").innerHTML = finalupdate;
+    dom.byId("output").innerHTML = updated;
   }
 
   function updateTemplate(property, oldVal, newVal) {
