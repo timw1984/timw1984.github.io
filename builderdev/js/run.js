@@ -97,16 +97,13 @@ require([
 		var mapr = '"esri/map"';
 		var mapf = "Map";
 		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
-		//updated.replace("mapfun", mapf);
 	} else {
 		updated = string.substitute(content, [mids, aliases]);
-		var mapr = '"esri/map,"';
+		var mapr = '"esri/map",';
 		var mapf = "Map,";
 		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
-		//updated.replace("mapfun", mapf);
 	}
 
-	//var finalupdate = updated.replace("themappart", thisitem);
     dom.byId("output").innerHTML = finalupdate;
   }
 
