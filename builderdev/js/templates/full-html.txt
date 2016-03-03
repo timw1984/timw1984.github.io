@@ -15,9 +15,9 @@
     &lt;script&gt;
       var map;
     
-      require([
+      require([ mapreq
 ${0}
-      ], function(
+      ], function( mapfun
 ${1}
       ) {
 

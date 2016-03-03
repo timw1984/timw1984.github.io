@@ -90,7 +90,14 @@ require([
     var content = template.content;
     var pad = template.pad;
     var mids = formatters.mids(gm.esriSelection, gm.dojoSelection, pad); 
-    var aliases = formatters.aliases(gm.esriSelection, gm.dojoSelection, pad); 
+    var aliases = formatters.aliases(gm.esriSelection, gm.dojoSelection, pad);
+	if (mids == ""){
+		updated.replace("mapreq", '"esri/map"');
+		updated.replace("mapfun", 'Map');
+	} else {
+		updated.replace("mapreq", '"esri/map",');
+		updated.replace("mapfun", 'Map,');
+	}
 
     var updated = string.substitute(content, [mids, aliases]);
 	var finalupdate = updated.replace("themappart", thisitem);

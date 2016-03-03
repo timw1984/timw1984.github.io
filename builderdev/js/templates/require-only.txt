@@ -1,6 +1,6 @@
-require([
+require([ mapreq
 ${0}
-], function(
+], function( mapfun
 ${1}
 ) {
 
