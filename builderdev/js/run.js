@@ -26,6 +26,7 @@ require([
   GridManager, TextSelector, formatters,
   requireOnly, fullHtml
 ) {
+	var updated; 
   // creates two dgrids:  one for esri, one for dojo
   // pass IDs of dom elements where grids will be created
   var gm = new GridManager({
@@ -92,14 +93,15 @@ require([
     var mids = formatters.mids(gm.esriSelection, gm.dojoSelection, pad); 
     var aliases = formatters.aliases(gm.esriSelection, gm.dojoSelection, pad);
 	if (mids == ""){
+		updated = string.substitute(content, [mids, aliases]);
 		updated.replace("mapreq", '"esri/map"');
 		updated.replace("mapfun", 'Map');
 	} else {
+		updated = string.substitute(content, [mids, aliases]);
 		updated.replace("mapreq", '"esri/map",');
 		updated.replace("mapfun", 'Map,');
 	}
 
-    var updated = string.substitute(content, [mids, aliases]);
 	var finalupdate = updated.replace("themappart", thisitem);
     dom.byId("output").innerHTML = finalupdate;
   }
