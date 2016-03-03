@@ -106,7 +106,7 @@ require([
 		updated.replace("mapfun", mapf);
 	}
 
-	var finalupdate = updated.replace("themappart", thisitem);
+	//var finalupdate = updated.replace("themappart", thisitem);
     dom.byId("output").innerHTML = finalupdate;
   }
 
