@@ -41,10 +41,6 @@ return [
     "id": "esri/kernel"
   }, 
   {
-    "alias": "Map", 
-    "id": "esri/map"
-  }, 
-  {
     "alias": "OperationBase", 
     "id": "esri/OperationBase"
   }, 
