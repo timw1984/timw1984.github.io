@@ -94,12 +94,16 @@ require([
     var aliases = formatters.aliases(gm.esriSelection, gm.dojoSelection, pad);
 	if (mids == ""){
 		updated = string.substitute(content, [mids, aliases]);
-		updated.replace("mapreq", '"esri/map"');
-		updated.replace("mapfun", 'Map');
+		var mapr = '"esri/map"';
+		var mapf = "Map";
+		updated.replace("mapreq", mapr);
+		updated.replace("mapfun", mapf);
 	} else {
 		updated = string.substitute(content, [mids, aliases]);
-		updated.replace("mapreq", '"esri/map",');
-		updated.replace("mapfun", 'Map,');
+		var mapr = '"esri/map,"';
+		var mapf = "Map,";
+		updated.replace("mapreq", mapr);
+		updated.replace("mapfun", mapf);
 	}
 
 	var finalupdate = updated.replace("themappart", thisitem);
