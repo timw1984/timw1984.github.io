@@ -96,13 +96,13 @@ require([
 		updated = string.substitute(content, [mids, aliases]);
 		var mapr = '"esri/map"';
 		var mapf = "Map";
-		updated.replace("mapreq", mapr).replace(("mapfun", mapf).replace("themappart", thisitem);
+		updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
 		//updated.replace("mapfun", mapf);
 	} else {
 		updated = string.substitute(content, [mids, aliases]);
 		var mapr = '"esri/map,"';
 		var mapf = "Map,";
-		updated.replace("mapreq", mapr).replace(("mapfun", mapf).replace("themappart", thisitem);
+		updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
 		//updated.replace("mapfun", mapf);
 	}
 
