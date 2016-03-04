@@ -201,6 +201,10 @@ return [
     "id": "esri/dijit/analysis/AnalysisBase"
   },
   {
+    "alias": "ConnectOriginsToDestinations", 
+    "id": "esri/dijit/analysis/ConnectOriginsToDestinations"
+  },
+  {
     "alias": "CalculateDensity", 
     "id": "esri/dijit/analysis/CalculateDensity"
   },   
@@ -211,7 +215,19 @@ return [
   {
     "alias": "CreateDriveTimeAreas", 
     "id": "esri/dijit/analysis/CreateDriveTimeAreas"
-  }, 
+  },
+  {
+    "alias": "CreateViewshed", 
+    "id": "esri/dijit/analysis/CreateViewshed"
+  },
+  {
+    "alias": "CreateWatersheds", 
+    "id": "esri/dijit/analysis/CreateWatersheds"
+  },   
+  {
+    "alias": "DeriveNewLocations", 
+    "id": "esri/dijit/analysis/DeriveNewLocations"
+  },     
   {
     "alias": "DissolveBoundaries", 
     "id": "esri/dijit/analysis/DissolveBoundaries"
@@ -233,13 +249,25 @@ return [
     "id": "esri/dijit/analysis/FindNearest"
   }, 
   {
+    "alias": "FindSimilarLocations", 
+    "id": "esri/dijit/analysis/FindSimilarLocations"
+  },
+  {
+    "alias": "InterpolatePoints", 
+    "id": "esri/dijit/analysis/InterpolatePoints"
+  },   
+  {
     "alias": "MergeLayers", 
     "id": "esri/dijit/analysis/MergeLayers"
   }, 
   {
     "alias": "OverlayLayers", 
     "id": "esri/dijit/analysis/OverlayLayers"
-  }, 
+  },
+  {
+    "alias": "PlanRoutes", 
+    "id": "esri/dijit/analysis/PlanRoutes"
+  },   
   {
     "alias": "SummarizeNearby", 
     "id": "esri/dijit/analysisSummarizeNearby"
@@ -247,7 +275,11 @@ return [
   {
     "alias": "SummarizeWithin", 
     "id": "esri/dijit/analysis/SummarizeWithin"
-  }, 
+  },
+  {
+    "alias": "TraceDownstream", 
+    "id": "esri/dijit/analysis/TraceDownstream"
+  },  
   {
     "alias": "AttachmentEditor", 
     "id": "esri/dijit/editing/AttachmentEditor"
@@ -347,7 +379,11 @@ return [
   {
     "alias": "CSVLayer", 
     "id": "esri//layers/CSVLayer"
-  },   
+  },
+  {
+    "alias": "DataAdapterFeatureLayer", 
+    "id": "esri//layers/DataAdapterFeatureLayer"
+  },  
   {
     "alias": "DataSource", 
     "id": "esri/layers/DataSource"
