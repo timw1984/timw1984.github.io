@@ -193,24 +193,28 @@ return [
     "id": "esri/dijit/TimeSlider"
   }, 
   {
-    "alias": "AggregateTool", 
-    "id": "esri/dijit/analysisAggregateTool"
+    "alias": "AggregatePoints", 
+    "id": "esri/dijit/analysis/AggregatePoints"
   }, 
   {
     "alias": "AnalysisBase", 
-    "id": "esri/dijit/analysisAnalysisBase"
-  }, 
+    "id": "esri/dijit/analysis/AnalysisBase"
+  },
   {
-    "alias": "BufferTool", 
-    "id": "esri/dijit/analysisBufferTool"
+    "alias": "CalculateDensity", 
+    "id": "esri/dijit/analysis/CalculateDensity"
+  },   
+  {
+    "alias": "CreateBuffers", 
+    "id": "esri/dijit/analysis/CreateBuffers"
   }, 
   {
     "alias": "CreateDriveTimeAreas", 
-    "id": "esri/dijit/analysisCreateDriveTimeAreas"
+    "id": "esri/dijit/analysis/CreateDriveTimeAreas"
   }, 
   {
     "alias": "DissolveBoundaries", 
-    "id": "esri/dijit/analysisDissolveBoundaries"
+    "id": "esri/dijit/analysis/DissolveBoundaries"
   }, 
   {
     "alias": "EnrichLayer", 
@@ -218,23 +222,23 @@ return [
   }, 
   {
     "alias": "ExtractData", 
-    "id": "esri/dijit/analysisExtractData"
+    "id": "esri/dijit/analysis/ExtractData"
   }, 
   {
     "alias": "FindHotSpots", 
-    "id": "esri/dijit/analysisFindHotSpots"
+    "id": "esri/dijit/analysis/FindHotSpots"
   }, 
   {
     "alias": "FindNearest", 
-    "id": "esri/dijit/analysisFindNearest"
+    "id": "esri/dijit/analysis/FindNearest"
   }, 
   {
     "alias": "MergeLayers", 
-    "id": "esri/dijit/analysisMergeLayers"
+    "id": "esri/dijit/analysis/MergeLayers"
   }, 
   {
     "alias": "OverlayLayers", 
-    "id": "esri/dijit/analysisOverlayLayers"
+    "id": "esri/dijit/analysis/OverlayLayers"
   }, 
   {
     "alias": "SummarizeNearby", 
@@ -242,7 +246,7 @@ return [
   }, 
   {
     "alias": "SummarizeWithin", 
-    "id": "esri/dijit/analysisSummarizeWithin"
+    "id": "esri/dijit/analysis/SummarizeWithin"
   }, 
   {
     "alias": "AttachmentEditor", 
