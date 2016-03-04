@@ -115,7 +115,23 @@ return [
   {
     "alias": "BookmarkItem", 
     "id": "esri/dijit/BookmarkItem"
-  }, 
+  },
+  {
+    "alias": "ClassedColorSlider", 
+    "id": "esri/dijit/ClassedColorSlider"
+  },
+  {
+    "alias": "ClassedSizeSlider", 
+    "id": "esri/dijit/ClassedSizeSlider"
+  },
+  {
+    "alias": "ColorInfoSlider", 
+    "id": "esri/dijit/ColorInfoSlider"
+  },
+  {
+    "alias": "ColorPicker", 
+    "id": "esri/dijit/ColorPicker"
+  },    
   {
     "alias": "Directions", 
     "id": "esri/dijit/Directions"
@@ -135,11 +151,23 @@ return [
   {
     "alias": "Geocoder", 
     "id": "esri/dijit/Geocoder"
-  }, 
+  },
+  {
+    "alias": "HeatmapSlider", 
+    "id": "esri/dijit/HeatmapSlider"
+  },   
   {
     "alias": "HistogramTimeSlider", 
     "id": "esri/dijit/HistogramTimeSlider"
-  }, 
+  },
+  {
+    "alias": "HomeButton", 
+    "id": "esri/dijit/HomeButton"
+  },
+  {
+    "alias": "HorizontalSlider", 
+    "id": "esri/dijit/HorizontalSlider"
+  },  
   {
     "alias": "InfoView", 
     "id": "esri/dijit/InfoView"
@@ -299,7 +327,11 @@ return [
   {
     "alias": "TemplatePicker", 
     "id": "esri/dijit/editing/TemplatePicker"
-  }, 
+  },
+  {
+    "alias": "busyIndicator", 
+    "id": "esri/dijit/util/busyIndicator"
+  },  
   {
     "alias": "Circle", 
     "id": "esri/geometry/Circle"
@@ -375,7 +407,11 @@ return [
   {
     "alias": "ArcGISImageServiceLayer", 
     "id": "esri/layers/ArcGISImageServiceLayer"
-  }, 
+  },
+  {
+    "alias": "ArcGISImageServiceVectorLayer", 
+    "id": "esri/layers/ArcGISImageServiceVectorLayer"
+  },   
   {
     "alias": "ArcGISTiledMapServiceLayer", 
     "id": "esri/layers/ArcGISTiledMapServiceLayer"
@@ -515,7 +551,11 @@ return [
   {
     "alias": "OpenStreetMapLayer", 
     "id": "esri/layers/OpenStreetMapLayer"
-  }, 
+  },
+  {
+    "alias": "PixelBlock", 
+    "id": "esri/layers/PixelBlock"
+  },   
   {
     "alias": "QueryDataSource", 
     "id": "esri/layers/QueryDataSource"
@@ -531,7 +571,11 @@ return [
   {
     "alias": "RasterFunction", 
     "id": "esri/layers/RasterFunction"
-  }, 
+  },
+  {
+    "alias": "RasterLayer", 
+    "id": "esri/layers/RasterLayer"
+  },   
   {
     "alias": "StreamLayer", 
     "id": "esri/layers/StreamLayer"
@@ -575,31 +619,51 @@ return [
   {
     "alias": "WMTSLayerInfo", 
     "id": "esri/layers/WMTSLayerInfo"
-  }, 
+  },
+  {
+    "alias": "FeatureLayerStatistics", 
+    "id": "esri/plugins/FeatureLayerStatistics"
+  },  
   {
     "alias": "ClassBreaksRenderer", 
     "id": "esri/renderers/ClassBreaksRenderer"
   },
   {
+    "alias": "DotDensityRenderer", 
+    "id": "esri/renderers/DotDensityRenderer"
+  },   
+  {
     "alias": "HeatmapRenderer", 
     "id": "esri/renderers/HeatmapRenderer"
-  },  
+  },
   {
-    "alias": "rendererJsonUtils", 
+    "alias": "BlendRenderer", 
+    "id": "esri/renderers/BlendRenderer"
+  },
+  {
+    "alias": "jsonUtils", 
     "id": "esri/renderers/jsonUtils"
-  }, 
+  },   
   {
     "alias": "Renderer", 
     "id": "esri/renderers/Renderer"
-  }, 
+  },
+  {
+    "alias": "ScaleDependentRenderer", 
+    "id": "esri/renderers/ScaleDependentRenderer"
+  },   
   {
     "alias": "SimpleRenderer", 
     "id": "esri/renderers/SimpleRenderer"
   }, 
   {
+    "alias": "smartMapping", 
+    "id": "esri/renderers/smartMapping"
+  },
+  {
     "alias": "SymbolAger", 
     "id": "esri/renderers/SymbolAger"
-  }, 
+  },  
   {
     "alias": "TemporalRenderer", 
     "id": "esri/renderers/TemporalRenderer"
@@ -615,7 +679,11 @@ return [
   {
     "alias": "UniqueValueRenderer", 
     "id": "esri/renderers/UniqueValueRenderer"
-  }, 
+  },
+  {
+    "alias": "VectorFieldRenderer", 
+    "id": "esri/renderers/VectorFieldRenderer"
+  },  
   {
     "alias": "CartographicLineSymbol", 
     "id": "esri/symbols/CartographicLineSymbol"
