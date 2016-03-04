@@ -187,7 +187,11 @@ return [
   {
     "alias": "Scalebar", 
     "id": "esri/dijit/Scalebar"
-  }, 
+  },
+  {
+    "alias": "Search", 
+    "id": "esri/dijit/Search"
+  },   
   {
     "alias": "TimeSlider", 
     "id": "esri/dijit/TimeSlider"
