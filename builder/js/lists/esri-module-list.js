@@ -121,6 +121,10 @@ return [
     "id": "esri/dijit/Directions"
   }, 
   {
+    "alias": "FeatureTable", 
+    "id": "esri/dijit/FeatureTable"
+  }, 
+  {
     "alias": "Gallery", 
     "id": "esri/dijit/Gallery"
   }, 
@@ -903,7 +907,39 @@ return [
   {
     "alias": "UniqueValueDefinition", 
     "id": "esri/tasks/UniqueValueDefinition"
-  }, 
+  },
+  {
+    "alias": "CoordinatesLocationProvider", 
+    "id": "esri/tasks/locationproviders/CoordinatesLocationProvider"
+  },
+  {
+    "alias": "GeometryLocationProvider", 
+    "id": "esri/tasks/locationproviders/GeometryLocationProvider"
+  },   
+  {
+    "alias": "LocationProviderBase", 
+    "id": "esri/tasks/locationproviders/LocationProviderBase"
+  },   
+  {
+    "alias": "LocationProviderClientBase", 
+    "id": "esri/tasks/locationproviders/LocationProviderClientBase"
+  },   
+  {
+    "alias": "LocationProviderRemoteBase", 
+    "id": "esri/tasks/locationproviders/LocationProviderRemoteBase"
+  },   
+  {
+    "alias": "LocatorLocationProvider", 
+    "id": "esri/tasks/locationproviders/LocatorLocationProvider"
+  },   
+  {
+    "alias": "QueryTaskLocationProvider", 
+    "id": "esri/tasks/locationproviders/QueryTaskLocationProvider"
+  },   
+  {
+    "alias": "StandardGeographyQueryLocationProvider", 
+    "id": "esri/tasks/locationproviders/StandardGeographyQueryLocationProvider"
+  },     
   {
     "alias": "Draw", 
     "id": "esri/toolbars/draw"
@@ -911,7 +947,11 @@ return [
   {
     "alias": "Edit", 
     "id": "esri/toolbars/edit"
-  }, 
+  },
+  {
+    "alias": "ImageServiceMeasureTool", 
+    "id": "esri/toolbars/ImageServiceMeasureTool"
+  },   
   {
     "alias": "Navigation", 
     "id": "esri/toolbars/navigation"
@@ -931,6 +971,10 @@ return [
   {
     "alias": "VETiledLayer", 
     "id": "esri/virtualearth/VETiledLayer"
+  },
+  {
+    "alias": "WorkerClient", 
+    "id": "esri/workers/WorkerClient"
   }
 ];
 });
