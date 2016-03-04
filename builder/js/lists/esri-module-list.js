@@ -339,7 +339,11 @@ return [
   {
     "alias": "CodedValueDomain", 
     "id": "esri/layers/CodedValueDomain"
-  }, 
+  },
+  {
+    "alias": "CSVLayer", 
+    "id": "esri//layers/CSVLayer"
+  },   
   {
     "alias": "DataSource", 
     "id": "esri/layers/DataSource"
@@ -411,7 +415,11 @@ return [
   {
     "alias": "KMLLayer", 
     "id": "esri/layers/KMLLayer"
-  }, 
+  },
+  {
+    "alias": "LabelLayer", 
+    "id": "esri/layers/LabelLayer"
+  },   
   {
     "alias": "Layer", 
     "id": "esri/layers/layer"
@@ -523,7 +531,11 @@ return [
   {
     "alias": "ClassBreaksRenderer", 
     "id": "esri/renderers/ClassBreaksRenderer"
-  }, 
+  },
+  {
+    "alias": "HeatmapRenderer", 
+    "id": "esri/renderers/HeatmapRenderer"
+  },  
   {
     "alias": "rendererJsonUtils", 
     "id": "esri/renderers/jsonUtils"
