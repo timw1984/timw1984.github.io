@@ -15,7 +15,13 @@
       width: 98%;
       margin: 1%;
     }
-
+#search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 28px;
+         left: 74px;
+      }
     #rightPane {
       width: 20%;
     }
@@ -37,14 +43,14 @@
     require([
       "esri/map", "esri/layers/FeatureLayer", "esri/SpatialReference", "esri/geometry/Extent",
       "dojo/_base/array", "dojo/parser","esri/dijit/BasemapGallery", "dijit/form/CheckBox", "esri/domUtils",  "esri/layers/ArcGISDynamicMapServiceLayer",
-  "esri/layers/ArcGISImageServiceLayer",
+  "esri/layers/ArcGISImageServiceLayer", "esri/dijit/Search",
   "esri/layers/FeatureLayer","dojo/_base/array","dojo/on","dojo/dom", "dijit/form/Button",
       "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
       "dijit/layout/AccordionContainer", "dojo/domReady!"
     ], function(
       Map, FeatureLayer, SpatialReference, Extent,
       arrayUtils, parser, BasemapGallery, CheckBox,domUtils,ArcGISDynamicMapServiceLayer,
-    ArcGISImageServiceLayer, FeatureLayer,arrayUtils, on,dom,Button
+    ArcGISImageServiceLayer,Search, FeatureLayer,arrayUtils, on,dom,Button
     ) {
       parser.parse();
 	  
@@ -58,6 +64,11 @@
         center: [-96.53, 38.374],
         zoom: 5
       });
+	  
+	   var search = new Search({
+            map: map
+         }, "search");
+         search.startup();
 	  ///////////////////////////////////////////////////////////////////////////////////////////
 	  
 	function setupDropZone () {
@@ -359,6 +370,7 @@
   }
 </style>
 <![endif]-->
+
 <div id="content"
      data-dojo-type="dijit/layout/BorderContainer"
      data-dojo-props="design:'headline', gutters:true"
@@ -403,6 +415,7 @@
        data-dojo-type="dijit/layout/ContentPane"
        data-dojo-props="region:'center'"
        style="overflow:hidden;">
+	   <div id="search"></div>
   </div>
 </div>
 </body>
