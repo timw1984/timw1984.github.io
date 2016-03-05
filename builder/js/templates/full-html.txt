@@ -4,14 +4,14 @@
     &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
     &lt;meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"&gt;
     &lt;title&gt;&lt;/title&gt;
-    &lt;link rel="stylesheet" href="//js.arcgis.com/3.15/esri/css/esri.css"&gt;
+    &lt;link rel="stylesheet" href="http://js.arcgis.com/3.15/esri/css/esri.css"&gt;
     &lt;style&gt;
       html, body, #map {
         height: 100%; width: 100%; margin: 0; padding: 0; 
       }
     &lt;/style&gt;
 
-    &lt;script src="//js.arcgis.com/3.15/"&gt;&lt;/script&gt;
+    &lt;script src="http://js.arcgis.com/3.15/"&gt;&lt;/script&gt;
     &lt;script&gt;
       var map;
     
