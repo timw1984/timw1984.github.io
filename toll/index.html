@@ -11,19 +11,38 @@
       }
     </style>
 
-    <script src="http://js.arcgis.com/3.15/init.js"></script>
+    <script src="http://js.arcgis.com/3.15/"></script>
     <script>
       var map;
     
       require([ 
-	  "esri/map"
-
+	  "esri/map",
+        "esri/layers/FeatureLayer",
+        "esri/dijit/HomeButton",
+        "esri/dijit/Search",
+        "dojo/parser",
+        "dojo/domReady!"
       ], function( 
-	  Map
-
+	  Map,
+        FeatureLayer,
+        HomeButton,
+        Search,
+        parser
       ) {
+		
+		map = new Map("map", {basemap:"topo", center:[-81.1215, 28.4626], zoom:11});
+		
+		var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
+			mode: FeatureLayer.MODE_ONDEMAND,
+			tileWidth: 200,
+			tileHeight: 200
+		});
+		
+		map.addLayer(tollLayer);
 
-		map = new Map("map", {basemap:"topo", center:[-81.2190, 28.3303], zoom:10});
+			
+		
+
      
       });
     </script>
