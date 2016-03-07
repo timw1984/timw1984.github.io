@@ -29,7 +29,19 @@
 </script>
 
 <!-- Place this tag where you want both of the search box and the search results to render -->
-<gcse:search></gcse:search>
+<script>
+  (function() {
+    var cx = 'partner-pub-6305302550519235:3967472706';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:searchbox-only></gcse:searchbox-only>
 
 <!-- SEARCH RESULT -->
 
