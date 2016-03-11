@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <style>
+     html, body, #map {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+  }
+    #legendWrapper {
+      position: absolute;
+      font-family: arial;
+     display: none;
+      margin: 5px;
+      padding: 10px;
+      z-index: 40;
+      background: #fff;
+      color: #444;
+      right: 30px;
+      top: 30px;
+      box-shadow: 0 0 5px #888;
+	  overflow: hidden;
+    }
+
+  
+
+  
+    </style>
+
+    <script src="http://js.arcgis.com/3.15/"></script>
+    <script>
+      var map, formerRenderer528;
+    
+      require([ 
+	  "esri/map",
+        "esri/renderers/Renderer",
+        "esri/renderers/SimpleRenderer",
+        "esri/dijit/Search",
+        "esri/layers/FeatureLayer",
+		"esri/dijit/Legend",
+        "esri/symbols/PictureMarkerSymbol",
+        "esri/InfoTemplate",
+        "dojo/parser",
+        "dojo/colors",
+		"esri/domUtils",
+        "dojo/_base/array",		
+		"dojo/dom",
+		 "dojo/on",
+		 "dojo/mouse",
+		 "esri/Color",		 
+		 "esri/symbols/SimpleLineSymbol",
+		 "dijit/form/ToggleButton",
+		"dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
+      "dijit/layout/AccordionContainer",
+        "dojo/domReady!"
+      ], function( 
+	  Map,
+        Renderer,
+        SimpleRenderer,
+        Search,
+        FeatureLayer,
+		Legend,
+        PictureMarkerSymbol,
+        InfoTemplate,
+        parser,
+        colors,
+		domUtils,
+        arrayUtils,
+		dom,
+		on,
+		mouse,
+		Color,
+		SimpleLineSymbol
+      ) {
+
+	parser.parse();
+	map = new Map("map", {basemap:"topo", center:[-81.2279, 28.4221], zoom:12});
+     var layer2 = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Highway_528/FeatureServer/0", {
+          mode: FeatureLayer.MODE_SNAPSHOT
+          
+        });
+		
+	  map.on("layers-add-result", function (evt) {
+			domUtils.show(dom.byId('legendWrapper'));
+        var layerInfo = arrayUtils.map(evt.layers, function (layer, index) {
+          return {layer:layer.layer, title:layer.layer.name};
+        });
+        if (layerInfo.length > 0) {
+			console.log(layerInfo);
+          var legendDijit = new Legend({
+            map: map,
+            layerInfos: layerInfo
+          }, "legenddiv");
+          legendDijit.startup();
+        }
+      });
+
+     // map.addLayers([waterbodies, rivers]);
+		
+     map.addLayers([layer2]);
+	 
+
+	
+      });
+    </script>
+  </head>
+  <body>
+   
+
+  <div id="map">
+   <div id ="legendWrapper"><div id="legenddiv"></div></div>
+  </div>
+
+  </body>
+</html>

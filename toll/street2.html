@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+     <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <style>
+      html, body {
+      height: 97%;
+      width: 98%;
+      margin: 1%;
+    }
+
+    #rightPane {
+      width: 20%;
+    }
+	#radio1{
+		color: red;
+	}
+
+    </style>
+
+    <script src="http://js.arcgis.com/3.15/"></script>
+    <script>
+      var map, formerRenderer528;
+    
+      require([ 
+	  "esri/map",
+        "esri/renderers/Renderer",
+        "esri/renderers/SimpleRenderer",
+        "esri/dijit/Search",
+        "esri/layers/FeatureLayer",
+        "esri/symbols/PictureMarkerSymbol",
+        "esri/InfoTemplate",
+        "dojo/parser",
+        "dojo/colors",
+        "dojo/_base/array",
+		"dojo/dom",
+		 "dojo/on",
+		 "dojo/mouse",
+		 "esri/Color",
+		 "esri/symbols/SimpleLineSymbol",
+		 "dijit/form/ToggleButton",
+		"dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
+      "dijit/layout/AccordionContainer",
+        "dojo/domReady!"
+      ], function( 
+	  Map,
+        Renderer,
+        SimpleRenderer,
+        Search,
+        FeatureLayer,
+        PictureMarkerSymbol,
+        InfoTemplate,
+        parser,
+        colors,
+        arrayUtil,
+		dom,
+		on,
+		mouse,
+		Color,
+		SimpleLineSymbol
+      ) {
+	parser.parse();
+	
+	$(function() {
+    $( "#radio" ).buttonset();
+	});
+	
+	 $( "button" )
+      .button()
+      .click(function( event ) {
+        //event.preventDefault();
+      });
+	
+	map = new Map("map", {basemap:"topo", center:[-81.2279, 28.4221], zoom:12});
+     var layer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Highway_528/FeatureServer/0", {
+          mode: FeatureLayer.MODE_SNAPSHOT
+          
+        });
+     map.addLayers([layer]);
+	 
+	layer.on("load", function(evt){
+		formerRenderer528 = evt.layer.renderer;	
+	 });
+	var symbol = new SimpleLineSymbol(
+		SimpleLineSymbol.STYLE_DASH,
+		new Color([255,0,0]),
+    3
+	);
+	 
+	 on(dom.byId("radio1"), "click", function(){
+		var renderer = new SimpleRenderer(symbol);
+		//formerRenderer528 = layer.renderer;
+		layer.setRenderer(renderer);
+		layer.redraw();
+		myExtent = layer.graphics[0].geometry.getExtent();
+		map.setExtent(myExtent);
+	});
+		 on(dom.byId("radio2"), "click", function(){
+
+		layer.setRenderer(formerRenderer528);
+		layer.redraw();
+	});
+	var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
+			mode: FeatureLayer.MODE_ONDEMAND,
+			tileWidth: 200,
+			tileHeight: 200
+		});
+		
+		map.addLayer(tollLayer);
+	
+	on(dom.byId("528"), mouse.leave, function(evt){
+    //layer.setRenderer(formerRenderer);
+		//layer.redraw()
+  });
+	
+      });
+    </script>
+  </head>
+  <body>
+    <body class="claro">
+<!--[if IE 7]>
+<style>
+  html, body {
+    margin: 0;
+  }
+</style>
+<![endif]-->
+<div id="content"
+     data-dojo-type="dijit/layout/BorderContainer"
+     data-dojo-props="design:'headline', gutters:true"
+     style="width: 100%; height: 100%; margin: 0;">
+
+  <div id="rightPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'right'">
+
+    <div data-dojo-type="dijit/layout/AccordionContainer">
+      <div data-dojo-type="dijit/layout/ContentPane" id="legendPane"
+           data-dojo-props="title:'Legend', selected:true">
+		  <button id="528">Highway 528</button>
+		  <button id="417">Highway 417</button>
+		  <div data-dojo-type="dijit/form/ToggleButton" id="bold"> Highway 520</div>
+      </div>
+      <div data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="title:'Pane 2'">
+        <form>
+  <div id="radio">
+    <input type="radio" id="radio1" name="radio"><label for="radio1">Highway 528</label>
+	<br></br>
+    <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">Highway 417</label>
+	<br></br>
+    <input type="radio" id="radio3" name="radio"><label for="radio3">Highway 520</label>
+  </div>
+</form>
+      </div>
+    </div>
+  </div>
+  <div id="map"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'center'"
+       style="overflow:hidden;">
+  </div>
+</div>
+  </body>
+</html>
