@@ -172,12 +172,17 @@ svg[Attributes Style] {
 		  outFields:["*"]
         }); 
 		
+		var opw = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Osceola_Parkway/FeatureServer/0", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+		  outFields:["*"]
+        }); 
 		
 		var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
 			mode: FeatureLayer.MODE_ONDEMAND,
 			outFields:["*"],
 			infoTemplate :infoTemplate
 		});
+		
 		 
   
   
@@ -201,7 +206,7 @@ svg[Attributes Style] {
 		
       });
 	  
-	map.addLayers([turn,cfxprop,cfx,tollLayer]);
+	map.addLayers([turn,cfxprop,cfx,opw,tollLayer]);
 	
       });
     </script>
