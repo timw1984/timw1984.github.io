@@ -191,7 +191,7 @@ svg[Attributes Style] {
         var layerInfo = arrayUtils.map(evt.layers, function (layer, index) {
 		 var layername = layer.layer.name;
 		 var layerfinal = layername.replace(/_/g, ' ');
-          return {layer:layer.layer, title:layerfinal};
+          return {layer:layer.layer, title:layerfinal, legend:layerfinal};
         });
         if (layerInfo.length > 0) {
           var legendDijit = new Legend({
@@ -221,7 +221,9 @@ svg[Attributes Style] {
 
 
    <div id ="legendWrapper"><div id="legenddiv"></div></div>
-   <img id src="cfx.png" alt="Mountain View" style="width:100px;height:100px; bottom:20px; left:20px; z-index:10; position: absolute;">
+   <a href="https://www.cfxway.com/" target="_blank">
+   <img id src="cfx.png" alt="toll" style="width:100px;height:100px; bottom:20px; left:20px; z-index:10; position: absolute;">
+   </a>
   </div>
 
   </body>
