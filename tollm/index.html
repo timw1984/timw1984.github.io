@@ -34,14 +34,14 @@
     "dojo/dom",
     "dijit/registry",
 	"esri/dijit/LocateButton",
-
+	"esri/layers/FeatureLayer",
     "dojo/on",
     "dojox/mobile/ToolBarButton",
     "dojox/mobile/View",
     "dojox/mobile/ContentPane"
   ],
 
-    function (Map, mobile, parser, has, dTheme, dom, registry,LocateButton, on) {
+    function (Map, mobile, parser, has, dTheme, dom, registry,LocateButton,FeatureLayer, on) {
       parser.parse();
       mobile.hideAddressBar();
 
@@ -57,9 +57,20 @@
       geoLocate.startup();
 
       map.on("load", mapLoadHandler);
-
+	var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
+			mode: FeatureLayer.MODE_ONDEMAND,
+			outFields:["*"]
+			//infoTemplate :infoTemplate
+		});
+		map.addLayers([tollLayer]);
       var resizeEvt = (window.onorientationchange !== undefined && !has('android')) ? "orientationchange" : "resize";
       on(window, resizeEvt, resizeMap);
+	  
+	  tollLayer.on("click", function (evt){
+		//alert("daaaa");
+		dom.byId("inform").innerHTML = "You will have to pay" + evt.graphic.attributes.Moto2Ax;
+	  
+	  });
 
       function mapLoadHandler(evt) {
         resizeMap();
@@ -119,7 +130,7 @@
   <div id="aboutView" data-dojo-type="dojox.mobile.View">
     <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Map', moveTo:'mapView'">About</h1>
 
-    <p style="padding: 5px;">This area can contain additional information about your application.</p>
+    <p style="padding: 5px;" id= "inform" >This area can contain additional information about your application.</p>
 
   </div>
 </body>
