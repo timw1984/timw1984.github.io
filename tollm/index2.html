@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,29 +36,20 @@
     "dijit/registry",
 	"esri/dijit/LocateButton",
 	"esri/layers/FeatureLayer",
-	"dojo/dom-construct",
     "dojo/on",
-	"esri/InfoTemplate",
-
-	"esri/dijit/PopupMobile",
     "dojox/mobile/ToolBarButton",
     "dojox/mobile/View",
     "dojox/mobile/ContentPane"
   ],
 
-    function (Map, mobile, parser, has, dTheme, dom, registry,LocateButton,FeatureLayer,domConstruct, on,InfoTemplate,PopupMobile) {
+    function (Map, mobile, parser, has, dTheme, dom, registry,LocateButton,FeatureLayer, on) {
       parser.parse();
       mobile.hideAddressBar();
-
-	  
-		var popup = new PopupMobile(null, domConstruct.create("div"));
-		//popup.setTitle("nfgngn");
 
       var map = new esri.Map("map", {
         basemap: "topo",
         center:[-81.3391, 28.4679],
         zoom: 10,
-		infoWindow:popup,
         slider: false
       });
 	   geoLocate = new LocateButton({
@@ -66,17 +58,10 @@
       geoLocate.startup();
 
       map.on("load", mapLoadHandler);
-	  
-	 // popup.setTitle("Toll Plaza");
-	 var featureLayerInfoTemplate = new InfoTemplate();
-	featureLayerInfoTemplate.setTitle("${NAME}");
-
-
 	var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
 			mode: FeatureLayer.MODE_ONDEMAND,
-			outFields:["*"],
-			infoTemplate:featureLayerInfoTemplate
-			
+			outFields:["*"]
+			infoTemplate :infoTemplate
 		});
 		map.addLayers([tollLayer]);
       var resizeEvt = (window.onorientationchange !== undefined && !has('android')) ? "orientationchange" : "resize";
