@@ -24,7 +24,7 @@
   }
 </style>
 
-<script src="//js.arcgis.com/3.16compact/"></script>
+<script src="https://js.arcgis.com/3.16compact/"></script>
 <script>
   require([
     "esri/Color",
@@ -33,6 +33,9 @@
     "esri/graphic",
     "esri/layers/FeatureLayer",
     "esri/map",
+	"esri/dijit/PopupMobile",
+	"esri/InfoTemplate",
+	"dojo/dom-construct",
     "esri/renderers/SimpleRenderer",
     "esri/renderers/TemporalRenderer",
     "esri/renderers/TimeClassBreaksAger",
@@ -40,7 +43,7 @@
     "esri/symbols/SimpleMarkerSymbol",
     "esri/TimeExtent",
     "dojo/domReady!"
-  ], function (Color, Point, webMercatorUtils, Graphic, FeatureLayer, Map, SimpleRenderer, TemporalRenderer,
+  ], function (Color, Point, webMercatorUtils, Graphic, FeatureLayer, Map,PopupMobile,InfoTemplate, domConstruct,SimpleRenderer, TemporalRenderer,
     TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent){
 
     var map, featureLayer;
@@ -52,11 +55,22 @@
     window.addEventListener(orientationEvent, function (){
       orientationChanged();
     }, false);
-
+   var popup = new PopupMobile(null, domConstruct.create("div"));
     map = new Map("map", {
-      basemap: "streets"
+      basemap: "streets",
+	  infoWindow:popup
     });
     map.on("load", mapLoadedHandler);
+	
+	 var featureLayerInfoTemplate = new InfoTemplate();
+	featureLayerInfoTemplate.setTitle("${NAME}");
+	
+	var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
+			mode: FeatureLayer.MODE_ONDEMAND,
+			outFields:["*"],
+			infoTemplate:featureLayerInfoTemplate
+			
+		});
 
     function mapLoadedHandler(maploadEvent){
       console.log("map loaded", maploadEvent);
@@ -130,6 +144,7 @@
         trackRenderer, ager);
       featureLayer.setRenderer(renderer);
       map.addLayer(featureLayer);
+	  map.addLayer(tollLayer);
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
