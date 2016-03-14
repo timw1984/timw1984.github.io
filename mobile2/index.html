@@ -37,21 +37,37 @@
     "dojo/dom",
     "dijit/registry",
     "dojo/on",
+	"esri/dijit/PopupMobile",
+	"esri/InfoTemplate",
+	"dojo/dom-construct",
     "dojox/mobile/ToolBarButton",
     "dojox/mobile/View",
     "dojox/mobile/ContentPane"
   ],
 
     function (Map,Color,Point,webMercatorUtils,Graphic,FeatureLayer, SimpleRenderer, TemporalRenderer,
-    TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on) {
+    TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,
+	domConstruct) {
+	
 	  var toggler = "notoggler";
 	  var map, featureLayer;
 	  var OBJECTID_COUNTER = 1000;
 	  var TRACKID_COUNTER = 1;
       parser.parse();
       mobile.hideAddressBar();
+	  var popup = new PopupMobile(null, domConstruct.create("div"));
 
-      map = new Map("map", {basemap:"topo", center:[-81.3466, 28.7067], zoom:11, slider:false});
+      map = new Map("map", {basemap:"topo", center:[-81.3466, 28.7067], zoom:11, infoWindow:popup, slider:false});
+	  var featureLayerInfoTemplate = new InfoTemplate();
+	  
+	  featureLayerInfoTemplate.setTitle("${NAME}");
+	
+	var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
+			mode: FeatureLayer.MODE_ONDEMAND,
+			outFields:["*"],
+			infoTemplate:featureLayerInfoTemplate
+			
+		});
 	  
       map.on("load", mapLoadHandler);
 
@@ -167,7 +183,8 @@
       var renderer = new TemporalRenderer(observationRenderer, latestObservationRenderer,
         trackRenderer, ager);
       featureLayer.setRenderer(renderer);
-      map.addLayer(featureLayer);
+      map.addLayers(featureLayer);
+	 
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
@@ -231,7 +248,7 @@
        // console.log("Point not added due to low accuracy: " + location.coords.accuracy);
       }
     }
-	  
+	   map.addLayer(tollLayer);
     });
 </script>
 </head>
