@@ -177,10 +177,11 @@
 		} else {
 			toggler = "notoggler";
 			map.removeLayer(featureLayer);
+			map.graphics.clear();
 		}			
 	  };
 	  
-	      function locationError(error){
+	 function locationError(error){
       switch (error.code) {
         case error.PERMISSION_DENIED:
           alert("Location not provided");
@@ -200,7 +201,7 @@
       }
     }
 	  
-	    function zoomToLocation(location){
+	function zoomToLocation(location){
       var pt = webMercatorUtils.geographicToWebMercator(new Point(location.coords.longitude,
         location.coords.latitude));
       map.centerAndZoom(pt, 16);
@@ -227,7 +228,7 @@
         });
       }
       else {
-        console.log("Point not added due to low accuracy: " + location.coords.accuracy);
+       // console.log("Point not added due to low accuracy: " + location.coords.accuracy);
       }
     }
 	  
