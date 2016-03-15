@@ -139,6 +139,7 @@
 
       //setup a temporal renderer
       var sms = new SimpleMarkerSymbol().setColor(new Color([0, 0, 0,0])).setSize(8);
+	  sms.setOutline(new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0,0,0,0]), 1));
       var observationRenderer = new SimpleRenderer(sms);
       var latestObservationRenderer = new SimpleRenderer(new SimpleMarkerSymbol());
       var infos = [
