@@ -145,7 +145,7 @@
 	  var mystyle = new SimpleMarkerSymbol();
 	  mystyle.setColor(new Color([255, 0, 0]));
       var latestObservationRenderer = new SimpleRenderer(mystyle);
-	  var pictureMarkerSymbol = new PictureMarkerSymbol('/Car.png', 15, 15);
+	  //var pictureMarkerSymbol = new PictureMarkerSymbol('/Car.png', 15, 15);
       var infos = [
         {
           minAge: 0,
@@ -169,7 +169,7 @@
       var sls = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
         new Color([255, 0, 0]), 3);
       var trackRenderer = new SimpleRenderer(sls);
-      var renderer = new TemporalRenderer(observationRenderer, pictureMarkerSymbol,
+      var renderer = new TemporalRenderer(observationRenderer, latestObservationRenderer,
         null, null);
       featureLayer.setRenderer(renderer);
       map.addLayer(featureLayer);
