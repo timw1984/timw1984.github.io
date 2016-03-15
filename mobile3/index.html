@@ -138,22 +138,22 @@
       featureLayer = new FeatureLayer(featureCollection);
 
       //setup a temporal renderer
-      var sms = new SimpleMarkerSymbol().setColor(new Color([0, 0, 0])).setSize(8);
+      var sms = new SimpleMarkerSymbol().setColor(new Color([0, 0, 0,0])).setSize(8);
       var observationRenderer = new SimpleRenderer(sms);
       var latestObservationRenderer = new SimpleRenderer(new SimpleMarkerSymbol());
       var infos = [
         {
           minAge: 0,
           maxAge: 1,
-          color: new Color([255, 0, 0])
+          color: new Color([255, 0, 0],0)
         }, {
           minAge: 1,
           maxAge: 5,
-          color: new Color([0, 0, 0])
+          color: new Color([0, 0, 0,0])
         }, {
           minAge: 5,
           maxAge: 10,
-          color: new Color([0, 0, 0])
+          color: new Color([0, 0, 0,0])
         }, {
           minAge: 10,
           maxAge: Infinity,
