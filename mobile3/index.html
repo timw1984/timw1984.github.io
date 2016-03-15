@@ -157,14 +157,14 @@
       map.addLayer(featureLayer);
 
       if (navigator.geolocation) {
-        getcurrentpos = navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
-        watchpos = navigator.geolocation.watchPosition(showLocation, locationError);
+        navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
+       navigator.geolocation.watchPosition(showLocation, locationError);
       }
 			
 	  } else {
 			toggler = "notoggler";
-			getcurrentpos.remove();
-			watchpos.remove();
+			//getcurrentpos.remove();
+			//watchpos.remove();
 			map.removeLayer(featureLayer);
 			map.graphics.clear();
 	  }			
