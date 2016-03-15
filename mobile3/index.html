@@ -142,9 +142,9 @@
       var sms = new SimpleMarkerSymbol().setColor(new Color([0, 0, 0,0])).setSize(8);
 	  sms.setOutline(new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0,0,0,0]), 1));
       var observationRenderer = new SimpleRenderer(sms);
-      //var latestObservationRenderer = new SimpleRenderer(new SimpleMarkerSymbol());
-	  //latestObservationRenderer.setColor(new Color([255, 0, 0]));
-	  var symbol2 = new PictureMarkerSymbol({"angle":0,"xoffset":0,"yoffset":0,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Transportation/CarRedFront.png","contentType":"image/png","width":24,"height":24});
+	  var mystyle = new SimpleMarkerSymbol();
+	  mystyle.setColor(new Color([255, 0, 0]));
+      var latestObservationRenderer = new SimpleRenderer(mystyle);
       var infos = [
         {
           minAge: 0,
@@ -168,7 +168,7 @@
       var sls = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
         new Color([255, 0, 0]), 3);
       var trackRenderer = new SimpleRenderer(sls);
-      var renderer = new TemporalRenderer(observationRenderer, symbol2,
+      var renderer = new TemporalRenderer(observationRenderer, latestObservationRenderer,
         null, null);
       featureLayer.setRenderer(renderer);
       map.addLayer(featureLayer);
