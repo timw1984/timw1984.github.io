@@ -47,6 +47,7 @@
     TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol,PictureMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on) {
 	  var toggler = "notoggler";
 	  var map, featureLayer;
+	  var getcurrentpos,watchpos;
 	  var OBJECTID_COUNTER = 1000;
 	  var TRACKID_COUNTER = 1;
       parser.parse();
@@ -98,7 +99,7 @@
 	  
 	  registry.byId('trackButton').on("click", toggleclick);
 	  
-	  function toggleclick (evt){
+	function toggleclick (evt){
 		if ( toggler == "notoggler") {
 			toggler = "toggled";
 			      var layerDefinition = {
@@ -146,45 +147,28 @@
 	  mystyle.setColor(new Color([255, 0, 0]));
       var latestObservationRenderer = new SimpleRenderer(mystyle);
 	  //var pictureMarkerSymbol = new PictureMarkerSymbol('/Car.png', 15, 15);
-      var infos = [
-        {
-          minAge: 0,
-          maxAge: 1,
-          color: new Color([255, 0, 0],0)
-        }, {
-          minAge: 1,
-          maxAge: 5,
-          color: new Color([0, 0, 0,0])
-        }, {
-          minAge: 5,
-          maxAge: 10,
-          color: new Color([0, 0, 0,0])
-        }, {
-          minAge: 10,
-          maxAge: Infinity,
-          color: new Color([0, 0, 0, 0])
-        }
-      ];
-      var ager = new TimeClassBreaksAger(infos, TimeClassBreaksAger.UNIT_MINUTES);
+     
       var sls = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
         new Color([255, 0, 0]), 3);
-      var trackRenderer = new SimpleRenderer(sls);
+
       var renderer = new TemporalRenderer(observationRenderer, latestObservationRenderer,
         null, null);
       featureLayer.setRenderer(renderer);
       map.addLayer(featureLayer);
 
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
-        navigator.geolocation.watchPosition(showLocation, locationError);
+        getcurrentpos = navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
+        watchpos = navigator.geolocation.watchPosition(showLocation, locationError);
       }
 			
-		} else {
+	  } else {
 			toggler = "notoggler";
+			getcurrentpos.remove();
+			watchpos.remove();
 			map.removeLayer(featureLayer);
 			map.graphics.clear();
-		}			
-	  };
+	  }			
+	};
 	  
 	 function locationError(error){
       switch (error.code) {
