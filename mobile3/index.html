@@ -47,7 +47,7 @@
     TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol,PictureMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on) {
 	  var toggler = "notoggler";
 	  var map, featureLayer;
-	  var getcurrentpos,watchpos;
+	  var myid;
 	  var OBJECTID_COUNTER = 1000;
 	  var TRACKID_COUNTER = 1;
       parser.parse();
@@ -158,13 +158,14 @@
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
-       navigator.geolocation.watchPosition(showLocation, locationError);
+		myid = navigator.geolocation.watchPosition(showLocation, locationError);
       }
 			
 	  } else {
 			toggler = "notoggler";
 			//getcurrentpos.remove();
 			//watchpos.remove();
+			navigator.geolocation.clearWatch(myid);
 			map.removeLayer(featureLayer);
 			map.graphics.clear();
 	  }			
