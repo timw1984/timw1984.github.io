@@ -102,6 +102,7 @@
 	function toggleclick (evt){
 		if ( toggler == "notoggler") {
 			toggler = "toggled";
+			dojo.byId("trackButton").innerHTML = "Stop showing location";
 			      var layerDefinition = {
         "objectIdField": "OBJECTID",
         "trackIdField": "TrackID",
@@ -163,8 +164,7 @@
 			
 	  } else {
 			toggler = "notoggler";
-			//getcurrentpos.remove();
-			//watchpos.remove();
+			dojo.byId("trackButton").innerHTML = "Show my location";
 			navigator.geolocation.clearWatch(myid);
 			map.removeLayer(featureLayer);
 			map.graphics.clear();
