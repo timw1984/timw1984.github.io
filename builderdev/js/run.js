@@ -102,7 +102,7 @@ require([
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
-			var homey = '<div id="homediv"></div>';
+			var homey = '&lt;div id="homediv"&lt;/div&gt;';
 			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey);
 		} else {
 			updated = string.substitute(content, [mids, aliases]);
