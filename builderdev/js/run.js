@@ -102,13 +102,14 @@ require([
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
-			var homey = '&lt;div id="homediv"&lt;/div&gt;';
+			var homey = '&lt;div id="homediv"&gt;&lt;/div&gt;';
 			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey);
 		} else {
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
+			var homey = '';
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey);
 		}
 	}
 
