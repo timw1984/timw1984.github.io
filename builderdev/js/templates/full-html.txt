@@ -24,6 +24,8 @@ ${1}
       ) {
 
 themappart
+
+homepart
      
       });
     &lt;/script&gt;

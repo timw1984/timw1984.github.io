@@ -103,13 +103,15 @@ require([
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
 			var homey = '&lt;div id="homediv"&gt;&lt;/div&gt;';
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey);
+			var homecode = 'var home = new HomeButton({ map: map}, "HomeButton");home.startup();';
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode);
 		} else {
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
 			var homey = '';
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey);
+			var homecode = '';
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode);;
 		}
 	}
 
