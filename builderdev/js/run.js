@@ -110,7 +110,7 @@ require([
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
 
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", " ").replace("homepart", " ");;
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'');;
 		}
 	}
 
