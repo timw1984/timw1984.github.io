@@ -85,7 +85,8 @@ require([
     on(checkbox, "change", gm.updateDojoPackages);
   });
 
-  function updateRequire() {
+  function updateRequire(evt) {
+	console.log(evt);
     var templateName = config.get("current");
     var template = config.get("templates")[templateName];
     var content = template.content;
