@@ -103,7 +103,7 @@ require([
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
 			var homey = '&lt;div id="homediv"&gt;&lt;/div&gt;';
-			var homecode = 'var home = new HomeButton({ map: map}, "HomeButton"); <br> home.startup();';
+			var homecode = 'var home = new HomeButton({ map: map}, "homediv"); <br> home.startup();';
 			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode);
 		} else {
 			updated = string.substitute(content, [mids, aliases]);

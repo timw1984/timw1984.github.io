@@ -31,7 +31,9 @@ homepart
     &lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;div id="map"&gt; homebutton &lt;/div&gt;
+    &lt;div id="map"&gt; 
+	homebutton 
+	&lt;/div&gt;
 
   &lt;/body&gt;
 &lt;/html&gt;
