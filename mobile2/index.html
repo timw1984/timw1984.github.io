@@ -23,6 +23,8 @@
 	"esri/geometry/Point",
 	"esri/geometry/webMercatorUtils",
 	"esri/graphic",
+	"esri/dijit/Legend",
+	"dojo/_base/array",
 	"esri/layers/FeatureLayer",
 	"esri/renderers/SimpleRenderer",
 	"esri/renderers/TemporalRenderer",
@@ -45,7 +47,7 @@
     "dojox/mobile/ContentPane"
   ],
 
-    function (Map,Color,Point,webMercatorUtils,Graphic,FeatureLayer, SimpleRenderer, TemporalRenderer,
+    function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
     TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,
 	domConstruct) {
 	

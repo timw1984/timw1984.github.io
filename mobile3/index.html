@@ -23,6 +23,8 @@
 	"esri/geometry/Point",
 	"esri/geometry/webMercatorUtils",
 	"esri/graphic",
+	"esri/dijit/Legend",
+	"dojo/_base/array",
 	"esri/layers/FeatureLayer",
 	"esri/renderers/SimpleRenderer",
 	"esri/renderers/TemporalRenderer",
@@ -38,13 +40,16 @@
     "dojo/dom",
     "dijit/registry",
     "dojo/on",
+	"esri/dijit/PopupMobile",
+	"esri/InfoTemplate",
+	"dojo/dom-construct",
     "dojox/mobile/ToolBarButton",
     "dojox/mobile/View",
     "dojox/mobile/ContentPane"
   ],
 
-    function (Map,Color,Point,webMercatorUtils,Graphic,FeatureLayer, SimpleRenderer, TemporalRenderer,
-    TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol,PictureMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on) {
+    function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
+    TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol,PictureMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,domConstruct) {
 	  var toggler = "notoggler";
 	  var map, featureLayer;
 	  var myid;
@@ -52,10 +57,18 @@
 	  var TRACKID_COUNTER = 1;
       parser.parse();
       mobile.hideAddressBar();
-
-      map = new Map("map", {basemap:"topo", center:[-81.3961, 28.4009], zoom:10, slider:false});
-	  
+	  var popup = new PopupMobile(null, domConstruct.create("div"));
+      map = new Map("map", {basemap:"topo", center:[-81.3961, 28.4009], zoom:10,infoWindow:popup, slider:false});
+	  var featureLayerInfoTemplate = new InfoTemplate();
+	  featureLayerInfoTemplate.setTitle("${NAME}");
       map.on("load", mapLoadHandler);
+	  
+	  var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
+			mode: FeatureLayer.MODE_ONDEMAND,
+			outFields:["*"],
+			infoTemplate:featureLayerInfoTemplate
+			
+		});
 
       var resizeEvt = (window.onorientationchange !== undefined && !has('android')) ? "orientationchange" : "resize";
       on(window, resizeEvt, resizeMap);
@@ -155,7 +168,7 @@
       var renderer = new TemporalRenderer(observationRenderer, latestObservationRenderer,
         null, null);
       featureLayer.setRenderer(renderer);
-      map.addLayers([featureLayer]);
+      map.addLayer(featureLayer);
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
@@ -221,7 +234,19 @@
        // console.log("Point not added due to low accuracy: " + location.coords.accuracy);
       }
     }
-	  
+	      map.on("layers-add-result", function (evt) {
+        var layerInfo = arrayUtils.map(evt.layers, function (layer, index) {
+          return {layer:layer.layer, title:layer.layer.name};
+        });
+        if (layerInfo.length > 0) {
+          var legendDijit = new Legend({
+            map: map,
+            layerInfos: layerInfo
+          }, "legendijit");
+          legendDijit.startup();
+        }
+      });
+	  map.addLayers([tollLayer]);
     });
 </script>
 </head>
@@ -253,8 +278,8 @@
   </div>
   <div id="legendView" data-dojo-type="dojox.mobile.View">
     <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Map', moveTo:'mapView'">Legend</h1>
-
-    <p style="padding: 5px;">This area can contain additional information about your application.</p>
+	<div id ="legendijit"></div>
+    
   </div>
 </body>
 </html>
