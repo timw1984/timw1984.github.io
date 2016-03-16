@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="css/main.css">
 
 <script>var dojoConfig = { mblAlwaysHideAddressBar: true };</script>
+
 <script src="https://js.arcgis.com/3.16compact/"></script>
 <script>
   require([
@@ -28,10 +29,8 @@
 	"esri/layers/FeatureLayer",
 	"esri/renderers/SimpleRenderer",
 	"esri/renderers/TemporalRenderer",
-	"esri/renderers/TimeClassBreaksAger",
 	"esri/symbols/SimpleLineSymbol",
 	"esri/symbols/SimpleMarkerSymbol",
-	"esri/symbols/PictureMarkerSymbol",
 	"esri/TimeExtent",
     "dojox/mobile",
     "dojox/mobile/parser",
@@ -49,7 +48,7 @@
   ],
 
     function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
-    TimeClassBreaksAger, SimpleLineSymbol, SimpleMarkerSymbol,PictureMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,domConstruct) {
+     SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,domConstruct) {
 	  var toggler = "notoggler";
 	  var map, featureLayer;
 	  var myid;
@@ -160,7 +159,6 @@
 	  var mystyle = new SimpleMarkerSymbol();
 	  mystyle.setColor(new Color([255, 0, 0]));
       var latestObservationRenderer = new SimpleRenderer(mystyle);
-	  //var pictureMarkerSymbol = new PictureMarkerSymbol('/Car.png', 15, 15);
      
       var sls = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
         new Color([255, 0, 0]), 3);

@@ -115,10 +115,30 @@ return [
   {
     "alias": "BookmarkItem", 
     "id": "esri/dijit/BookmarkItem"
-  }, 
+  },
+  {
+    "alias": "ClassedColorSlider", 
+    "id": "esri/dijit/ClassedColorSlider"
+  },
+  {
+    "alias": "ClassedSizeSlider", 
+    "id": "esri/dijit/ClassedSizeSlider"
+  },
+  {
+    "alias": "ColorInfoSlider", 
+    "id": "esri/dijit/ColorInfoSlider"
+  },
+  {
+    "alias": "ColorPicker", 
+    "id": "esri/dijit/ColorPicker"
+  },    
   {
     "alias": "Directions", 
     "id": "esri/dijit/Directions"
+  }, 
+  {
+    "alias": "FeatureTable", 
+    "id": "esri/dijit/FeatureTable"
   }, 
   {
     "alias": "Gallery", 
@@ -131,11 +151,23 @@ return [
   {
     "alias": "Geocoder", 
     "id": "esri/dijit/Geocoder"
-  }, 
+  },
+  {
+    "alias": "HeatmapSlider", 
+    "id": "esri/dijit/HeatmapSlider"
+  },   
   {
     "alias": "HistogramTimeSlider", 
     "id": "esri/dijit/HistogramTimeSlider"
-  }, 
+  },
+  {
+    "alias": "HomeButton", 
+    "id": "esri/dijit/HomeButton"
+  },
+  {
+    "alias": "HorizontalSlider", 
+    "id": "esri/dijit/HorizontalSlider"
+  },  
   {
     "alias": "InfoView", 
     "id": "esri/dijit/InfoView"
@@ -187,30 +219,54 @@ return [
   {
     "alias": "Scalebar", 
     "id": "esri/dijit/Scalebar"
-  }, 
+  },
+  {
+    "alias": "Search", 
+    "id": "esri/dijit/Search"
+  },   
   {
     "alias": "TimeSlider", 
     "id": "esri/dijit/TimeSlider"
   }, 
   {
-    "alias": "AggregateTool", 
-    "id": "esri/dijit/analysisAggregateTool"
+    "alias": "AggregatePoints", 
+    "id": "esri/dijit/analysis/AggregatePoints"
   }, 
   {
     "alias": "AnalysisBase", 
-    "id": "esri/dijit/analysisAnalysisBase"
-  }, 
+    "id": "esri/dijit/analysis/AnalysisBase"
+  },
   {
-    "alias": "BufferTool", 
-    "id": "esri/dijit/analysisBufferTool"
+    "alias": "ConnectOriginsToDestinations", 
+    "id": "esri/dijit/analysis/ConnectOriginsToDestinations"
+  },
+  {
+    "alias": "CalculateDensity", 
+    "id": "esri/dijit/analysis/CalculateDensity"
+  },   
+  {
+    "alias": "CreateBuffers", 
+    "id": "esri/dijit/analysis/CreateBuffers"
   }, 
   {
     "alias": "CreateDriveTimeAreas", 
-    "id": "esri/dijit/analysisCreateDriveTimeAreas"
-  }, 
+    "id": "esri/dijit/analysis/CreateDriveTimeAreas"
+  },
+  {
+    "alias": "CreateViewshed", 
+    "id": "esri/dijit/analysis/CreateViewshed"
+  },
+  {
+    "alias": "CreateWatersheds", 
+    "id": "esri/dijit/analysis/CreateWatersheds"
+  },   
+  {
+    "alias": "DeriveNewLocations", 
+    "id": "esri/dijit/analysis/DeriveNewLocations"
+  },     
   {
     "alias": "DissolveBoundaries", 
-    "id": "esri/dijit/analysisDissolveBoundaries"
+    "id": "esri/dijit/analysis/DissolveBoundaries"
   }, 
   {
     "alias": "EnrichLayer", 
@@ -218,32 +274,48 @@ return [
   }, 
   {
     "alias": "ExtractData", 
-    "id": "esri/dijit/analysisExtractData"
+    "id": "esri/dijit/analysis/ExtractData"
   }, 
   {
     "alias": "FindHotSpots", 
-    "id": "esri/dijit/analysisFindHotSpots"
+    "id": "esri/dijit/analysis/FindHotSpots"
   }, 
   {
     "alias": "FindNearest", 
-    "id": "esri/dijit/analysisFindNearest"
+    "id": "esri/dijit/analysis/FindNearest"
   }, 
   {
+    "alias": "FindSimilarLocations", 
+    "id": "esri/dijit/analysis/FindSimilarLocations"
+  },
+  {
+    "alias": "InterpolatePoints", 
+    "id": "esri/dijit/analysis/InterpolatePoints"
+  },   
+  {
     "alias": "MergeLayers", 
-    "id": "esri/dijit/analysisMergeLayers"
+    "id": "esri/dijit/analysis/MergeLayers"
   }, 
   {
     "alias": "OverlayLayers", 
-    "id": "esri/dijit/analysisOverlayLayers"
-  }, 
+    "id": "esri/dijit/analysis/OverlayLayers"
+  },
+  {
+    "alias": "PlanRoutes", 
+    "id": "esri/dijit/analysis/PlanRoutes"
+  },   
   {
     "alias": "SummarizeNearby", 
     "id": "esri/dijit/analysisSummarizeNearby"
   }, 
   {
     "alias": "SummarizeWithin", 
-    "id": "esri/dijit/analysisSummarizeWithin"
-  }, 
+    "id": "esri/dijit/analysis/SummarizeWithin"
+  },
+  {
+    "alias": "TraceDownstream", 
+    "id": "esri/dijit/analysis/TraceDownstream"
+  },  
   {
     "alias": "AttachmentEditor", 
     "id": "esri/dijit/editing/AttachmentEditor"
@@ -255,7 +327,11 @@ return [
   {
     "alias": "TemplatePicker", 
     "id": "esri/dijit/editing/TemplatePicker"
-  }, 
+  },
+  {
+    "alias": "busyIndicator", 
+    "id": "esri/dijit/util/busyIndicator"
+  },  
   {
     "alias": "Circle", 
     "id": "esri/geometry/Circle"
@@ -331,7 +407,11 @@ return [
   {
     "alias": "ArcGISImageServiceLayer", 
     "id": "esri/layers/ArcGISImageServiceLayer"
-  }, 
+  },
+  {
+    "alias": "ArcGISImageServiceVectorLayer", 
+    "id": "esri/layers/ArcGISImageServiceVectorLayer"
+  },   
   {
     "alias": "ArcGISTiledMapServiceLayer", 
     "id": "esri/layers/ArcGISTiledMapServiceLayer"
@@ -339,7 +419,15 @@ return [
   {
     "alias": "CodedValueDomain", 
     "id": "esri/layers/CodedValueDomain"
-  }, 
+  },
+  {
+    "alias": "CSVLayer", 
+    "id": "esri//layers/CSVLayer"
+  },
+  {
+    "alias": "DataAdapterFeatureLayer", 
+    "id": "esri//layers/DataAdapterFeatureLayer"
+  },  
   {
     "alias": "DataSource", 
     "id": "esri/layers/DataSource"
@@ -411,7 +499,11 @@ return [
   {
     "alias": "KMLLayer", 
     "id": "esri/layers/KMLLayer"
-  }, 
+  },
+  {
+    "alias": "LabelLayer", 
+    "id": "esri/layers/LabelLayer"
+  },   
   {
     "alias": "Layer", 
     "id": "esri/layers/layer"
@@ -459,7 +551,11 @@ return [
   {
     "alias": "OpenStreetMapLayer", 
     "id": "esri/layers/OpenStreetMapLayer"
-  }, 
+  },
+  {
+    "alias": "PixelBlock", 
+    "id": "esri/layers/PixelBlock"
+  },   
   {
     "alias": "QueryDataSource", 
     "id": "esri/layers/QueryDataSource"
@@ -475,7 +571,11 @@ return [
   {
     "alias": "RasterFunction", 
     "id": "esri/layers/RasterFunction"
-  }, 
+  },
+  {
+    "alias": "RasterLayer", 
+    "id": "esri/layers/RasterLayer"
+  },   
   {
     "alias": "StreamLayer", 
     "id": "esri/layers/StreamLayer"
@@ -519,27 +619,51 @@ return [
   {
     "alias": "WMTSLayerInfo", 
     "id": "esri/layers/WMTSLayerInfo"
-  }, 
+  },
+  {
+    "alias": "FeatureLayerStatistics", 
+    "id": "esri/plugins/FeatureLayerStatistics"
+  },  
   {
     "alias": "ClassBreaksRenderer", 
     "id": "esri/renderers/ClassBreaksRenderer"
-  }, 
+  },
   {
-    "alias": "rendererJsonUtils", 
+    "alias": "DotDensityRenderer", 
+    "id": "esri/renderers/DotDensityRenderer"
+  },   
+  {
+    "alias": "HeatmapRenderer", 
+    "id": "esri/renderers/HeatmapRenderer"
+  },
+  {
+    "alias": "BlendRenderer", 
+    "id": "esri/renderers/BlendRenderer"
+  },
+  {
+    "alias": "jsonUtils", 
     "id": "esri/renderers/jsonUtils"
-  }, 
+  },   
   {
     "alias": "Renderer", 
     "id": "esri/renderers/Renderer"
-  }, 
+  },
+  {
+    "alias": "ScaleDependentRenderer", 
+    "id": "esri/renderers/ScaleDependentRenderer"
+  },   
   {
     "alias": "SimpleRenderer", 
     "id": "esri/renderers/SimpleRenderer"
   }, 
   {
+    "alias": "smartMapping", 
+    "id": "esri/renderers/smartMapping"
+  },
+  {
     "alias": "SymbolAger", 
     "id": "esri/renderers/SymbolAger"
-  }, 
+  },  
   {
     "alias": "TemporalRenderer", 
     "id": "esri/renderers/TemporalRenderer"
@@ -555,7 +679,11 @@ return [
   {
     "alias": "UniqueValueRenderer", 
     "id": "esri/renderers/UniqueValueRenderer"
-  }, 
+  },
+  {
+    "alias": "VectorFieldRenderer", 
+    "id": "esri/renderers/VectorFieldRenderer"
+  },  
   {
     "alias": "CartographicLineSymbol", 
     "id": "esri/symbols/CartographicLineSymbol"
@@ -847,7 +975,39 @@ return [
   {
     "alias": "UniqueValueDefinition", 
     "id": "esri/tasks/UniqueValueDefinition"
-  }, 
+  },
+  {
+    "alias": "CoordinatesLocationProvider", 
+    "id": "esri/tasks/locationproviders/CoordinatesLocationProvider"
+  },
+  {
+    "alias": "GeometryLocationProvider", 
+    "id": "esri/tasks/locationproviders/GeometryLocationProvider"
+  },   
+  {
+    "alias": "LocationProviderBase", 
+    "id": "esri/tasks/locationproviders/LocationProviderBase"
+  },   
+  {
+    "alias": "LocationProviderClientBase", 
+    "id": "esri/tasks/locationproviders/LocationProviderClientBase"
+  },   
+  {
+    "alias": "LocationProviderRemoteBase", 
+    "id": "esri/tasks/locationproviders/LocationProviderRemoteBase"
+  },   
+  {
+    "alias": "LocatorLocationProvider", 
+    "id": "esri/tasks/locationproviders/LocatorLocationProvider"
+  },   
+  {
+    "alias": "QueryTaskLocationProvider", 
+    "id": "esri/tasks/locationproviders/QueryTaskLocationProvider"
+  },   
+  {
+    "alias": "StandardGeographyQueryLocationProvider", 
+    "id": "esri/tasks/locationproviders/StandardGeographyQueryLocationProvider"
+  },     
   {
     "alias": "Draw", 
     "id": "esri/toolbars/draw"
@@ -855,7 +1015,11 @@ return [
   {
     "alias": "Edit", 
     "id": "esri/toolbars/edit"
-  }, 
+  },
+  {
+    "alias": "ImageServiceMeasureTool", 
+    "id": "esri/toolbars/ImageServiceMeasureTool"
+  },   
   {
     "alias": "Navigation", 
     "id": "esri/toolbars/navigation"
@@ -875,6 +1039,10 @@ return [
   {
     "alias": "VETiledLayer", 
     "id": "esri/virtualearth/VETiledLayer"
+  },
+  {
+    "alias": "WorkerClient", 
+    "id": "esri/workers/WorkerClient"
   }
 ];
 });

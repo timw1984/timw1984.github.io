@@ -98,10 +98,18 @@ require([
 		var mapf = "Map";
 		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
 	} else {
-		updated = string.substitute(content, [mids, aliases]);
-		var mapr = '"esri/map",';
-		var mapf = "Map,";
-		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
+		if (gm.esriSelection[0].alias == "HomeButton") {
+			updated = string.substitute(content, [mids, aliases]);
+			var mapr = '"esri/map",';
+			var mapf = "Map,";
+			var homey = '<div id="homediv"></div>';
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey);
+		} else {
+			updated = string.substitute(content, [mids, aliases]);
+			var mapr = '"esri/map",';
+			var mapf = "Map,";
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
+		}
 	}
 
     dom.byId("output").innerHTML = finalupdate;
