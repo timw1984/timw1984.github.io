@@ -42,7 +42,8 @@
 	"dojox/mobile/ToggleButton",
     "dojox/mobile/View",
     "dojox/mobile/ContentPane",
-	"dojox/mobile/TabBar"
+	"dojox/mobile/TabBar",
+	"dojox/mobile/Heading"
   ],
 
     function (Map,Color,Point,webMercatorUtils,Graphic,FeatureLayer, SimpleRenderer, TemporalRenderer,
@@ -230,15 +231,15 @@
 
 <body>
   <div id="mapView" data-dojo-type="dojox.mobile.View" data-dojo-props="selected: true">
-    <h1 id="header" data-dojo-type="dojox.mobile.Heading">
-		<ul id="headingTabBar" dojotType="dojox.mobileTabBar"  data-dojo-props='barType:"standardTab"'>
-			<li id="aboutButton" data-dojo-type="dojox.mobile.ToolBarButton"  moveTo="aboutView">
+    <h1 id="header" data-dojo-type="dojox/mobile/Heading">
+		<ul id="headingTabBar" dojotType="dojox/mobile/TabBar" data-dojo-props='barType:"segmentedControl"'>
+			<li id="aboutButton" data-dojo-type="dojox/mobile/TabBarButton"  moveTo="aboutView">
 				About
 			</li>
-			<li id="trackButton" data-dojo-type="dojox.mobile.ToolBarButton"  toggle=true >
+			<li id="trackButton" data-dojo-type="dojox/mobile/TabBarButton"  toggle=true >
 				Show my location
 			</li>
-			<li id="legendButton" data-dojo-type="dojox.mobile.ToolBarButton"  moveTo="aboutView">
+			<li id="legendButton" data-dojo-type="dojox/mobile/TabBarButton"  moveTo="aboutView">
 				Legend
 			</li>
 	 </ul>

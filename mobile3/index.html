@@ -155,7 +155,7 @@
       var renderer = new TemporalRenderer(observationRenderer, latestObservationRenderer,
         null, null);
       featureLayer.setRenderer(renderer);
-      map.addLayer(featureLayer);
+      map.addLayers([featureLayer]);
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
@@ -232,6 +232,9 @@
       <div id="aboutButton" data-dojo-type="dojox.mobile.ToolBarButton" style="float: right;" moveTo="aboutView">
         About
       </div>
+	   <div id="LegendButton" data-dojo-type="dojox.mobile.ToolBarButton" style="float: right;" moveTo="legendView">
+        Legend
+      </div>
 	  <div id="trackButton" data-dojo-type="dojox.mobile.ToolBarButton" style="float: left;" toggle=true >
         Show my location
       </div>
@@ -247,7 +250,11 @@
     <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Map', moveTo:'mapView'">About</h1>
 
     <p style="padding: 5px;">This area can contain additional information about your application.</p>
+  </div>
+  <div id="legendView" data-dojo-type="dojox.mobile.View">
+    <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Map', moveTo:'mapView'">Legend</h1>
 
+    <p style="padding: 5px;">This area can contain additional information about your application.</p>
   </div>
 </body>
 </html>
