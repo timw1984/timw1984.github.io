@@ -26,7 +26,7 @@ require([
   GridManager, TextSelector, formatters,
   requireOnly, fullHtml
 ) {
-	var updated, finalupdate; 
+	var updated, finalupdate, HomeThere; 
   // creates two dgrids:  one for esri, one for dojo
   // pass IDs of dom elements where grids will be created
   var gm = new GridManager({
@@ -85,7 +85,13 @@ require([
     on(checkbox, "change", gm.updateDojoPackages);
   });
 
-  function updateRequire() {
+  function updateRequire(evt) {
+	arrayUtils.map(gm.esriSelection, function(evt){
+		if(evt.alias == "HomeButton"){
+			HomeThere = "yes";
+		}	
+	});
+	console.log(evt);
     var templateName = config.get("current");
     var template = config.get("templates")[templateName];
     var content = template.content;
@@ -96,12 +102,23 @@ require([
 		updated = string.substitute(content, [mids, aliases]);
 		var mapr = '"esri/map"';
 		var mapf = "Map";
-		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
+		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homesty",'');
 	} else {
-		updated = string.substitute(content, [mids, aliases]);
-		var mapr = '"esri/map",';
-		var mapf = "Map,";
-		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem);
+		if (HomeThere == "yes") {
+			updated = string.substitute(content, [mids, aliases]);
+			var mapr = '"esri/map",';
+			var mapf = "Map,";
+			var homey = '&lt;div id="homediv"&gt;&lt;/div&gt;';
+			var homecode = 'var home = new HomeButton({ map: map}, "homediv"); <br> home.startup();';
+			var homestylecode = '#homediv {position: absolute; top: 95px; left: 20px; z-index: 50; }'
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode).replace("homesty", homestylecode);
+			HomeThere = "no";
+		} else {
+			updated = string.substitute(content, [mids, aliases]);
+			var mapr = '"esri/map",';
+			var mapf = "Map,";
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homesty",'');
+		}
 	}
 
     dom.byId("output").innerHTML = finalupdate;

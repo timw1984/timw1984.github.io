@@ -9,6 +9,8 @@
       html, body, #map {
         height: 100%; width: 100%; margin: 0; padding: 0; 
       }
+	  homesty
+	  
     &lt;/style&gt;
 
     &lt;script src="http://js.arcgis.com/3.16/"&gt;&lt;/script&gt;
@@ -24,11 +26,16 @@ ${1}
       ) {
 
 themappart
+
+homepart
      
       });
     &lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;div id="map"&gt;&lt;/div&gt;
+    &lt;div id="map"&gt; 
+	homebutton 
+	&lt;/div&gt;
+
   &lt;/body&gt;
 &lt;/html&gt;
