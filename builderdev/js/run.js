@@ -26,7 +26,7 @@ require([
   GridManager, TextSelector, formatters,
   requireOnly, fullHtml
 ) {
-	var updated, finalupdate; 
+	var updated, finalupdate, HomeThere; 
   // creates two dgrids:  one for esri, one for dojo
   // pass IDs of dom elements where grids will be created
   var gm = new GridManager({
@@ -87,7 +87,9 @@ require([
 
   function updateRequire(evt) {
 	arrayUtils.map(gm.esriSelection, function(evt){
-		console.log(evt);
+		if(evt.alias == "HomeButton"){
+			HomeThere = "yes";
+		}	
 	});
 	console.log(evt);
     var templateName = config.get("current");
@@ -102,13 +104,14 @@ require([
 		var mapf = "Map";
 		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'');
 	} else {
-		if (gm.esriSelection[0].alias == "HomeButton") {
+		if (HomeThere == "yes";) {
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
 			var homey = '&lt;div id="homediv"&gt;&lt;/div&gt;';
 			var homecode = 'var home = new HomeButton({ map: map}, "homediv"); <br> home.startup();';
 			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode);
+			HomeThere = "no";
 		} else {
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
