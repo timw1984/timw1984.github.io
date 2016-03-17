@@ -102,7 +102,7 @@ require([
 		updated = string.substitute(content, [mids, aliases]);
 		var mapr = '"esri/map"';
 		var mapf = "Map";
-		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homebuttonsty",'');
+		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homesty",'');
 	} else {
 		if (HomeThere == "yes") {
 			updated = string.substitute(content, [mids, aliases]);
@@ -111,13 +111,13 @@ require([
 			var homey = '&lt;div id="homediv"&gt;&lt;/div&gt;';
 			var homecode = 'var home = new HomeButton({ map: map}, "homediv"); <br> home.startup();';
 			var homestylecode = '#homediv {position: absolute; top: 95px; left: 20px; z-index: 50; }'
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode).replace("homebuttonsty", homestylecode);
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode).replace("homesty", homestylecode);
 			HomeThere = "no";
 		} else {
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homebuttonsty",'');
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homesty",'');
 		}
 	}
 
