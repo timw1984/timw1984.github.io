@@ -9,7 +9,7 @@
       html, body, #map {
         height: 100%; width: 100%; margin: 0; padding: 0; 
       }
-	  homesty
+      homesty
 	  
     &lt;/style&gt;
 
@@ -18,24 +18,22 @@
       var map;
     
       require([ 
-	  mapreq
+        mapreq
 ${0}
       ], function( 
-	  mapfun
+        mapfun
 ${1}
       ) {
 
-themappart
+       themappart
 
-homepart
-     
+       homepart
       });
     &lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;div id="map"&gt; 
-	homebutton 
-	&lt;/div&gt;
-
+      homebutton 
+    &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
