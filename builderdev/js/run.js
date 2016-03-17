@@ -104,7 +104,7 @@ require([
 		var mapf = "Map";
 		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'');
 	} else {
-		if (HomeThere == "yes";) {
+		if (HomeThere == "yes") {
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
