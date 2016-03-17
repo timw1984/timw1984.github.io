@@ -18,16 +18,16 @@
       var map;
     
       require([ 
-	  mapreq
+        mapreq
 ${0}
       ], function( 
-	  mapfun
+        mapfun
 ${1}
       ) {
 
-    themappart
+       themappart
 
-    homepart
+       homepart
      
       });
     &lt;/script&gt;
