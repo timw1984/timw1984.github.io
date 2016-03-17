@@ -28,7 +28,6 @@ ${1}
        themappart
 
        homepart
-     
       });
     &lt;/script&gt;
   &lt;/head&gt;
