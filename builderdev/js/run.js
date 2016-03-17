@@ -86,6 +86,9 @@ require([
   });
 
   function updateRequire(evt) {
+	arrayUtils.map(gm.esriSelection, function(evt){
+		console.log(evt);
+	});
 	console.log(evt);
     var templateName = config.get("current");
     var template = config.get("templates")[templateName];
