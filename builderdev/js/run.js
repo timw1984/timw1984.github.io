@@ -110,7 +110,8 @@ require([
 			var mapf = "Map,";
 			var homey = '&lt;div id="homediv"&gt;&lt;/div&gt;';
 			var homecode = 'var home = new HomeButton({ map: map}, "homediv"); <br> home.startup();';
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode);
+			var homestyle = '#homediv {position: absolute; top: 95px; left: 20px; z-index: 50; }'
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton", homey).replace("homepart", homecode).replace("homebuttonstyle", homestyle);
 			HomeThere = "no";
 		} else {
 			updated = string.substitute(content, [mids, aliases]);
