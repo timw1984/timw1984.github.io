@@ -35,6 +35,5 @@ ${1}
     &lt;div id="map"&gt; 
       homebutton 
     &lt;/div&gt;
-
   &lt;/body&gt;
 &lt;/html&gt;
