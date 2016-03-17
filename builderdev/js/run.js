@@ -102,7 +102,7 @@ require([
 		updated = string.substitute(content, [mids, aliases]);
 		var mapr = '"esri/map"';
 		var mapf = "Map";
-		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homesty",'');
+		finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace(/^.*homebutton.*$/mg, "").replace("homepart",'').replace("homesty",'');
 	} else {
 		if (HomeThere == "yes") {
 			updated = string.substitute(content, [mids, aliases]);
@@ -117,7 +117,7 @@ require([
 			updated = string.substitute(content, [mids, aliases]);
 			var mapr = '"esri/map",';
 			var mapf = "Map,";
-			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace("homebutton",'').replace("homepart",'').replace("homesty",'');
+			finalupdate = updated.replace("mapreq", mapr).replace("mapfun", mapf).replace("themappart", thisitem).replace(/^.*homebutton.*$/mg, "");.replace("homepart",'').replace("homesty",'');
 		}
 	}
 
