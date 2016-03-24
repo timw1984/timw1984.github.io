@@ -1,0 +1,67 @@
+     html, body, #map {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+  }
+  .svg {
+    width: 20;
+    height: 20;
+    overflow: hidden;
+}
+  .esriLegendService{
+	font-size: x-small;
+  }
+  .esriLegendLayerLabel {
+    display:none;
+  }
+  .esriLegendService {
+    padding-bottom: 5px;
+}
+svg[Attributes Style] {
+    width: 20;
+    height: 20;
+    overflow: hidden;
+}
+ #HomeButton {
+      position: absolute;
+      top: 88px;
+      left: 15px;
+      z-index: 50;
+    }
+
+    #search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 15px;
+         left: 70px;
+      }
+	#LocateButtonDiv {
+      position: absolute;
+      top: 130px;
+      left: 15px;
+      z-index: 50;
+    }
+	.calcite .esriLegendService {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    }
+	.calcite .esriLegendService > div {
+    padding-left: 0;
+}
+
+    #legendWrapper {
+      position: absolute;
+      font-family: arial;
+     display: none;
+      margin: 5px;
+      padding: 10px;
+      z-index: 40;
+      background: #fff;
+      color: #444;
+      right: 30px;
+      top: 30px;
+      box-shadow: 0 0 5px #888;
+	  overflow: hidden;
+	  border-radius: 3px;
+    }
