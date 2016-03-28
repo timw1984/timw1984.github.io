@@ -83,9 +83,7 @@ require([
       on(window, resizeEvt, resizeMap);
 
       function mapLoadHandler(evt) {
-		if (navigator.geolocation) {
-			console.log("Got it");
-		}
+
         resizeMap();
         registry.byId('mapView').on('AfterTransitionIn', resizeMap);
       }
@@ -222,7 +220,7 @@ require([
     }
 	
 	function showLocation(location){
-      if (location.coords.accuracy <= 500) {
+      if (location.coords.accuracy <= 1000) {
         var now = new Date();
         var attributes = {};
         attributes.OBJECTID = OBJECTID_COUNTER;
