@@ -19,8 +19,10 @@ require([
     "dojo/dom",
     "dijit/registry",
     "dojo/on",
+	"dojo/_base/window",
 	"esri/dijit/PopupMobile",
 	"esri/InfoTemplate",
+	"dojox/mobile/ProgressIndicator",
 	"dojo/dom-construct",
     "dojox/mobile/ToolBarButton",
     "dojox/mobile/View",
@@ -28,7 +30,10 @@ require([
   ],
 
     function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
-     SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,domConstruct) {
+     SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,win,PopupMobile,InfoTemplate,ProgressIndicator,domConstruct) {
+	  var prog = new ProgressIndicator({size:40, center:false});
+		win.body().appendChild(prog.domNode);
+		prog.start();
 	  var toggler = "notoggler";
 	  var map, featureLayer;
 	  var myid;
@@ -80,7 +85,10 @@ require([
       on(window, resizeEvt, resizeMap);
 
       function mapLoadHandler(evt) {
-		navigator.geolocation.getCurrentPosition();
+		prog.stop();
+		if (navigator.geolocation) {
+			console.log("Got it");
+		}
         resizeMap();
         registry.byId('mapView').on('AfterTransitionIn', resizeMap);
       }
