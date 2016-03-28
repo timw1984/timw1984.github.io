@@ -31,9 +31,7 @@ require([
 
     function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
      SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,win,PopupMobile,InfoTemplate,ProgressIndicator,domConstruct) {
-	  var prog = new ProgressIndicator({size:40, center:false});
-		win.body().appendChild(prog.domNode);
-		prog.start();
+	
 	  var toggler = "notoggler";
 	  var map, featureLayer;
 	  var myid;
@@ -85,7 +83,6 @@ require([
       on(window, resizeEvt, resizeMap);
 
       function mapLoadHandler(evt) {
-		prog.stop();
 		if (navigator.geolocation) {
 			console.log("Got it");
 		}
