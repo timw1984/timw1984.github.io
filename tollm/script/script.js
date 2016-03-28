@@ -80,6 +80,7 @@ require([
       on(window, resizeEvt, resizeMap);
 
       function mapLoadHandler(evt) {
+		navigator.geolocation.getCurrentPosition();
         resizeMap();
         registry.byId('mapView').on('AfterTransitionIn', resizeMap);
       }
