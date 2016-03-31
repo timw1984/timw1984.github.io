@@ -20,16 +20,24 @@ require([
     "dojo/dom",
     "dijit/registry",
     "dojo/on",
+	"dojo/_base/window",
 	"esri/dijit/PopupMobile",
 	"esri/InfoTemplate",
+	"dojox/mobile/ProgressIndicator",
 	"dojo/dom-construct",
     "dojox/mobile/ToolBarButton",
     "dojox/mobile/View",
     "dojox/mobile/ContentPane"
   ],
 
+<<<<<<< HEAD
     function (Map,Color,Point,webMercatorUtils,Graphic,Legend,HomeButton,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
      SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,domConstruct) {
+=======
+    function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
+     SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,win,PopupMobile,InfoTemplate,ProgressIndicator,domConstruct) {
+	
+>>>>>>> origin/master
 	  var toggler = "notoggler";
 	  var map, featureLayer;
 	  var myid;
@@ -81,6 +89,7 @@ require([
       on(window, resizeEvt, resizeMap);
 
       function mapLoadHandler(evt) {
+
         resizeMap();
         registry.byId('mapView').on('AfterTransitionIn', resizeMap);
       }
@@ -217,7 +226,7 @@ require([
     }
 	
 	function showLocation(location){
-      if (location.coords.accuracy <= 500) {
+      if (location.coords.accuracy <= 1000) {
         var now = new Date();
         var attributes = {};
         attributes.OBJECTID = OBJECTID_COUNTER;
