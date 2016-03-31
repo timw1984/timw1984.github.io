@@ -20,24 +20,19 @@ require([
     "dojo/dom",
     "dijit/registry",
     "dojo/on",
-	"dojo/_base/window",
 	"esri/dijit/PopupMobile",
 	"esri/InfoTemplate",
-	"dojox/mobile/ProgressIndicator",
 	"dojo/dom-construct",
     "dojox/mobile/ToolBarButton",
     "dojox/mobile/View",
     "dojox/mobile/ContentPane"
   ],
 
-<<<<<<< HEAD
+
     function (Map,Color,Point,webMercatorUtils,Graphic,Legend,HomeButton,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
      SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,domConstruct) {
-=======
-    function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
-     SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,win,PopupMobile,InfoTemplate,ProgressIndicator,domConstruct) {
-	
->>>>>>> origin/master
+
+
 	  var toggler = "notoggler";
 	  var map, featureLayer;
 	  var myid;
