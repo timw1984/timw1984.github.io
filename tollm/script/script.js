@@ -5,6 +5,7 @@ require([
 	"esri/geometry/webMercatorUtils",
 	"esri/graphic",
 	"esri/dijit/Legend",
+	"esri/dijit/HomeButton",
 	"dojo/_base/array",
 	"esri/layers/FeatureLayer",
 	"esri/renderers/SimpleRenderer",
@@ -27,7 +28,7 @@ require([
     "dojox/mobile/ContentPane"
   ],
 
-    function (Map,Color,Point,webMercatorUtils,Graphic,Legend,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
+    function (Map,Color,Point,webMercatorUtils,Graphic,Legend,HomeButton,arrayUtils,FeatureLayer, SimpleRenderer, TemporalRenderer,
      SimpleLineSymbol, SimpleMarkerSymbol, TimeExtent, mobile, parser, has, dTheme, dom, registry, on,PopupMobile,InfoTemplate,domConstruct) {
 	  var toggler = "notoggler";
 	  var map, featureLayer;
@@ -37,40 +38,40 @@ require([
       parser.parse();
       mobile.hideAddressBar();
 	  var popup = new PopupMobile(null, domConstruct.create("div"));
-      map = new Map("map", {basemap:"topo", center:[-81.3961, 28.4009], zoom:10,infoWindow:popup, slider:false});
+      map = new Map("map", {basemap:"topo", center:[-81.3961, 28.4009], zoom:10,infoWindow:popup});
 
 	  var infoTemplate = new InfoTemplate("${NAME}", "Motorcycles and 2 Axles: <b>${Moto2Ax}</b><br></br> Motorcycles and 2 Axles Epass: <b>${Moto2AxEP}</b> <br></br>  3 Axles: <b>${3Ax}</b><br></br> 3 Axles Epass: <b>${3AxEP}</b> <br></br>  4 Axles: <b>${4Ax}</b><br></br> 4 Axles Epass: <b>${4AxEP}</b><br></br>  5 or more Axles: <b>${5ormoreAx}</b><br></br> 5 or more Axles Epass: <b>${5ormoreAxEP}</b>   ");
 
       map.on("load", mapLoadHandler);
 	  
 	
-	 	var cfx = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Existing_CFX_System/FeatureServer/0", {
+	 	var cfx = new FeatureLayer("https://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Existing_CFX_System/FeatureServer/0", {
           mode: FeatureLayer.MODE_ONDEMAND,
 		  outFields:["*"]
         }); 
 		
-		var cfxprop = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/ArcGIS/rest/services/Future_CFX_Segments/FeatureServer/0", {
+		var cfxprop = new FeatureLayer("https://services6.arcgis.com/JcSnorSBV0EzWsKT/ArcGIS/rest/services/Future_CFX_Segments/FeatureServer/0", {
           mode: FeatureLayer.MODE_ONDEMAND,
 		  outFields:["*"]
         }); 
 		
-		var turn = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Florida_Turnpike_System/FeatureServer/0", {
+		var turn = new FeatureLayer("https://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Florida_Turnpike_System/FeatureServer/0", {
           mode: FeatureLayer.MODE_ONDEMAND,
 		  outFields:["*"]
         }); 
 		
-		var opw = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Osceola_Parkway/FeatureServer/0", {
+		var opw = new FeatureLayer("https://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Osceola_Parkway/FeatureServer/0", {
           mode: FeatureLayer.MODE_ONDEMAND,
 		  outFields:["*"]
         }); 
 		
-		var tollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
+		var tollLayer = new FeatureLayer("https://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/CFEA_TOLL/FeatureServer/0", {
 			mode: FeatureLayer.MODE_ONDEMAND,
 			outFields:["*"],
 			infoTemplate :infoTemplate
 		});
 		
-		var TPtollLayer = new FeatureLayer("http://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Florida_Turnpike_Toll_Plaza/FeatureServer/0", {
+		var TPtollLayer = new FeatureLayer("https://services6.arcgis.com/JcSnorSBV0EzWsKT/arcgis/rest/services/Florida_Turnpike_Toll_Plaza/FeatureServer/0", {
 			mode: FeatureLayer.MODE_ONDEMAND,
 			outFields:["*"],
 			infoTemplate :infoTemplate
