@@ -43,7 +43,7 @@ require([
 	  var popup = new PopupMobile(null, domConstruct.create("div"));
       map = new Map("map", {basemap:"topo", center:[-81.3961, 28.4009], zoom:10,infoWindow:popup});
 
-	  var infoTemplate = new InfoTemplate("${NAME}", "Motorcycles and 2 Axles: <b>${Moto2Ax}</b><br></br> Motorcycles and 2 Axles Epass: <b>${Moto2AxEP}</b> <br></br>  3 Axles: <b>${3Ax}</b><br></br> 3 Axles Epass: <b>${3AxEP}</b> <br></br>  4 Axles: <b>${4Ax}</b><br></br> 4 Axles Epass: <b>${4AxEP}</b><br></br>  5 or more Axles: <b>${5ormoreAx}</b><br></br> 5 or more Axles Epass: <b>${5ormoreAxEP}</b>   ");
+	  var infoTemplate = new InfoTemplate("${NAME}", "<h3>${NAME}</h3>Motorcycles and 2 Axles: <b>${Moto2Ax}</b><br></br> Motorcycles and 2 Axles Epass: <b>${Moto2AxEP}</b> <br></br>  3 Axles: <b>${3Ax}</b><br></br> 3 Axles Epass: <b>${3AxEP}</b> <br></br>  4 Axles: <b>${4Ax}</b><br></br> 4 Axles Epass: <b>${4AxEP}</b><br></br>  5 or more Axles: <b>${5ormoreAx}</b><br></br> 5 or more Axles Epass: <b>${5ormoreAxEP}</b>   ");
 
       map.on("load", mapLoadHandler);
 	  
