@@ -64,12 +64,16 @@
 	</head>
 	<body class="claro">
 		<style>
+		<!-- Audio Style -->
+		<!-- Audio Style -->
 			#playlist,audio{background:#666;width:400px; margin-bottom: 5px;}
 			.active a{color:#5DB0E6;text-decoration:none;}
 			.widget-content{padding-left: 5px;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			li a{color:#eeeedd;background:#333;padding:5px;display:block;}
 			li a:hover{text-decoration:none;}
+		<!-- Audio Style -->
+		<!-- Audio Style -->
 		</style>
 
 		<!-- Builder top panel is injected here -->
@@ -107,7 +111,8 @@
 								</table>
 						
 							</div>
-											<!-- Audio Player -->
+							<!-- Audio Player -->
+							<!-- Audio Player -->
 							<button id ="audiobutton" class="btn-minimize">Audio</button>	
 							<div class="widget-content" style="display:none;">
 								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
@@ -120,10 +125,8 @@
 									<li ><a href="http://www.mfiles.co.uk/mp3-downloads/Toccata-and-Fugue-Dm.mp3">Toccata and Fugue</a></li>
 								</ul>
 							</div>
-							
+							<!-- Audio Player -->
 							<!-- Audio Player-->
-					
-
 							<div class="appTitle" tabindex="-1" aria-hidden="true"></div>
 							<span class="error-status">
 								<button class="btn btn-xs btn-warning check-story"></button>
@@ -339,102 +342,96 @@
 
 		<script type="text/javascript">
 		require([
-	'dojo/topic',
-	'dojo/_base/array'
-], function(
-	topic,
-	array
-) {
-		var audio;
-		var playlist;
-		var tracks;
-		var current;
-		var buttonvalue = "mini";
-		init();
-		function init(){
+			'dojo/topic',
+			'dojo/_base/array'
+		], function(
+			topic,
+			array
+		) {
+			var audio;
+			var playlist;
+			var tracks;
+			var current;
+			var buttonvalue = "mini";
+			init();
+			function init(){
 
-			current = 0;
-			audio = $('audio');
-			playlist = $('#playlist');
-			tracks = playlist.find('li a');
-			len = tracks.length;
-			audio[0].volume = .50;
-			//audio[0].play();
-			playlist.find('a').click(function(e){
-				e.preventDefault();
-				link = $(this);
-				current = link.parent().index();
-				run(link, audio[0]);
-			});
-			audio[0].addEventListener('ended',function(e){
-				current++;
-				if(current === len){
-					current = 0;
-					link = playlist.find('a')[0];
-				}else{
-					link = playlist.find('a')[current];    
+				current = 0;
+				audio = $('audio');
+				playlist = $('#playlist');
+				tracks = playlist.find('li a');
+				len = tracks.length;
+				audio[0].volume = .50;
+				//audio[0].play();
+				playlist.find('a').click(function(e){
+					e.preventDefault();
+					link = $(this);
+					current = link.parent().index();
+					run(link, audio[0]);
+				});
+				audio[0].addEventListener('ended',function(e){
+					current++;
+					if(current === len){
+						current = 0;
+						link = playlist.find('a')[0];
+					}else{
+						link = playlist.find('a')[current];    
+					}
+					run($(link),audio[0]);
+				});
+				function run(link, player){
+					player.src = link.attr('href');
+					par = link.parent();
+					par.addClass('active').siblings().removeClass('active');
+					audio[0].load();
+					audio[0].play();
 				}
-				run($(link),audio[0]);
-			});
-			function run(link, player){
-				player.src = link.attr('href');
-				par = link.parent();
-				par.addClass('active').siblings().removeClass('active');
-				audio[0].load();
-				audio[0].play();
+			<!-- Play Audio during certain sections -->	
+				topic.subscribe('story-load-section', setmusic);
+				function setmusic(evt){
+					// No Audio on map home screen
+					if (evt == 0) {
+						audio[0].pause();
+					// Play Song 1 when section 1 is active
+					} else if (evt == 1) {	
+						mysong = 0;
+						link = playlist.find('a')[mysong];    
+						run($(link),audio[0]);
+					// Play Song 2 when section 2 is active	
+					} else if (evt == 2) {	
+						mysong = 1;
+						link = playlist.find('a')[mysong];    
+						run($(link),audio[0]);
+					// Play Song 3 when section 3 is active	
+					}else if (evt == 3) {	
+						mysong = 2;
+						link = playlist.find('a')[mysong];    
+						run($(link),audio[0]);
+					// No Audio when section four is active	
+					}else if (evt == 4) {
+						audio[0].pause();
+					// Play Song 2 when section 5 is active	
+					}else if (evt == 5) {	
+						mysong = 1;
+						link = playlist.find('a')[mysong];    
+						run($(link),audio[0]);
+					}
+
+				}
 			}
-			
-		topic.subscribe('story-load-section', setmusic);
-		function setmusic(evt){
-				// No Audio on map home screen
-				if (evt == 0) {
-					audio[0].pause();
-				// Play Song 1 when section 1 is active
-				} else if (evt == 1) {	
-					mysong = 0;
-					link = playlist.find('a')[mysong];    
-				    run($(link),audio[0]);
-				// Play Song 2 when section 2 is active	
-				} else if (evt == 2) {	
-					mysong = 1;
-					link = playlist.find('a')[mysong];    
-				    run($(link),audio[0]);
-				// Play Song 3 when section 3 is active	
-				}else if (evt == 3) {	
-					mysong = 2;
-					link = playlist.find('a')[mysong];    
-				    run($(link),audio[0]);
-				// No Audio when section four is active	
-				}else if (evt == 4) {
-					audio[0].pause();
-				// Play Song 2 when section 5 is active	
-				}else if (evt == 5) {	
-					mysong = 1;
-					link = playlist.find('a')[mysong];    
-				    run($(link),audio[0]);
-				}
-			console.log(evt);
-		
-		}
-		}
-	
-	$(".btn-minimize").click(function(){
-		$(this).toggleClass('btn-plus');
-		$(".widget-content").slideToggle();
-		if (buttonvalue == "mini") {
-			$("#audiobutton").html('Minimize Audio');
-			buttonvalue = "maxi"
-		} else {
-			$("#audiobutton").html('Audio');
-			buttonvalue = "mini";
-		}
-		
-
-		
-	
-		
+		// Audio Button
+		$(".btn-minimize").click(function(){
+			$(this).toggleClass('btn-plus');
+			$(".widget-content").slideToggle();
+			if (buttonvalue == "mini") {
+				$("#audiobutton").html('Minimize Audio');
+				buttonvalue = "maxi"
+			} else {
+				$("#audiobutton").html('Audio');
+				buttonvalue = "mini";
+			}
+		});
 	});
-});
 		</script>
 	</body>
 </html>
