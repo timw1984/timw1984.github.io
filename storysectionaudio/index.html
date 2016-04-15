@@ -359,7 +359,7 @@
 			tracks = playlist.find('li a');
 			len = tracks.length;
 			audio[0].volume = .50;
-			audio[0].play();
+			//audio[0].play();
 			playlist.find('a').click(function(e){
 				e.preventDefault();
 				link = $(this);
@@ -385,8 +385,8 @@
 			}
 			
 		topic.subscribe('story-load-section', setmusic);
-	function setmusic(evt){
-				// No Audio when map starts
+		function setmusic(evt){
+				// No Audio on map home screen
 				if (evt == 0) {
 					audio[0].pause();
 				// Play Song 1 when section 1 is active
