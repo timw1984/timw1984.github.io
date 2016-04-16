@@ -371,6 +371,7 @@
 					current = link.parent().index();
 					run(link, audio[0]);
 				});
+				/*
 				audio[0].addEventListener('ended',function(e){
 					current++;
 					if(current === len){
@@ -380,7 +381,7 @@
 						link = playlist.find('a')[current];    
 					}
 					run($(link),audio[0]);
-				});
+				}); */
 				function run(link, player){
 					player.src = link.attr('href');
 					par = link.parent();
