@@ -400,24 +400,24 @@
 						link = playlist.find('a')[mysong];    
 						run($(link),audio[0]);
 					// Play Song 2 when section 2 is active	
-					} else if (evt == 2) {	
+					} else if (evt == 2 || evt == 3) {	
 						mysong = 1;
 						link = playlist.find('a')[mysong];    
 						run($(link),audio[0]);
 					// Play Song 3 when section 3 is active	
-					}else if (evt == 3) {	
+					}else if (evt == 4) {	
 						mysong = 3;
 						link = playlist.find('a')[mysong];    
 						run($(link),audio[0]);
 					// No Audio when section four is active	
-					}else if (evt == 4) {
+					}else if (evt == 5) {
 						audio[0].pause();
 					// Play Song 2 when section 5 is active	
-					}else if (evt == 5) {	
+					}else if (evt == 6) {	
 						mysong = 4;
 						link = playlist.find('a')[mysong];    
 						run($(link),audio[0]);
-					}else if (evt == 6) {	
+					}else if (evt == 7) {	
 						mysong = 5;
 						link = playlist.find('a')[mysong];    
 						run($(link),audio[0]);
