@@ -401,10 +401,14 @@
 						link = playlist.find('a')[mysong];    
 						run($(link),audio[0]);
 					// Play Song 2 when section 2 is active	
-					} else if (evt == 2 || evt == 3) {	
-						mysong = 1;
-						link = playlist.find('a')[mysong];    
-						run($(link),audio[0]);
+					} else if (evt == 2 || evt == 3) {
+						if (mysong == 1){
+						
+						} else {
+							mysong = 1;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
 					// Play Song 3 when section 3 is active	
 					}else if (evt == 4) {	
 						mysong = 3;
