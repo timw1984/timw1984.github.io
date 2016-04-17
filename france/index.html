@@ -400,6 +400,10 @@
 			<!-- Play Audio during certain sections -->	
 				topic.subscribe('story-load-section', setmusic);
 				function setmusic(evt){
+					if (audioon = "no"){
+						audio[0].pause();
+					
+					} else{
 					// No Audio on map home screen
 					if (evt == 0) {
 						audio[0].pause();
@@ -437,6 +441,7 @@
 					}
 
 				}
+				}
 			}
 		// Audio Button
 		$(".btn-minimize").click(function(){
@@ -455,6 +460,7 @@
 			$("#myckeck").change(function() {
 				if(this.checked) {
 					audioon = "no";
+					audio[0].pause();
 				} else {
 					audioon = "yes";
 				}
