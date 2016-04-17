@@ -362,6 +362,7 @@
 			var tracks;
 			var current;
 			var buttonvalue = "mini";
+			var audioon = "yes";
 			init();
 			function init(){
 
@@ -407,8 +408,8 @@
 						mysong = 0;
 						link = playlist.find('a')[mysong];    
 						run($(link),audio[0]);
-					// Play Song 2 when section 2 is active	
-					} else if (evt == 2 || evt == 3) {
+					// Play Song 2 when section 2,3 or 4 are active	
+					} else if (evt == 2 || evt == 3 || evt == 4) {
 						if (mysong == 1){
 						
 						} else {
@@ -448,6 +449,13 @@
 				$("#audiobutton").html('Audio');
 				buttonvalue = "mini";
 			}
+		$("#myckeck").change(function() {
+			if(this.checked) {
+				audioon = "no";
+			} else {
+				audioon = "yes";
+			}
+});
 		});
 	});
 		</script>
