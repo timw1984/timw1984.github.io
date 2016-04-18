@@ -130,8 +130,8 @@
 									<li ><a href="music/6Ravel-Daybreak.mp3">Ravel - Daybreak</a></li>
 									<li ><a href="music/7Debussy-ClairdeLune.mp3">Debussy - ClairdeLune</a></li>
 									<li ><a href="music/8ErikSatie-Gymnopedie.mp3">ErikSatie - Gymnopedie</a></li>
-									<li ><a href="music/9Dukas-Fanfare.mp3">Dukas - Fanfare</a></li>
-									<li ><a href="music/10SaintSaens-Finale.mp3">Saint-Saens - Finale</a></li>
+									<li ><a href="music/9SaintSaens-Finale.mp3">Saint-Saens - Finale</a></li>
+									<li ><a href="music/10Dukas-Fanfare.mp3">Dukas - Fanfare</a></li>
 									<li ><a href="music/11SaintSaens-4thMovement.mp3">Saint-Saens - 4th Movement</a></li>
 								</ul>
 							</div>
@@ -478,6 +478,30 @@
 						
 						} else {
 							mysong = 1;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
+					} else if (evt == 28 || evt == 29 || evt == 30) {	
+							if (mysong == 8){
+						
+						} else {
+							mysong = 8;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
+					} else if (evt == 33) {	
+							if (mysong == 9){
+						
+						} else {
+							mysong = 9;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
+					}else if (evt == 34) {	
+							if (mysong == 10){
+						
+						} else {
+							mysong = 10;
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
