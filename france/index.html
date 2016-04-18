@@ -456,15 +456,23 @@
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					}else if (evt == 19 || evt == 20) {	
-							if (mysong == 5){
+					}else if (evt == 19 ) {	
+							if (mysong == 6){
 						
 						} else {
-							mysong = 5;
+							mysong = 6;
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					}  
+					}  else if (evt == 20) {	
+							if (mysong == 7){
+						
+						} else {
+							mysong = 7;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
+					}
 
 				}
 				}
