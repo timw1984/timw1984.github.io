@@ -67,7 +67,7 @@
 		<!-- Audio Style -->
 		<!-- Audio Style -->
 			#removeable{margin-bottom: 5px;}
-			#myckeck{margin-bottom: 5px;}
+			#myckeck{margin-bottom: 5px;margin-right: 2px;}
 			#playlist,audio{background:#666;width:400px; margin-bottom: 10px;}
 			.active a{color:#5DB0E6;text-decoration:none;}
 			.widget-content{padding-left: 5px;}
@@ -115,7 +115,7 @@
 							</div>
 							<!-- Audio Player -->
 							<!-- Audio Player -->
-							<button id ="audiobutton" class="btn-minimize">Audio</button> <label style="color: 	#FFFFFF;"><input id="myckeck" type="checkbox">Turn off Audio</label>	
+							<button id ="audiobutton" class="btn-minimize">Audio</button> <input id="myckeck" type="checkbox">Turn off Audio
 							<div id="removeable" class="widget-content" style="display:none;">
 								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
 									<source type="audio/mp3" src="music/1Debussy-Soloforflute.mp3">
@@ -456,7 +456,15 @@
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					}
+					}else if (evt == 19 || evt == 20) {	
+							if (mysong == 5){
+						
+						} else {
+							mysong = 5;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
+					}  
 
 				}
 				}
