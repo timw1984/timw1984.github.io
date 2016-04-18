@@ -131,7 +131,8 @@
 									<li ><a href="music/7Debussy-ClairdeLune.mp3">Debussy - ClairdeLune</a></li>
 									<li ><a href="music/8ErikSatie-Gymnopedie.mp3">ErikSatie - Gymnopedie</a></li>
 									<li ><a href="music/9Dukas-Fanfare.mp3">Dukas - Fanfare</a></li>
-									<li ><a href="music/10SaintSaens-Finale.mp3">SaintSaens - Finale</a></li>
+									<li ><a href="music/10SaintSaens-Finale.mp3">Saint-Saens - Finale</a></li>
+									<li ><a href="music/11SaintSaens-4thMovement.mp3">Saint-Saens - 4th Movement</a></li>
 								</ul>
 							</div>
 							<!-- Audio Player -->
@@ -469,6 +470,14 @@
 						
 						} else {
 							mysong = 7;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
+					} else if (evt == 22) {	
+							if (mysong == 1){
+						
+						} else {
+							mysong = 1;
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
