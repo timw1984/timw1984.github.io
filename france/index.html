@@ -422,22 +422,40 @@
 							run($(link),audio[0]);
 						}
 					// Play Song 3 when section 3 is active	
-					}else if (evt == 4) {	
-						mysong = 3;
-						link = playlist.find('a')[mysong];    
-						run($(link),audio[0]);
+					}else if (evt == 5 || evt == 6 || evt == 7) {	
+						if (mysong == 2){
+						
+						} else {
+							mysong = 2;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
 					// No Audio when section four is active	
-					}else if (evt == 5) {
-						audio[0].pause();
+					}else if (evt == 14) {
+							if (mysong == 3){
+						
+						} else {
+							mysong = 3;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
 					// Play Song 2 when section 5 is active	
-					}else if (evt == 6) {	
-						mysong = 4;
-						link = playlist.find('a')[mysong];    
-						run($(link),audio[0]);
-					}else if (evt == 7) {	
-						mysong = 5;
-						link = playlist.find('a')[mysong];    
-						run($(link),audio[0]);
+					}else if (evt == 15 || evt == 16) {	
+								if (mysong == 4){
+						
+						} else {
+							mysong = 4;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
+					}else if (evt == 17 || evt == 18) {	
+							if (mysong == 5){
+						
+						} else {
+							mysong = 5;
+							link = playlist.find('a')[mysong];    
+							run($(link),audio[0]);
+						}
 					}
 
 				}
