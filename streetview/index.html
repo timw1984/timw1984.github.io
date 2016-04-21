@@ -65,12 +65,15 @@
 	<body class="claro">
 		<style>
 		<!----- Street View Button style ------->
-				.myIcon {
+		.myIcon {
 			background-image: url(https://timw1984.github.io/streetview/image/street.png);
 			background-repeat: no-repeat;
 			width: 11px;
 			height: 24px;
 			text-align: center;
+		}
+		#zoomin{
+			width:12px;
 		}
 
 		<!----- Street View Button style ------->
@@ -113,9 +116,9 @@
 							</div>
 							<!-- Street View -->
 							<!-- Street View -->
-							<div id="streetb" data-dojo-type="dijit.form.Button" iconClass="myIcon">
-								
-							</div>	
+						<div id="zoomin" data-dojo-type="dijit.form.Button" iconClass="myIcon">
+
+							</div>
 							
 							<!-- Street View -->
 							<!-- Street View -->
@@ -351,7 +354,7 @@
 			init();
 			function init(){
 		
-				$("#streetb").click(function () {
+				$("#zoomin").click(function () {
 					var thestreet = app.map.on("click", function(evt) {
 						xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
 						Lati = xycoor.y;
