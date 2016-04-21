@@ -66,7 +66,7 @@
 		<style>
 		<!----- Street View Button style ------->
 				.myIcon {
-			background-image: url(image/street.png);
+			background-image: url(https://timw1984.github.io/streetview/image/street.png);
 			background-repeat: no-repeat;
 			width: 11px;
 			height: 24px;
@@ -334,40 +334,37 @@
 
 		<script type="text/javascript">
 		require([
-		'dojo/topic',
-	"dojo/parser",
-	"esri/geometry/webMercatorUtils",
-	'dojo/_base/array'
-], function(
-	topic,
-	parser,
-	webMercatorUtils,
-	array
-) {
+			'dojo/topic',
+			"dojo/parser",
+			"esri/geometry/webMercatorUtils",
+			'dojo/_base/array'
+		], function(
+			topic,
+			parser,
+			webMercatorUtils,
+			array
+		) {
+
+
+		/////////////////// Street View //////////////////////////////////////////////
 		 parser.parse();
 			init();
 			function init(){
-
-		/////////////////// Street View //////////////////////////////////////////////
-
 		
-			 $("#streetb").click(function () {
-				var thestreet = app.map.on("click", function(evt) {
-					console.log(evt);
-					xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
-					console.log(xycoor);
-					Lati = xycoor.y;
-					Longi = xycoor.x;
-					streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
-					console.log(streetviewurl);
-				
-					var win = window.open(streetviewurl, '_blank');
-					win.focus();
-					thestreet.remove();	
+				$("#streetb").click(function () {
+					var thestreet = app.map.on("click", function(evt) {
+						xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+						Lati = xycoor.y;
+						Longi = xycoor.x;
+						streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
+						var win = window.open(streetviewurl, '_blank');
+						win.focus();
+						thestreet.remove();	
+					});
 				});
-			});
-		/////////////////// Street View //////////////////////////////////////////////
 			}
+		/////////////////// Street View //////////////////////////////////////////////
+			
 
 	});
 		</script>
