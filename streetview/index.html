@@ -64,7 +64,13 @@
 	</head>
 	<body class="claro">
 		<style>
-
+				.myIcon {
+  background-image: url(image/street.png);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+}
 		</style>
 
 		<!-- Builder top panel is injected here -->
@@ -104,7 +110,9 @@
 							</div>
 							<!-- Street View -->
 							<!-- Street View -->
-							<button id ="streetbutton">StreetView</button>		
+							<div id="street" data-dojo-type="dijit.form.Button" iconClass="myIcon">
+								<span>street</span>
+							</div>		
 							
 							<!-- Street View -->
 							<!-- Street View -->
@@ -323,14 +331,16 @@
 
 		<script type="text/javascript">
 		require([
-			'dojo/topic',
-			"esri/geometry/webMercatorUtils",
-			'dojo/_base/array'
-		], function(
-			topic,
-			webMercatorUtils,
-			array
-		) {
+		'dojo/topic',
+	"dojo/parser",
+	"esri/geometry/webMercatorUtils",
+	'dojo/_base/array'
+], function(
+	topic,
+	parser,
+	webMercatorUtils,
+	array
+) {
 
 			init();
 			function init(){
