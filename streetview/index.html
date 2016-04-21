@@ -72,7 +72,7 @@
 			height: 24px;
 			text-align: center;
 		}
-		#street{
+		#streetb{
 			width:12px;
 		}
 		<!----- Street View Button style ------->
@@ -115,9 +115,9 @@
 							</div>
 							<!-- Street View -->
 							<!-- Street View -->
-							<div id="street" data-dojo-type="dijit.form.Button" iconClass="myIcon">
-								
-							</div>		
+							<div id="streetb" data-dojo-type="dijit.form.Button" iconClass="myIcon">
+
+							</div>	
 							
 							<!-- Street View -->
 							<!-- Street View -->
@@ -351,22 +351,23 @@
 			function init(){
 
 		/////////////////// Street View //////////////////////////////////////////////
-		function clickme(evt){
-				console.log(evt);
-				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
-				console.log(xycoor);
-				Lati = xycoor.y;
-				Longi = xycoor.x;
-				streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
-				console.log(streetviewurl);
+
+		
+			 $("#streetb").click(function () {
+				var thestreet = app.map.on("click", function(evt) {
+					console.log(evt);
+					xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+					console.log(xycoor);
+					Lati = xycoor.y;
+					Longi = xycoor.x;
+					streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
+					console.log(streetviewurl);
 				
-				var win = window.open(streetviewurl, '_blank');
-				win.focus();
-			};
-			
-		 topic.subscribe("tpl-ready", function(){
-			app.map.on("click", clickme);
-		});
+					var win = window.open(streetviewurl, '_blank');
+					win.focus();
+					thestreet.remove();	
+				});
+			});
 		/////////////////// Street View //////////////////////////////////////////////
 			}
 
