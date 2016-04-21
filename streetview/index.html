@@ -72,9 +72,7 @@
 			height: 24px;
 			text-align: center;
 		}
-		#zoomin{
-			width:12px;
-		}
+	
 
 		<!----- Street View Button style ------->
 		</style>
@@ -116,8 +114,8 @@
 							</div>
 							<!-- Street View -->
 							<!-- Street View -->
-						<div id="zoomin" data-dojo-type="dijit.form.Button" iconClass="myIcon">
-
+						<div id="streetb" data-dojo-type="dijit/form/Button" iconClass="myIcon">
+								Street View
 							</div>
 							
 							<!-- Street View -->
@@ -340,12 +338,14 @@
 			'dojo/topic',
 			"dojo/parser",
 			"esri/geometry/webMercatorUtils",
-			'dojo/_base/array'
+			'dojo/_base/array',
+			"dijit/form/Button"
 		], function(
 			topic,
 			parser,
 			webMercatorUtils,
-			array
+			array,
+			Button
 		) {
 
 
@@ -354,7 +354,7 @@
 			init();
 			function init(){
 		
-				$("#zoomin").click(function () {
+				$("#streetb").click(function () {
 					var thestreet = app.map.on("click", function(evt) {
 						xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
 						Lati = xycoor.y;
