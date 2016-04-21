@@ -34,7 +34,7 @@
 			//-------------------------------------------------------------------------------------------
 			var configOptions = {
 				// Enter an application ID created through the Map Journal builder
-				appid: "219bd4515dff47a8b12dc101fb8a8230",
+				appid: "6932a2beeee94b55bfb31e27fec774eb",
 				// Optionally to secure Journal's access, use an OAuth application ID (example: 6gyOg377fLUhUk6f)
 				// User will need to sign-in to access the viewer even if your application is public
 				oAuthAppId: "",
@@ -64,8 +64,15 @@
 	</head>
 	<body class="claro">
 		<style>
-		<!----- Street View Button style ------->
-		.myIcon {
+			#playlist,audio{background:#666;width:400px; margin-bottom: 5px;}
+			.active a{color:#5DB0E6;text-decoration:none;}
+			.widget-content{padding-left: 5px;}
+			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
+			li a{color:#eeeedd;background:#333;padding:5px;display:block;}
+			li a:hover{text-decoration:none;}
+			.ui-button .ui-button-icon-primary {
+    background: url('https://www.google.com/images/srpr/logo3w.png') -10px -10px;}
+			.myIcon {
 			background-image: url(https://timw1984.github.io/streetview/image/street.png);
 			background-repeat: no-repeat;
 			width: 11px;
@@ -75,8 +82,6 @@
 		#zoomin{
 			width:12px;
 		}
-
-		<!----- Street View Button style ------->
 		</style>
 
 		<!-- Builder top panel is injected here -->
@@ -114,14 +119,27 @@
 								</table>
 						
 							</div>
-							<!-- Street View -->
-							<!-- Street View -->
-						<div id="zoomin" data-dojo-type="dijit.form.Button" iconClass="myIcon">
+											<!-- Audio Player -->
+							<div id="zoomin" data-dojo-type="dijit.form.Button" iconClass="myIcon">
 
 							</div>
+							<button id ="audiobutton" class="btn-minimize">Audio</button>	
+							<div class="widget-content" style="display:none;">
+								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
+									<source type="audio/mp3" src="song2.mp3">
+									Sorry, your browser does not support HTML5 audio.
+								</audio>
+								<ul id="playlist">
+									<li class="active"><a href="song2.mp3">Camille Saint-Saens - Aquarium</a></li>
+									<li ><a href="song1.mp3">Claude Debussy - Syrinx</a></li>
+									<li ><a href="http://www.mfiles.co.uk/mp3-downloads/Toccata-and-Fugue-Dm.mp3">Toccata and Fugue</a></li>
+								</ul>
+								<input id="turnoff" type="checkbox"> Turn off Audio
+							</div>
 							
-							<!-- Street View -->
-							<!-- Street View -->
+							<!-- Audio Player-->
+					
+
 							<div class="appTitle" tabindex="-1" aria-hidden="true"></div>
 							<span class="error-status">
 								<button class="btn btn-xs btn-warning check-story"></button>
@@ -337,39 +355,143 @@
 
 		<script type="text/javascript">
 		require([
-			'dojo/topic',
-			"dojo/parser",
-			"esri/geometry/webMercatorUtils",
-			'dojo/_base/array'
-		], function(
-			topic,
-			parser,
-			webMercatorUtils,
-			array
-		) {
-
-
-		/////////////////// Street View //////////////////////////////////////////////
-		 parser.parse();
-			init();
-			function init(){
-		
-				$("#zoomin").click(function () {
-					var thestreet = app.map.on("click", function(evt) {
-						xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
-						Lati = xycoor.y;
-						Longi = xycoor.x;
-						streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
-						var win = window.open(streetviewurl, '_blank');
-						win.focus();
-						thestreet.remove();	
-					});
-				});
+	'dojo/topic',
+	"dojo/parser",
+	"esri/geometry/webMercatorUtils",
+	'dojo/_base/array'
+], function(
+	topic,
+	parser,
+	webMercatorUtils,
+	array
+) {
+ parser.parse();
+		var audio;
+		var playlist;
+		var tracks;
+		var current;
+		var buttonvalue = "mini";
+		init();
+		function init(){
+			var amichecked = $('#turnoff').is(':checked');
+			console.log(amichecked);
+			audio = $('audio');
+			playlist = $('#playlist');
+			tracks = playlist.find('li a');
+			len = tracks.length;
+			audio[0].volume = .50;
+			//audio[0].play();
+			playlist.find('a').click(function(e){
+				e.preventDefault();
+				link = $(this);
+				current = link.parent().index();
+				run(link, audio[0]);
+			});
+			audio[0].addEventListener('ended',function(e){
+				current++;
+				if(current === len){
+					current = 0;
+					link = playlist.find('a')[0];
+				}else{
+					link = playlist.find('a')[current];    
+				}
+				run($(link),audio[0]);
+			});
+			function run(link, player){
+				player.src = link.attr('href');
+				par = link.parent();
+				par.addClass('active').siblings().removeClass('active');
+				audio[0].load();
+				audio[0].play();
 			}
 		/////////////////// Street View //////////////////////////////////////////////
+		function clickme(evt){
+				console.log(evt);
+				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+				console.log(xycoor);
+				Lati = xycoor.y;
+				Longi = xycoor.x;
+				streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
+				console.log(streetviewurl);
+				
+				var win = window.open(streetviewurl, '_blank');
+				win.focus();
+			};
+	
 			
+		 topic.subscribe("tpl-ready", function(){
+			//app.map.on("click", clickme);
+		});
+		/////////////////// Street View //////////////////////////////////////////////
+		topic.subscribe('story-load-section', setmusic);
+		function setmusic(evt){
+			
+				// No Audio when map starts
+				if (evt == 0) {
+					audio[0].pause();
+				// Play Song 1 when section 1 is active
+				} else if (evt == 1) {
+					
+					mysong = 0;
+					link = playlist.find('a')[mysong];    
+				    run($(link),audio[0]);
+				// Play Song 2 when section 2 is active	
+				} else if (evt == 2) {	
+					mysong = 1;
+					link = playlist.find('a')[mysong];    
+				    run($(link),audio[0]);
+				// Play Song 3 when section 3 is active	
+				}else if (evt == 3) {	
+					mysong = 2;
+					link = playlist.find('a')[mysong];    
+				    run($(link),audio[0]);
+				// No Audio when section four is active	
+				}else if (evt == 4) {
+					audio[0].pause();
+				// Play Song 2 when section 5 is active	
+				}else if (evt == 5) {	
+					mysong = 1;
+					link = playlist.find('a')[mysong];    
+				    run($(link),audio[0]);
+				}
+			console.log(evt);
+		
+		}
+		}
 
+	$(".btn-minimize").click(function(){
+		$(this).toggleClass('btn-plus');
+		$(".widget-content").slideToggle();
+		if (buttonvalue == "mini") {
+			$("#audiobutton").html('Minimize Audio');
+			buttonvalue = "maxi"
+		} else {
+			$("#audiobutton").html('Audio');
+			buttonvalue = "mini";
+		}
+		
 	});
+	
+	 $("#zoomin").click(function () {
+
+		app.map.setMapCursor("url('image/street.cur'),auto");
+       var thestreet = app.map.on("click", function(evt) {
+
+				console.log(evt);
+				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+				console.log(xycoor);
+				Lati = xycoor.y;
+				Longi = xycoor.x;
+				streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
+				console.log(streetviewurl);
+				
+				var win = window.open(streetviewurl, '_blank');
+				win.focus();
+				thestreet.remove();	
+		});
+    });
+	
+});
 		</script>
 	</body>
 </html>
