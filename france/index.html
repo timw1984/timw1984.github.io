@@ -367,7 +367,26 @@
 			var mysong = "song value";
 			init();
 			function init(){
+				
+					topic.subscribe("tpl-ready", function(){
+					app.map.on("click", function(evt) {
+						if (app.data.getCurrentSectionIndex() !== 0){
+			
+						} else {
+							if (evt.graphic._count > 0){
+								console.log("Graphic clicked");
+								sectionID = evt.graphic.attributes.Number;
+								console.log(sectionID);
+								topic.publish("story-navigate-section", sectionID);
+								//topic.publish("story-navigate-entry", 2);
 
+							} else {
+								console.log("nothing");
+							}
+						}	
+					});
+				});
+				
 				current = 0;
 				audio = $('audio');
 				playlist = $('#playlist');
