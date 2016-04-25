@@ -339,18 +339,18 @@
 
 			init();
 			function init(){
-
+				//// Wait for story map to be ready
 				topic.subscribe("tpl-ready", function(){
 					app.map.on("click", function(evt) {
 						if (app.data.getCurrentSectionIndex() !== 0){
-								/// Zoom to section won;t work if you are not on your home map 
+								/// Zoom to section won;t work if you are not on your home map. 
 						} else {
 							if (evt.graphic._count > 0){
 								//// If a popup is configured for your points, this line will hide the popup.
 								app.map.infoWindow.hide();
-								//// This line refers to the field that contains the section ID (change FID to the attribute you saved your section ID's in //////
+								//// This line refers to the field that contains the section ID (change FID to the attribute you saved your section ID's in) //////
 								sectionID = evt.graphic.attributes.FID;
-								////  This line will zoom to the selected section
+								////  This line will zoom to the selected section.
 								topic.publish("story-navigate-section", sectionID);
 							} else {
 								console.log("nothing");
