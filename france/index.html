@@ -73,6 +73,7 @@
 			.widget-content{padding-left: 5px;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			#audiooff{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
+			#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			li a{color:#eeeedd;background:#333;padding:5px;display:block;}
 			li a:hover{text-decoration:none;}
 		<!-- Audio Style -->
@@ -124,6 +125,14 @@
 								<div class="panelEditBtn">
 									<div class="panelEditBtnInner"></div>
 								</div>
+								
+											<!-- Street View Button -->
+							
+							<button id="streetv" data-toggle="tooltip" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
+								<span class="glyphicon glyphicon-road"></span>
+							</button>
+							
+							<!-- Street View Button  -->
 											<!-- Audio Player -->
 							<!-- Audio Player -->
 							<button id ="audiobutton" type="button" data-toggle="tooltip" title="Show/Hide Playlist" class="btn btn-sm btn-default btn-minimize ">
@@ -363,9 +372,13 @@
 		<script type="text/javascript">
 		require([
 			'dojo/topic',
+			"dojo/parser",
+			"esri/geometry/webMercatorUtils",
 			'dojo/_base/array'
 		], function(
 			topic,
+			parser,
+			webMercatorUtils,
 			array
 		) {
 			var audio;
@@ -576,6 +589,26 @@
 		});
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
+ $("#streetv").click(function () {
+		$("body").css("cursor", "url('image/select.cur'),auto");
+		app.map.setMapCursor("url('image/select.cur'),auto");
+		var thestreet = app.map.on("click", function(evt) {
+				app.map.setMapCursor("default");
+				$("body").css("cursor", "default");
+				console.log(evt);
+				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+				console.log(xycoor);
+				Lati = xycoor.y;
+				Longi = xycoor.x;
+				streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
+				console.log(streetviewurl);
+				
+				var win = window.open(streetviewurl, '_blank');
+				win.focus();
+				thestreet.remove();	
+		});
+    });
+	/////////////////// Street View //////////////////////////////////////////////
 		
 	});
 		</script>
