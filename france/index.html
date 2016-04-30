@@ -590,10 +590,10 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
  $("#streetv").click(function () {
-		$("body").css("cursor", "url('image/select.cur'),auto");
-		app.map.setMapCursor("url('image/select.cur'),auto");
+		//$("body").css("cursor", "url('image/select.cur'),auto");
+		//app.map.setMapCursor("url('image/select.cur'),auto");
 		var thestreet = app.map.on("click", function(evt) {
-				app.map.setMapCursor("default");
+				//app.map.setMapCursor("default");
 				$("body").css("cursor", "default");
 				console.log(evt);
 				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
