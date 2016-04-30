@@ -72,6 +72,7 @@
 			.active a{color:#5DB0E6;text-decoration:none;}
 			.widget-content{padding-left: 5px;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
+			#audiooff{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			li a{color:#eeeedd;background:#333;padding:5px;display:block;}
 			li a:hover{text-decoration:none;}
 		<!-- Audio Style -->
@@ -553,19 +554,25 @@
 		});
 		
 		//////////////////////////////// AUDIO ///////////////////////////////////////////
-	$("[data-toggle='tooltip']").tooltip({
-    trigger : 'hover',
-	container: 'body'
-});  
+		$("[data-toggle='tooltip']").tooltip({
+			trigger : 'hover',
+			container: 'body'
+		});  
 
 	
-  $('#audiooff').on('click', function () {
-        if(this.checked) {
-		var $el = $(this),
+		$('#audiooff').on('click', function () {
+			if(audioon == "yes") {
+				audioon = "no";
+				audio[0].pause();
+			} else {
+				audioon = "yes";
+		
+			}
+			var $el = $(this),
             textNode = this.lastChild;
-        $el.find('span').toggleClass('glyphicon-volume-off glyphicon-volume-up');
-        $el.toggleClass('showAudio');
-    });
+			$el.find('span').toggleClass('glyphicon-volume-off glyphicon-volume-up');
+			$el.toggleClass('showAudio');
+		});
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 		
