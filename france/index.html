@@ -115,7 +115,11 @@
 							</div>
 							<!-- Audio Player -->
 							<!-- Audio Player -->
-							<button id ="audiobutton" class="btn-minimize">Audio</button> <input id="myckeck" type="checkbox"> <font color= "white">Turn off Audio</font>
+							<button id ="audiobutton" type="button" data-toggle="tooltip" title="Show/Hide Playlist" class="btn btn-sm btn-default btn-minimize ">
+								<span class="glyphicon glyphicon-list-alt"></span>
+							</button>	
+							
+							<input id="myckeck" type="checkbox"> <font color= "white">Turn off Audio</font>
 							<div id="removeable" class="widget-content" style="display:none;">
 								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
 									<source type="audio/mp3" src="music/1Debussy-Soloforflute.mp3">
@@ -542,14 +546,6 @@
 		$(".btn-minimize").click(function(){
 			$(this).toggleClass('btn-plus');
 			$(".widget-content").slideToggle();
-			if (buttonvalue == "mini") {
-				$("#audiobutton").html('Minimize Audio');
-				buttonvalue = "maxi"
-			} else {
-				$("#audiobutton").html('Audio');
-				buttonvalue = "mini";
-			}
-	
 		});
 		
 			$("#myckeck").change(function() {
