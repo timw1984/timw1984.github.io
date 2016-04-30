@@ -119,7 +119,11 @@
 								<span class="glyphicon glyphicon-list-alt"></span>
 							</button>	
 							
-							<input id="myckeck" type="checkbox"> <font color= "white">Turn off Audio</font>
+							<button id="audiooff" data-toggle="tooltip" title="Turn Audio on/off" type="button" class="btn btn-default btn-sm showAudio" >
+								<span class="glyphicon glyphicon-volume-up"></span>
+							</button>
+							
+			
 							<div id="removeable" class="widget-content" style="display:none;">
 								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
 									<source type="audio/mp3" src="music/1Debussy-Soloforflute.mp3">
@@ -548,14 +552,23 @@
 			$(".widget-content").slideToggle();
 		});
 		
-			$("#myckeck").change(function() {
-				if(this.checked) {
-					audioon = "no";
-					audio[0].pause();
-				} else {
-					audioon = "yes";
-				}
-			});
+		//////////////////////////////// AUDIO ///////////////////////////////////////////
+	$("[data-toggle='tooltip']").tooltip({
+    trigger : 'hover',
+	container: 'body'
+});  
+
+	
+  $('#audiooff').on('click', function () {
+        if(this.checked) {
+		var $el = $(this),
+            textNode = this.lastChild;
+        $el.find('span').toggleClass('glyphicon-volume-off glyphicon-volume-up');
+        $el.toggleClass('showAudio');
+    });
+///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+		
 	});
 		</script>
 	</body>
