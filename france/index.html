@@ -567,10 +567,7 @@
 			$(".widget-content").slideToggle();
 		});
 		
-			$("#sidePanelInner").tooltip({
-			track: true,
-			 content: "Awesome title!"
-		});
+		
 		
 		//////////////////////////////// AUDIO ///////////////////////////////////////////
 		$("[data-toggle='tooltip']").tooltip({
@@ -599,6 +596,10 @@
 		//$("body").css("cursor", "url('image/select.cur'),auto");
 		//app.map.setMapCursor("url('image/strview.cur'),auto");
 		var thestreet = app.map.on("click", function(evt) {
+				$("div").tooltip({
+			track: true,
+			 content: "Awesome title!"
+		});
 				//app.map.setMapCursor("default");
 				//$("body").css("cursor", "default");
 				console.log(evt);
