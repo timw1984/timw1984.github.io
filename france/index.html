@@ -567,6 +567,11 @@
 			$(".widget-content").slideToggle();
 		});
 		
+			$("#sidePanelInner").tooltip({
+			track: true,
+			 content: "Awesome title!"
+		});
+		
 		//////////////////////////////// AUDIO ///////////////////////////////////////////
 		$("[data-toggle='tooltip']").tooltip({
 			trigger : 'hover',
@@ -591,10 +596,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////
  $("#streetv").click(function () {
  
-		$("#sidePanelInner").tooltip({
-			track: true,
-			content: "test"
-		});
 		//$("body").css("cursor", "url('image/select.cur'),auto");
 		//app.map.setMapCursor("url('image/strview.cur'),auto");
 		var thestreet = app.map.on("click", function(evt) {
