@@ -591,10 +591,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
  $("#streetv").click(function () {
 		//$("body").css("cursor", "url('image/select.cur'),auto");
-		app.map.setMapCursor("url('image/strview.cur'),auto");
+		//app.map.setMapCursor("url('image/strview.cur'),auto");
 		var thestreet = app.map.on("click", function(evt) {
 				//app.map.setMapCursor("default");
-				$("body").css("cursor", "default");
+				//$("body").css("cursor", "default");
 				console.log(evt);
 				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
 				console.log(xycoor);
