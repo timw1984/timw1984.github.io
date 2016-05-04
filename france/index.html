@@ -11,6 +11,7 @@
 
 		<link type="image/ico" rel="shortcut icon" href="resources/tpl/viewer/icons/favicon.ico">
 		<link type="image/ico" rel="icon"  href="resources/tpl/viewer/icons/favicon.ico">
+		<link rel="stylesheet" href="resources/lib/font-awesome/css/font-awesome.min.css">
 
 		<!--
 			To correctly reference your Map Journal in search engine:
@@ -71,9 +72,9 @@
 			#playlist,audio{background:#666;width:400px; margin-bottom: 10px;}
 			.active a{color:#5DB0E6;text-decoration:none;}
 			.widget-content{padding-left: 5px;}
+			#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1000; position:absolute; left: 15px; top: 120px; border-color: #57585A;display: block;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			#audiooff{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
-			#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			li a{color:#eeeedd;background:#333;padding:5px;display:block;}
 			li a:hover{text-decoration:none;}
 		<!-- Audio Style -->
@@ -128,7 +129,7 @@
 								
 											<!-- Street View Button -->
 							
-							<button id="streetv" data-toggle="tooltip" data-placement="bottom" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
+							<!--<button id="streetv" data-toggle="tooltip" data-placement="bottom" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
 								<span class="glyphicon glyphicon-road"></span>
 							</button>
 							
@@ -193,6 +194,10 @@
 					<td id="mainStagePanel">
 						<div id="mainStagePanelInner">
 							<div class="medias">
+							<button id="streetv" data-toggle="tooltip" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
+								<!--<span class="glyphicon glyphicon-road"></span>-->
+								<i class="fa fa-street-view" aria-hidden="true"></i>
+							</button>
 								<!-- Maps and media injected here -->
 							</div>
 							<div id="mainStageLoadingIndicator" class="loadingIndicator">
@@ -444,6 +449,14 @@
 			<!-- Play Audio during certain sections -->	
 				topic.subscribe('story-load-section', setmusic);
 				function setmusic(evt){
+				
+						whatisit = app.data.getCurrentSection();
+				infoIneed = whatisit.media.type;
+				if (infoIneed == "webmap"){
+					$("#streetv").fadeIn();
+				} else {
+					$("#streetv").hide();
+				}
 					if (audioon == "no"){
 						audio[0].pause();
 					
@@ -567,7 +580,18 @@
 			$(".widget-content").slideToggle();
 		});
 		
-		
+			topic.subscribe("story-perform-action-media", function(media){
+		if (media.type == "webpage"){
+			$("#streetv").hide();
+		} else {
+			$("#streetv").fadeIn();
+		}
+		console.log("A Main Stage action is performed:", media);
+	});
+	
+	$(".mediaBackContainer").click(function(){
+		$("#streetv").fadeIn();	
+	});
 		
 		//////////////////////////////// AUDIO ///////////////////////////////////////////
 		$("[data-toggle='tooltip']").tooltip({
@@ -584,6 +608,7 @@
 				audioon = "yes";
 		
 			}
+			this.blur();
 			var $el = $(this),
             textNode = this.lastChild;
 			$el.find('span').toggleClass('glyphicon-volume-off glyphicon-volume-up');
@@ -592,10 +617,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
  $("#streetv").click(function () {
- 
+		$("#streetv").blur();
 		$("body").css("cursor", "url('image/streetv.cur'),auto");
 		app.map.setMapCursor("url('image/streetv.cur'),auto");
 		var thestreet = app.map.on("click", function(evt) {
+				$("#streetv").blur();
 				app.map.setMapCursor("default");
 				$("body").css("cursor", "default");
 				console.log(evt);
