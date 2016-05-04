@@ -390,6 +390,8 @@
 			var playlist;
 			var tracks;
 			var current;
+			var thestreet;
+			var streetcurs = "normal";
 			var buttonvalue = "mini";
 			var audioon = "yes";
 			var mysong = "song value";
@@ -617,9 +619,21 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
  $("#streetv").click(function () {
-		$("#streetv").blur();
-		$("body").css("cursor", "url('image/streetv.cur'),auto");
-		app.map.setMapCursor("url('image/streetv.cur'),auto");
+ 
+		 if (streetcurs == "street"){
+			app.map.setMapCursor("default");
+			$("body").css("cursor", "default");
+			streetcurs = "normal";
+			//////////////
+			$("#streetv").blur();
+			/////////////
+			thestreet.remove();	
+		} else {
+			$("body").css("cursor", "url('image/streetv.cur'),auto");
+			app.map.setMapCursor("url('image/streetv.cur'),auto");
+			streetcurs = "street";
+		
+		
 		var thestreet = app.map.on("click", function(evt) {
 				$("#streetv").blur();
 				app.map.setMapCursor("default");
@@ -636,6 +650,7 @@
 				win.focus();
 				thestreet.remove();	
 		});
+		}
     });
 	/////////////////// Street View //////////////////////////////////////////////
 	
