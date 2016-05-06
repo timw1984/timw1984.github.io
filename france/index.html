@@ -417,8 +417,8 @@
 					app.map.on("click", function(evt) {
 						if (app.data.getCurrentSectionIndex() !== 0){
 			
-						} else if (evt.graphic == "undefined") {
-						
+						} else if (evt.graphic == undefined) {
+							console.log("no graphic);
 						} else {
 							if (evt.graphic._count > 0){
 								console.log("Graphic clicked");
@@ -599,7 +599,7 @@
 			$(".widget-content").slideToggle();
 		});
 		
-			topic.subscribe("story-perform-action-media", function(media){
+		topic.subscribe("story-perform-action-media", function(media){
 		if (media.type == "webpage"){
 			$("#streetv").hide();
 		} else {
