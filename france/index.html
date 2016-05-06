@@ -633,43 +633,43 @@
 		});
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
- $("#streetv").click(function () {
+		$("#streetv").click(function () {
  
-		 if (streetcurs == "street"){
-			$(document).off("mousemove");
-			document.getElementById('image').style.display = "none";
-			document.getElementById('image2').style.display = "none";
-			streetcurs = "normal";
-			//////////////
-			$("#streetv").blur();
-			/////////////
-			thestreet.remove();	
-		} else {
-		$(document).mousemove(function(e){
-		if (prevx > e.pageX ){
-     document.getElementById('image').style.display = "block";
-     document.getElementById('image2').style.display = "none";
-      prevx = e.pageX;
-    } else if (prevx < e.pageX)  {
-     document.getElementById('image2').style.display = "block";
-     document.getElementById('image').style.display = "none";
-     }
-    	$("#image2").css({left:e.pageX, top:e.pageY});
-      $("#image").css({left:e.pageX, top:e.pageY});
-      prevx = e.pageX;
+			if (streetcurs == "street"){
+				$(document).unbind('mousemove');
+				document.getElementById('image').style.display = "none";
+				document.getElementById('image2').style.display = "none";
+				streetcurs = "normal";
+				//////////////
+				$("#streetv").blur();
+				/////////////
+				thestreet.remove();	
+			} else {
+				$(document).mousemove(function(e){
+					if (prevx > e.pageX ){
+						document.getElementById('image').style.display = "block";
+						document.getElementById('image2').style.display = "none";
+						prevx = e.pageX;
+					} else if (prevx < e.pageX)  {
+					document.getElementById('image2').style.display = "block";
+					document.getElementById('image').style.display = "none";
+					}
+					$("#image2").css({left:e.pageX - 20, top:e.pageY- 40});
+					$("#image").css({left:e.pageX - 20, top:e.pageY- 40});
+					prevx = e.pageX;
     
-});	
+				});	
 
-			streetcurs = "street";
+				streetcurs = "street";
 		
 		
-		var thestreet = app.map.on("click", function(evt) {
+			var thestreet = app.map.on("click", function(evt) {
 				$("#streetv").blur();
 
 				console.log(evt);
 				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
 				document.getElementById('image').style.display = "none";
-			document.getElementById('image2').style.display = "none";
+				document.getElementById('image2').style.display = "none";
 				console.log(xycoor);
 				Lati = xycoor.y;
 				Longi = xycoor.x;
@@ -680,7 +680,7 @@
 				win.focus();
 				$(document).off("mousemove");
 				thestreet.remove();	
-		});
+			});
 		}
     });
 	/////////////////// Street View //////////////////////////////////////////////
