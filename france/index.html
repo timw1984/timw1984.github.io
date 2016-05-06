@@ -634,7 +634,7 @@
  $("#streetv").click(function () {
  
 		 if (streetcurs == "street"){
-
+			$(document).off("mousemove");
 			streetcurs = "normal";
 			//////////////
 			$("#streetv").blur();
@@ -654,15 +654,14 @@
       $("#image").css({left:e.pageX - 20, top:e.pageY - 40});
       prevx = e.pageX;
     
-});
+});	
 
 			streetcurs = "street";
 		
 		
 		var thestreet = app.map.on("click", function(evt) {
 				$("#streetv").blur();
-				app.map.setMapCursor("default");
-				$("body").css("cursor", "default");
+
 				console.log(evt);
 				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
 				console.log(xycoor);
@@ -673,6 +672,7 @@
 				streetcurs = "normal";
 				var win = window.open(streetviewurl, '_blank');
 				win.focus();
+				$(document).off("mousemove");
 				thestreet.remove();	
 		});
 		}
