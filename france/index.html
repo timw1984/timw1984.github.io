@@ -635,6 +635,8 @@
  
 		 if (streetcurs == "street"){
 			$(document).off("mousemove");
+			document.getElementById('image').style.display = "none";
+			document.getElementById('image2').style.display = "none";
 			streetcurs = "normal";
 			//////////////
 			$("#streetv").blur();
@@ -664,6 +666,8 @@
 
 				console.log(evt);
 				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+				document.getElementById('image').style.display = "none";
+			document.getElementById('image2').style.display = "none";
 				console.log(xycoor);
 				Lati = xycoor.y;
 				Longi = xycoor.x;
