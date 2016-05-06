@@ -11,7 +11,9 @@
 
 		<link type="image/ico" rel="shortcut icon" href="resources/tpl/viewer/icons/favicon.ico">
 		<link type="image/ico" rel="icon"  href="resources/tpl/viewer/icons/favicon.ico">
+		<!-- Font awesome style https://fortawesome.github.io/Font-Awesome/ -->
 		<link rel="stylesheet" href="resources/lib/font-awesome/css/font-awesome.min.css">
+		<!-- Font awesome style https://fortawesome.github.io/Font-Awesome/ -->
 
 		<!--
 			To correctly reference your Map Journal in search engine:
@@ -65,30 +67,22 @@
 	</head>
 	<body class="claro">
 		<style>
-		<!-- Audio Style -->
-		<!-- Audio Style -->
+		<!-- Custom Style -->
+		<!-- Custom Style -->
 			#removeable{margin-bottom: 5px;}
 			#myckeck{margin-bottom: 5px;margin-right: 2px;}
 			#playlist,audio{background:#666;width:400px; margin-bottom: 10px;}
 			.active a{color:#5DB0E6;text-decoration:none;}
 			.widget-content{padding-left: 5px;}
-			#image{
-				position:absolute;
-				display: none;
-				z-index:1001;
-				}
-			#image2{
-				position:absolute;
-				display: none;
-				z-index:1001;
-			}
+			#image{position:absolute;display: none;z-index:1001;}
+			#image2{position:absolute;display: none;z-index:1001;}
 			#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1000; position:absolute; left: 15px; top: 120px; border-color: #57585A;display: block;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			#audiooff{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			li a{color:#eeeedd;background:#333;padding:5px;display:block;}
 			li a:hover{text-decoration:none;}
-		<!-- Audio Style -->
-		<!-- Audio Style -->
+		<!-- Custom Style -->
+		<!-- Custom Style -->
 		</style>
 
 		<!-- Builder top panel is injected here -->
@@ -126,9 +120,12 @@
 								</table>
 						
 							</div>
+							
+							<!-- street view cursor image NEEDS TO GO HERE -->
 							<img id="image" src="image/gsve.png"/>
 							<img id="image2" src="image/gsvw.png"/>
-				
+							<!-- street view cursor image NEEDS TO GO HERE -->
+
 							<div class="appTitle" tabindex="-1" aria-hidden="true"></div>
 							<span class="error-status">
 								<button class="btn btn-xs btn-warning check-story"></button>
@@ -138,27 +135,22 @@
 								<div class="panelEditBtn">
 									<div class="panelEditBtnInner"></div>
 								</div>
-								
-											<!-- Street View Button -->
 							
-							<!--<button id="streetv" data-toggle="tooltip" data-placement="bottom" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
-								<span class="glyphicon glyphicon-road"></span>
-							</button>
-							
-							<!-- Street View Button  -->
-											<!-- Audio Player -->
-							<!-- Audio Player -->
-					
+							<!-- Audio Player show/hide button -->
 							<button id ="audiobutton" type="button" data-toggle="tooltip" data-placement="bottom" title="Show/Hide Playlist" class="btn btn-sm btn-default btn-minimize ">
 								<span class="glyphicon glyphicon-list-alt"></span>
-							</button>	
+							</button>
+							<!-- Audio Player show/hide button -->
 							
+							<!-- Audio off/on Button -->
 							<button id="audiooff" data-toggle="tooltip" data-placement="bottom" title="Turn Audio on/off" type="button" class="btn btn-default btn-sm showAudio" >
 								<span class="glyphicon glyphicon-volume-up"></span>
 							</button>
+							<!-- Audio off/on Button -->
 							
-			
+							<!-- Audio Player -->
 							<div id="removeable" class="widget-content" style="display:none;">
+							
 								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
 									<source type="audio/mp3" src="music/1Debussy-Soloforflute.mp3">
 									Sorry, your browser does not support HTML5 audio.
@@ -178,7 +170,7 @@
 								</ul>
 							</div>
 							<!-- Audio Player -->
-							<!-- Audio Player-->
+
 								<div class="sections">
 									<!-- sections injected here -->
 									
@@ -208,11 +200,14 @@
 					
 						<div id="mainStagePanelInner">
 							<div class="medias">
+
+							<!-- Street View Button  -->
 							<button id="streetv" data-toggle="tooltip" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
-								<!--<span class="glyphicon glyphicon-road"></span>-->
 								<i class="fa fa-street-view" aria-hidden="true"></i>
 							</button>
-								<!-- Maps and media injected here -->
+							<!-- Street View Button  -->
+
+							<!-- Maps and media injected here -->
 							</div>
 							<div id="mainStageLoadingIndicator" class="loadingIndicator">
 								<img src="resources/tpl/viewer/icons/loading-light.gif" />
@@ -413,7 +408,7 @@
 			init();
 			function init(){
 				
-					topic.subscribe("tpl-ready", function(){
+				topic.subscribe("tpl-ready", function(){
 					app.map.on("click", function(evt) {
 						if (app.data.getCurrentSectionIndex() !== 0){
 			
@@ -421,12 +416,8 @@
 							console.log("no graphic");
 						} else {
 							if (evt.graphic._count > 0){
-								console.log("Graphic clicked");
 								sectionID = evt.graphic.attributes.Number;
-								console.log(sectionID);
 								topic.publish("story-navigate-section", sectionID);
-								//topic.publish("story-navigate-entry", 2);
-
 							} else {
 								console.log("nothing");
 							}
@@ -440,14 +431,14 @@
 				tracks = playlist.find('li a');
 				len = tracks.length;
 				audio[0].volume = .50;
-				//audio[0].play();
+
 				playlist.find('a').click(function(e){
 					e.preventDefault();
 					link = $(this);
 					current = link.parent().index();
 					run(link, audio[0]);
 				});
-				/*
+				/* Uncomment if you want the playlist to automatically run next audio file
 				audio[0].addEventListener('ended',function(e){
 					current++;
 					if(current === len){
@@ -469,17 +460,17 @@
 				topic.subscribe('story-load-section', setmusic);
 				function setmusic(evt){
 				
-						whatisit = app.data.getCurrentSection();
-				infoIneed = whatisit.media.type;
-				if (infoIneed == "webmap"){
-					$("#streetv").fadeIn();
-				} else {
-					$("#streetv").hide();
-				}
+					whatisit = app.data.getCurrentSection();
+					infoIneed = whatisit.media.type;
+					if (infoIneed == "webmap"){
+						$("#streetv").fadeIn();
+					} else {
+						$("#streetv").hide();
+					}
 					if (audioon == "no"){
 						audio[0].pause();
 					
-					} else{
+					} else {
 					// No Audio on map home screen
 					if (evt == 0) {
 						audio[0].pause();
@@ -497,8 +488,7 @@
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					// Play Song 3 when section 3 is active	
-					}else if (evt == 5 || evt == 6 || evt == 7) {	
+					} else if (evt == 5 || evt == 6 || evt == 7) {	
 						if (mysong == 2){
 						
 						} else {
@@ -506,42 +496,40 @@
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					// No Audio when section four is active	
-					}else if (evt == 14) {
-							if (mysong == 3){
+					} else if (evt == 14) {
+						if (mysong == 3){
 						
 						} else {
 							mysong = 3;
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					// Play Song 2 when section 5 is active	
-					}else if (evt == 15 || evt == 16) {	
-								if (mysong == 4){
+					} else if (evt == 15 || evt == 16) {	
+							if (mysong == 4){
 						
 						} else {
 							mysong = 4;
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					}else if (evt == 17 || evt == 18) {	
-							if (mysong == 5){
+					} else if (evt == 17 || evt == 18) {	
+						if (mysong == 5){
 						
 						} else {
 							mysong = 5;
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					}else if (evt == 19 ) {	
-							if (mysong == 6){
+					} else if (evt == 19 ) {	
+						if (mysong == 6){
 						
 						} else {
 							mysong = 6;
 							link = playlist.find('a')[mysong];    
 							run($(link),audio[0]);
 						}
-					}  else if (evt == 20) {	
-							if (mysong == 7){
+					} else if (evt == 20) {	
+						if (mysong == 7){
 						
 						} else {
 							mysong = 7;
@@ -549,7 +537,7 @@
 							run($(link),audio[0]);
 						}
 					} else if (evt == 22) {	
-							if (mysong == 1){
+						if (mysong == 1){
 						
 						} else {
 							mysong = 1;
@@ -557,7 +545,7 @@
 							run($(link),audio[0]);
 						}
 					} else if (evt == 28 || evt == 29 || evt == 30) {	
-							if (mysong == 8){
+						if (mysong == 8){
 						
 						} else {
 							mysong = 8;
@@ -565,7 +553,7 @@
 							run($(link),audio[0]);
 						}
 					} else if (evt == 32) {	
-							if (mysong == 6){
+						if (mysong == 6){
 						
 						} else {
 							mysong = 6;
@@ -573,7 +561,7 @@
 							run($(link),audio[0]);
 						}
 					} else if (evt == 33) {	
-							if (mysong == 9){
+						if (mysong == 9){
 						
 						} else {
 							mysong = 9;
@@ -581,7 +569,7 @@
 							run($(link),audio[0]);
 						}
 					}else if (evt == 34) {	
-							if (mysong == 10){
+						if (mysong == 10){
 						
 						} else {
 							mysong = 10;
@@ -600,17 +588,17 @@
 		});
 		
 		topic.subscribe("story-perform-action-media", function(media){
-		if (media.type == "webpage"){
-			$("#streetv").hide();
-		} else {
-			$("#streetv").fadeIn();
-		}
-		console.log("A Main Stage action is performed:", media);
-	});
+			if (media.type == "webpage"){
+				$("#streetv").hide();
+			} else {
+				$("#streetv").fadeIn();
+			}
+			console.log("A Main Stage action is performed:", media);
+		});
 	
-	$(".mediaBackContainer").click(function(){
-		$("#streetv").fadeIn();	
-	});
+		$(".mediaBackContainer").click(function(){
+			$("#streetv").fadeIn();	
+		});
 		
 		//////////////////////////////// AUDIO ///////////////////////////////////////////
 		$("[data-toggle='tooltip']").tooltip({
@@ -625,7 +613,6 @@
 				audio[0].pause();
 			} else {
 				audioon = "yes";
-		
 			}
 			this.blur();
 			var $el = $(this),
@@ -633,8 +620,7 @@
 			$el.find('span').toggleClass('glyphicon-volume-off glyphicon-volume-up');
 			$el.toggleClass('showAudio');
 		});
-///////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////// Street View //////////////////////////////////////////////
 		$("#streetv").click(function () {
  
 			if (streetcurs == "street"){
@@ -642,9 +628,7 @@
 				document.getElementById('image').style.display = "none";
 				document.getElementById('image2').style.display = "none";
 				streetcurs = "normal";
-				//////////////
 				$("#streetv").blur();
-				/////////////
 				thestreet.remove();	
 			} else {
 				$(document).mousemove(function(e){
@@ -664,26 +648,21 @@
 
 				streetcurs = "street";
 		
-		
-			var thestreet = app.map.on("click", function(evt) {
-				$("#streetv").blur();
-
-				console.log(evt);
-				xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
-				document.getElementById('image').style.display = "none";
-				document.getElementById('image2').style.display = "none";
-				console.log(xycoor);
-				Lati = xycoor.y;
-				Longi = xycoor.x;
-				streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
-				console.log(streetviewurl);
-				streetcurs = "normal";
-				var win = window.open(streetviewurl, '_blank');
-				win.focus();
-				$(document).off("mousemove");
-				thestreet.remove();	
-			});
-		}
+				var thestreet = app.map.on("click", function(evt) {
+					$("#streetv").blur();
+					xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+					document.getElementById('image').style.display = "none";
+					document.getElementById('image2').style.display = "none";
+					Lati = xycoor.y;
+					Longi = xycoor.x;
+					streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
+					streetcurs = "normal";
+					var win = window.open(streetviewurl, '_blank');
+					win.focus();
+					$(document).off("mousemove");
+					thestreet.remove();	
+				});
+			}
     });
 	/////////////////// Street View //////////////////////////////////////////////
 	
