@@ -407,7 +407,7 @@
 			var mysong = "song value";
 			init();
 			function init(){
-				
+				// Click a symbol on the home map to go to section that contains the symbol
 				topic.subscribe("tpl-ready", function(){
 					app.map.on("click", function(evt) {
 						if (app.data.getCurrentSectionIndex() !== 0){
@@ -416,15 +416,17 @@
 							console.log("no graphic");
 						} else {
 							if (evt.graphic._count > 0){
+								// You need to have a Number attribute in your feature layer that corresponds to section number
 								sectionID = evt.graphic.attributes.Number;
 								topic.publish("story-navigate-section", sectionID);
+								///////////////////////////////////////////////////////
 							} else {
 								console.log("nothing");
 							}
 						}	
 					});
 				});
-				
+				//////////////////////////////////////////////////////////////
 				current = 0;
 				audio = $('audio');
 				playlist = $('#playlist');
@@ -438,7 +440,8 @@
 					current = link.parent().index();
 					run(link, audio[0]);
 				});
-				/* Uncomment if you want the playlist to automatically run next audio file
+				
+				/* Uncomment if you want the playlist to automatically run next audio file once one has finished
 				audio[0].addEventListener('ended',function(e){
 					current++;
 					if(current === len){
@@ -449,6 +452,8 @@
 					}
 					run($(link),audio[0]);
 				}); */
+				
+				// Starts playing the audio
 				function run(link, player){
 					player.src = link.attr('href');
 					par = link.parent();
@@ -456,10 +461,10 @@
 					audio[0].load();
 					audio[0].play();
 				}
-			<!-- Play Audio during certain sections -->	
+				// Plays particular audio during certain sections
 				topic.subscribe('story-load-section', setmusic);
 				function setmusic(evt){
-				
+					// If the section is a webmap, show the streetview button
 					whatisit = app.data.getCurrentSection();
 					infoIneed = whatisit.media.type;
 					if (infoIneed == "webmap"){
@@ -467,6 +472,7 @@
 					} else {
 						$("#streetv").hide();
 					}
+					///////////////////////////////////////////////////////////
 					if (audioon == "no"){
 						audio[0].pause();
 					
@@ -581,12 +587,14 @@
 				}
 				}
 			}
-		// Audio Button
+		// Minimize the playlist
 		$(".btn-minimize").click(function(){
 			$(this).toggleClass('btn-plus');
 			$(".widget-content").slideToggle();
 		});
+		///////////////////////////////////////
 		
+		// If the Mainstage media is changed show/hide the street view button
 		topic.subscribe("story-perform-action-media", function(media){
 			if (media.type == "webpage"){
 				$("#streetv").hide();
@@ -599,14 +607,16 @@
 		$(".mediaBackContainer").click(function(){
 			$("#streetv").fadeIn();	
 		});
+		////////////////////////////////////////////////////////////////////////
 		
-		//////////////////////////////// AUDIO ///////////////////////////////////////////
+		// Show tooltips
 		$("[data-toggle='tooltip']").tooltip({
 			trigger : 'hover',
 			container: 'body'
 		});  
-
-	
+		///////////////////////////////////////////////////////////////////////
+		
+		// Audio on/off button
 		$('#audiooff').on('click', function () {
 			if(audioon == "yes") {
 				audioon = "no";
@@ -620,7 +630,9 @@
 			$el.find('span').toggleClass('glyphicon-volume-off glyphicon-volume-up');
 			$el.toggleClass('showAudio');
 		});
-		/////////////////// Street View //////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		
+		// Street View
 		$("#streetv").click(function () {
  
 			if (streetcurs == "street"){
@@ -631,6 +643,7 @@
 				$("#streetv").blur();
 				thestreet.remove();	
 			} else {
+				// Street view image following cursor
 				$(document).mousemove(function(e){
 					if (prevx > e.pageX ){
 						document.getElementById('image').style.display = "block";
@@ -643,9 +656,8 @@
 					$("#image2").css({left:e.pageX - 20, top:e.pageY- 40});
 					$("#image").css({left:e.pageX - 20, top:e.pageY- 40});
 					prevx = e.pageX;
-    
 				});	
-
+				//////////////////////////////////////////////////////
 				streetcurs = "street";
 		
 				var thestreet = app.map.on("click", function(evt) {
@@ -663,8 +675,8 @@
 					thestreet.remove();	
 				});
 			}
-    });
-	/////////////////// Street View //////////////////////////////////////////////
+		});
+		/////////////////////////////////////////////////////////////////
 	
 	});
 		</script>
