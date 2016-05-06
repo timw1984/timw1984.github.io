@@ -72,6 +72,16 @@
 			#playlist,audio{background:#666;width:400px; margin-bottom: 10px;}
 			.active a{color:#5DB0E6;text-decoration:none;}
 			.widget-content{padding-left: 5px;}
+			#image{
+				position:absolute;
+				display: none;
+				z-index:1001;
+				}
+			#image2{
+				position:absolute;
+				display: none;
+				z-index:1001;
+			}
 			#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1000; position:absolute; left: 15px; top: 120px; border-color: #57585A;display: block;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			#audiooff{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
@@ -192,6 +202,8 @@
 					</td>
 					<!-- Map -->
 					<td id="mainStagePanel">
+					<img id="image" src="http://gis.calhouncounty.org/WAB/V2.0/widgets/StreetView/widgets/StreetView/images/flying_gsv_man_e.png"/>
+					<img id="image2" src="http://gis.calhouncounty.org/WAB/V2.0/widgets/StreetView/widgets/StreetView/images/flying_gsv_man_w.png"/>
 						<div id="mainStagePanelInner">
 							<div class="medias">
 							<button id="streetv" data-toggle="tooltip" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
@@ -387,6 +399,7 @@
 			array
 		) {
 			var audio;
+			var prevx = 1;
 			var playlist;
 			var tracks;
 			var current;
@@ -621,16 +634,28 @@
  $("#streetv").click(function () {
  
 		 if (streetcurs == "street"){
-			app.map.setMapCursor("default");
-			$("body").css("cursor", "default");
+
 			streetcurs = "normal";
 			//////////////
 			$("#streetv").blur();
 			/////////////
 			thestreet.remove();	
 		} else {
-			$("body").css("cursor", "url('image/streetv.cur'),auto");
-			app.map.setMapCursor("url('image/streetv.cur'),auto");
+		$(document).mousemove(function(e){
+		if (prevx > e.pageX ){
+     document.getElementById('image').style.display = "block";
+     document.getElementById('image2').style.display = "none";
+      prevx = e.pageX;
+    } else if (prevx < e.pageX)  {
+     document.getElementById('image2').style.display = "block";
+     document.getElementById('image').style.display = "none";
+     }
+    	$("#image2").css({left:e.pageX - 20, top:e.pageY - 40});
+      $("#image").css({left:e.pageX - 20, top:e.pageY - 40});
+      prevx = e.pageX;
+    
+});
+
 			streetcurs = "street";
 		
 		
