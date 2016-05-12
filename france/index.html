@@ -423,40 +423,33 @@
 			var mysong = "song value";
 			init();
 			function init(){
-			
-					$("#basemapchange").click(function () {
+			// Switches Basemap between aerial and topo
+			$("#basemapchange").click(function () {
 				var basemap = app.map.getLayer(app.map.layerIds[0]);
-		app.map.removeLayer(basemap);
-		if (mybase == 'image'){
-			var newbase = new OpenStreetMapLayer();
-			 mybase = 'no street';
-
-			 /* $("#basemapchange").tooltip('hide')
-				.attr('data-original-title', "new tooltip")
-				.tooltip('fixTitle')
-				.tooltip('show');
-				*/
-				$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
-		} else {
-			//var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
-			var newbase = new VETiledLayer({
-				bingMapsKey: "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh",
-				mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
-			});
-			 mybase = 'image';
-			$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
-		}
-		////////////////////////
-		app.map.addLayer(newbase);
-		});
+				app.map.removeLayer(basemap);
+				if (mybase == 'image'){
+					var newbase = new OpenStreetMapLayer();
+					mybase = 'no street';
+					$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
+				} else {
+					var newbase = new VETiledLayer({
+					bingMapsKey: "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh",
+					mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
+					});
+					mybase = 'image';
+					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
+				}
 		
-		 $('#basemapchange').on('click', function () {
-		this.blur();
-        var $el = $(this),
-            textNode = this.lastChild;
-        $el.find('span').toggleClass('fa-car fa-picture-o');
-        $el.toggleClass('showBasemap');
-    });
+				app.map.addLayer(newbase);
+			});
+			// Change button depending on which basemap is there
+			$('#basemapchange').on('click', function () {
+				this.blur();
+				var $el = $(this),
+				textNode = this.lastChild;
+				$el.find('span').toggleClass('fa-car fa-picture-o');
+				$el.toggleClass('showBasemap');
+			});
 				// Click a symbol on the home map to go to section that contains the symbol
 				topic.subscribe("tpl-ready", function(){
 					app.map.on("click", function(evt) {
@@ -519,8 +512,10 @@
 					infoIneed = whatisit.media.type;
 					if (infoIneed == "webmap"){
 						$("#streetv").fadeIn();
+						$("#basemapchange").fadeIn();
 					} else {
 						$("#streetv").hide();
+						$("#basemapchange").hide();
 					}
 					///////////////////////////////////////////////////////////
 					if (audioon == "no"){
@@ -648,14 +643,17 @@
 		topic.subscribe("story-perform-action-media", function(media){
 			if (media.type == "webpage"){
 				$("#streetv").hide();
+				$("#basemapchange").hide();
 			} else {
 				$("#streetv").fadeIn();
+				$("#basemapchange").fadeIn();
 			}
 			console.log("A Main Stage action is performed:", media);
 		});
 	
 		$(".mediaBackContainer").click(function(){
-			$("#streetv").fadeIn();	
+			$("#streetv").fadeIn();
+			$("#basemapchange").fadeIn();
 		});
 		////////////////////////////////////////////////////////////////////////
 		
