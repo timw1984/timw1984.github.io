@@ -80,9 +80,9 @@
 			 @font-face { font-family: disneyfont; font-weight: bold; src: url('font/waltographbold.ttf');}
 			 
 			 .sectionPanel .title strong, .sectionPanel .appTitle strong, #mobileView .title strong, #AddEditTitleEditor strong {
-    font-family: disneyfont;
-}
-			 
+				font-family: disneyfont;
+				}
+			 #basemapchange{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1000; position:absolute; left: 15px; top: 160px; border-color: #57585A;display: block;padding: 5px 8.5px;}
 			#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1000; position:absolute; left: 15px; top: 120px; border-color: #57585A;display: block;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			#audiooff{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
@@ -213,6 +213,10 @@
 								<i class="fa fa-street-view" aria-hidden="true"></i>
 							</button>
 							<!-- Street View Button  -->
+							
+							<button id="basemapchange"data-toggle="tooltip" title="Show Aerial" type="button" class="btn btn-default btn-sm showBasemap " >
+								<span class="fa fa-picture-o"></span>
+							</button>
 
 							<!-- Maps and media injected here -->
 							</div>
@@ -395,11 +399,15 @@
 			'dojo/topic',
 			"dojo/parser",
 			"esri/geometry/webMercatorUtils",
+			"esri/virtualearth/VETiledLayer",
+			"esri/layers/OpenStreetMapLayer",
 			'dojo/_base/array'
 		], function(
 			topic,
 			parser,
 			webMercatorUtils,
+			VETiledLayer,
+			OpenStreetMapLayer,
 			array
 		) {
 			var audio;
@@ -407,6 +415,7 @@
 			var playlist;
 			var tracks;
 			var current;
+			var mybase = 'no street';
 			var thestreet;
 			var streetcurs = "normal";
 			var buttonvalue = "mini";
@@ -414,6 +423,40 @@
 			var mysong = "song value";
 			init();
 			function init(){
+			
+					$("#basemapchange").click(function () {
+				var basemap = app.map.getLayer(app.map.layerIds[0]);
+		app.map.removeLayer(basemap);
+		if (mybase == 'image'){
+			var newbase = new OpenStreetMapLayer();
+			 mybase = 'no street';
+
+			 /* $("#basemapchange").tooltip('hide')
+				.attr('data-original-title', "new tooltip")
+				.tooltip('fixTitle')
+				.tooltip('show');
+				*/
+				$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
+		} else {
+			//var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
+			var newbase = new VETiledLayer({
+				bingMapsKey: "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh",
+				mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
+			});
+			 mybase = 'image';
+			$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
+		}
+		////////////////////////
+		app.map.addLayer(newbase);
+		});
+		
+		 $('#basemapchange').on('click', function () {
+		this.blur();
+        var $el = $(this),
+            textNode = this.lastChild;
+        $el.find('span').toggleClass('fa-car fa-picture-o');
+        $el.toggleClass('showBasemap');
+    });
 				// Click a symbol on the home map to go to section that contains the symbol
 				topic.subscribe("tpl-ready", function(){
 					app.map.on("click", function(evt) {
@@ -667,7 +710,7 @@
 				//////////////////////////////////////////////////////
 				streetcurs = "street";
 		
-				var thestreet = app.map.on("click", function(evt) {
+				 thestreet = app.map.on("click", function(evt) {
 					$("#streetv").blur();
 					xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
 					document.getElementById('image').style.display = "none";
