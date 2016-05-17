@@ -400,15 +400,13 @@
 			"dojo/parser",
 			"esri/geometry/webMercatorUtils",
 			"esri/virtualearth/VETiledLayer",
-			"esri/layers/OpenStreetMapLayer",
-			'dojo/_base/array'
+			"esri/layers/OpenStreetMapLayer"
 		], function(
 			topic,
 			parser,
 			webMercatorUtils,
 			VETiledLayer,
-			OpenStreetMapLayer,
-			array
+			OpenStreetMapLayer
 		) {
 			var audio;
 			var prevx = 1;
@@ -423,25 +421,28 @@
 			var mysong = "song value";
 			init();
 			function init(){
+			
 			// Switches Basemap between aerial and topo
-			$("#basemapchange").click(function () {
-				var basemap = app.map.getLayer(app.map.layerIds[0]);
-				app.map.removeLayer(basemap);
-				if (mybase == 'image'){
-					var newbase = new OpenStreetMapLayer();
-					mybase = 'no street';
-					$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
-				} else {
-					var newbase = new VETiledLayer({
-					bingMapsKey: "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh",
-					mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
-					});
-					mybase = 'image';
-					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
-				}
+			
+				$("#basemapchange").click(function () {
+					var basemap = app.map.getLayer(app.map.layerIds[0]);
+					app.map.removeLayer(basemap);
+					if (mybase == 'image'){
+						var newbase = new OpenStreetMapLayer();
+						mybase = 'no street';
+						$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
+					} else {
+						var newbase = new VETiledLayer({
+						bingMapsKey: "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh",
+						mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
+						});
+						mybase = 'image';
+						$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
+					}
 		
-				app.map.addLayer(newbase);
-			});
+					app.map.addLayer(newbase);
+				});
+			
 			// Change button depending on which basemap is there
 			$('#basemapchange').on('click', function () {
 				this.blur();
@@ -450,25 +451,8 @@
 				$el.find('span').toggleClass('fa-car fa-picture-o');
 				$el.toggleClass('showBasemap');
 			});
-				// Click a symbol on the home map to go to section that contains the symbol
-				topic.subscribe("tpl-ready", function(){
-					app.map.on("click", function(evt) {
-						if (app.data.getCurrentSectionIndex() !== 0){
 			
-						} else if (evt.graphic == undefined) {
-							console.log("no graphic");
-						} else {
-							if (evt.graphic._count > 0){
-								// You need to have a Number attribute in your feature layer that corresponds to section number
-								sectionID = evt.graphic.attributes.Number;
-								topic.publish("story-navigate-section", sectionID);
-								///////////////////////////////////////////////////////
-							} else {
-								console.log("nothing");
-							}
-						}	
-					});
-				});
+			
 				//////////////////////////////////////////////////////////////
 				current = 0;
 				audio = $('audio');
@@ -476,6 +460,7 @@
 				tracks = playlist.find('li a');
 				len = tracks.length;
 				audio[0].volume = .50;
+		
 
 				playlist.find('a').click(function(e){
 					e.preventDefault();
@@ -632,6 +617,32 @@
 				}
 				}
 			}
+		
+				topic.subscribe("story-loaded-map", function(){
+					setTimeout(clickmap, 1000);	
+				});
+			
+		// Click a symbol on the home map to go to section that contains the symbol	
+		function clickmap (){
+			app.map.on("click", function(evt) {
+						//if (app.data.getCurrentSectionIndex() !== 0){
+			
+						if (evt.graphic == undefined) {
+							console.log("no graphic");
+						} else {
+							if (evt.graphic._count > 0){
+								// You need to have a Number attribute in your feature layer that corresponds to section number
+								sectionID = evt.graphic.attributes.Number;
+								topic.publish("story-navigate-section", sectionID);
+								///////////////////////////////////////////////////////
+							} else {
+								console.log("nothing");
+							}
+						}	
+					});
+		
+		}
+		
 		// Minimize the playlist
 		$(".btn-minimize").click(function(){
 			$(this).toggleClass('btn-plus');
@@ -664,13 +675,19 @@
 		});  
 		///////////////////////////////////////////////////////////////////////
 		
+		audio[0].onplay = function() {
+					//alert("The video has started to play");
+				};
+		
 		// Audio on/off button
 		$('#audiooff').on('click', function () {
 			if(audioon == "yes") {
 				audioon = "no";
-				audio[0].pause();
+				//audio[0].pause();
+				audio[0].volume = 0;
 			} else {
 				audioon = "yes";
+				audio[0].volume = .50;
 			}
 			this.blur();
 			var $el = $(this),
