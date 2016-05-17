@@ -625,9 +625,9 @@
 		// Click a symbol on the home map to go to section that contains the symbol	
 		function clickmap (){
 			app.map.on("click", function(evt) {
-						if (app.data.getCurrentSectionIndex() !== 0){
+						//if (app.data.getCurrentSectionIndex() !== 0){
 			
-						} else if (evt.graphic == undefined) {
+						if (evt.graphic == undefined) {
 							console.log("no graphic");
 						} else {
 							if (evt.graphic._count > 0){
