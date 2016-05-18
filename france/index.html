@@ -503,6 +503,14 @@
 						$("#basemapchange").hide();
 					}
 					///////////////////////////////////////////////////////////
+					if (evt == 0){
+						$("#streetv").hide();
+						$("#basemapchange").hide();
+					} else {
+						$("#streetv").fadeIn();
+						$("#basemapchange").fadeIn();
+					}
+					
 					if (audioon == "no"){
 						audio[0].pause();
 					
