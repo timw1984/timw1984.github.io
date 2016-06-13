@@ -12,9 +12,6 @@
 		<link type="image/ico" rel="shortcut icon" href="resources/tpl/viewer/icons/favicon.ico">
 		<link type="image/ico" rel="icon"  href="resources/tpl/viewer/icons/favicon.ico">
 		
-		<!-- Font awesome style https://fortawesome.github.io/Font-Awesome/ -->
-		<link rel="stylesheet" href="resources/lib/font-awesome/css/font-awesome.min.css">
-		<!-- Font awesome style https://fortawesome.github.io/Font-Awesome/ -->
 
 		<!--
 			To correctly reference your Map Journal in search engine:
@@ -446,6 +443,12 @@
 				this.blur();
 			}			
 		};
+		
+		// Minimize the playlist
+		$(".btn-minimize").click(function(){
+			$(this).toggleClass('btn-plus');
+			$(".widget-content").slideToggle();
+		});
 		
 		// Audio on/off button
 		$('#audiooff').on('click', function () {
