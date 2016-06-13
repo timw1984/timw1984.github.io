@@ -11,6 +11,10 @@
 
 		<link type="image/ico" rel="shortcut icon" href="resources/tpl/viewer/icons/favicon.ico">
 		<link type="image/ico" rel="icon"  href="resources/tpl/viewer/icons/favicon.ico">
+		
+		<!-- Font awesome style https://fortawesome.github.io/Font-Awesome/ -->
+		<link rel="stylesheet" href="resources/lib/font-awesome/css/font-awesome.min.css">
+		<!-- Font awesome style https://fortawesome.github.io/Font-Awesome/ -->
 
 		<!--
 			To correctly reference your Map Journal in search engine:
@@ -113,7 +117,9 @@
 							</div>
 							<!-- Audio Player -->
 							<!-- Audio Player -->
-							<button id ="audiobutton" class="btn-minimize">Audio</button>	
+							<button id ="audiobutton" type="button" data-toggle="tooltip" data-placement="bottom" title="Show/Hide Playlist" class="btn btn-sm btn-default btn-minimize ">
+								<span class="glyphicon glyphicon-list-alt"></span>
+							</button>
 							<div class="widget-content" style="display:none;">
 								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
 									<source type="audio/mp3" src="song2.mp3">
