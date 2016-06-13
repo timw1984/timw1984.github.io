@@ -74,6 +74,7 @@
 			.active a{color:#5DB0E6;text-decoration:none;}
 			.widget-content{padding-left: 5px;}
 			.btn-minimize{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
+			#audiooff{margin-left: 5px; margin-bottom: 5px; margin-top: 2px;}
 			li a{color:#eeeedd;background:#333;padding:5px;display:block;}
 			li a:hover{text-decoration:none;}
 		<!-- Audio Style -->
@@ -120,6 +121,10 @@
 							<button id ="audiobutton" type="button" data-toggle="tooltip" data-placement="bottom" title="Show/Hide Playlist" class="btn btn-sm btn-default btn-minimize ">
 								<span class="glyphicon glyphicon-list-alt"></span>
 							</button>
+							<button id="audiooff" data-toggle="tooltip" data-placement="bottom" title="Turn Audio on/off" type="button" class="btn btn-default btn-sm showAudio" >
+								<span class="glyphicon glyphicon-volume-up"></span>
+							</button>
+							<!-- Audio off/on Button -->
 							<div class="widget-content" style="display:none;">
 								<audio id="audio" preload="auto" tabindex="0" controls="autoplay" type="audio/mpeg">
 									<source type="audio/mp3" src="song2.mp3">
@@ -354,11 +359,10 @@
 			topic,
 			array
 		) {
-			var audio;
-			var playlist;
-			var tracks;
-			var current;
+			var audio,playlist,tracks;
 			var buttonvalue = "mini";
+			var audioon = "yes";
+			var mysong = "song value";
 			init();
 			function init(){
 
@@ -425,6 +429,41 @@
 
 				}
 			}
+		// Change audio off button style when Volume is manually muted
+		audio[0].onvolumechange = function(evt) {
+			currentAudio = audio[0].volume;
+			if (currentAudio == 0){
+				audioon = "no";
+				this.blur();
+				var $el = $('#audiooff'),
+				textNode = this.lastChild;
+				$('#audiooff').find('span').removeClass('glyphicon-volume-up');
+				$('#audiooff').find('span').addClass('glyphicon-volume-off');
+			} else {
+				audioon = "yes";
+				$('#audiooff').find('span').removeClass('glyphicon-volume-off');
+				$('#audiooff').find('span').addClass('glyphicon-volume-up');
+				this.blur();
+			}			
+		};
+		
+		// Audio on/off button
+		$('#audiooff').on('click', function () {
+			if(audioon == "yes") {
+				audioon = "no";
+				$('#audiooff').find('span').removeClass('glyphicon-volume-up');
+				$('#audiooff').find('span').addClass('glyphicon-volume-off');
+				audio[0].volume = 0;
+			} else {
+				audioon = "yes";
+				$('#audiooff').find('span').removeClass('glyphicon-volume-off');
+				$('#audiooff').find('span').addClass('glyphicon-volume-up');
+				audio[0].volume = .50;
+			}
+			this.blur();
+
+		});
+		////////////////////////////////////////////////////////////////////////////
 
 	});
 		</script>
