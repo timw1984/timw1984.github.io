@@ -119,6 +119,7 @@
 							<button id ="audiobutton" type="button" data-toggle="tooltip" data-placement="bottom" title="Show/Hide Playlist" class="btn btn-sm btn-default btn-minimize ">
 								<span class="glyphicon glyphicon-list-alt"></span>
 							</button>
+							<!-- Audio off/on Button -->
 							<button id="audiooff" data-toggle="tooltip" data-placement="bottom" title="Turn Audio on/off" type="button" class="btn btn-default btn-sm showAudio" >
 								<span class="glyphicon glyphicon-volume-up"></span>
 							</button>
@@ -370,13 +371,13 @@
 				tracks = playlist.find('li a');
 				len = tracks.length;
 				audio[0].volume = .50;
-				//audio[0].play();
 				playlist.find('a').click(function(e){
 					e.preventDefault();
 					link = $(this);
 					current = link.parent().index();
 					run(link, audio[0]);
 				});
+				/* Uncomment if you want the playlist to automatically run next audio file once one has finished
 				audio[0].addEventListener('ended',function(e){
 					current++;
 					if(current === len){
@@ -386,7 +387,7 @@
 						link = playlist.find('a')[current];    
 					}
 					run($(link),audio[0]);
-				});
+				});  */
 				function run(link, player){
 					player.src = link.attr('href');
 					par = link.parent();
