@@ -342,7 +342,27 @@
 		) {
 		
 			var mybase = 'no street';
-			init();		
+			init();
+			topic.subscribe('story-load-section', setbasemap);
+			function setbasemap(evt){
+				whatisit = app.data.getCurrentSection();
+				infoIneed = whatisit.media.type;
+				if (infoIneed == "webmap"){
+						$("#streetv").fadeIn();
+						$("#basemapchange").fadeIn();
+					} else {
+						$("#streetv").hide();
+						$("#basemapchange").hide();
+					}
+					///////////////////////////////////////////////////////////
+					if (evt == 0 || evt == 35){
+						$("#streetv").hide();
+						$("#basemapchange").hide();
+					} else {
+						$("#streetv").fadeIn();
+						$("#basemapchange").fadeIn();
+					}
+			}
 					// Switches Basemap between aerial and topo
 			function init(){
 				$("#basemapchange").click(function () {
@@ -375,6 +395,23 @@
 					$el.toggleClass('showBasemap');
 				});
 			}
+			
+					// If the Mainstage media is changed show/hide the street view button
+		topic.subscribe("story-perform-action-media", function(media){
+			if (media.type == "webpage"){
+				$("#streetv").hide();
+				$("#basemapchange").hide();
+			} else {
+				$("#streetv").fadeIn();
+				$("#basemapchange").fadeIn();
+			}
+			console.log("A Main Stage action is performed:", media);
+		});
+	
+		$(".mediaBackContainer").click(function(){
+			$("#streetv").fadeIn();
+			$("#basemapchange").fadeIn();
+		});
 			
 				//////////////////////////////////////////////////////////////
 		
