@@ -146,12 +146,17 @@
 					<td id="mainStagePanel">
 						<div id="mainStagePanelInner">
 							<div class="medias">
-
-							
+							<!-- Street View Button  -->
+							<button id="streetv" data-toggle="tooltip" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
+								<i class="fa fa-street-view" aria-hidden="true"></i>
+							</button>
+							<!-- Street View Button  -->
+							<!-- Basemap Change Button -->
 							<button id="basemapchange"data-toggle="tooltip" title="Show Aerial" type="button" class="btn btn-default btn-sm showBasemap " >
 								<span class="fa fa-picture-o"></span>
 							</button>
-
+							<!-- Basemap Change Button -->
+							
 							<!-- Maps and media injected here -->
 							</div>
 							<div id="mainStageLoadingIndicator" class="loadingIndicator">
@@ -330,19 +335,15 @@
 
 		<script type="text/javascript">
 		
-		require([
-			'dojo/topic',
-			"dojo/parser",
-			"esri/geometry/webMercatorUtils",
-			"esri/virtualearth/VETiledLayer",
-			"esri/layers/OpenStreetMapLayer"
-		], function(
-			topic,
-			parser,
-			webMercatorUtils,
-			VETiledLayer,
-			OpenStreetMapLayer
-		) {
+	require([
+		'dojo/topic',
+		"esri/virtualearth/VETiledLayer",
+		"esri/layers/OpenStreetMapLayer"
+	], function(
+		topic,
+		VETiledLayer,
+		OpenStreetMapLayer
+	) {
 		
 			var mybase = 'no street';
 			init();
@@ -390,7 +391,7 @@
 				});
 			}
 			
-					// If the Mainstage media is changed show/hide the street view button
+		// If the Mainstage media is changed show/hide the street view button
 		topic.subscribe("story-perform-action-media", function(media){
 			if (media.type == "webpage"){
 				$("#streetv").hide();
