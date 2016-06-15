@@ -366,8 +366,8 @@
 					app.map.removeLayer(basemap);
 					if (mybase == 'image'){
 						//// Your topo Layer
-						var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer");
-						//var newbase = new OpenStreetMapLayer();
+						var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer");
+						// var newbase = new OpenStreetMapLayer(); // Open Street Basemap
 						mybase = 'no street';
 						$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
 					} else {
