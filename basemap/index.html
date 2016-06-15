@@ -365,17 +365,20 @@
 					var basemap = app.map.getLayer(app.map.layerIds[0]);
 					app.map.removeLayer(basemap);
 					if (mybase == 'image'){
-						//// Your topo Layer
-						var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer");
-						// var newbase = new OpenStreetMapLayer(); // Open Street Basemap
+						//// Your topo Layer, uncomment whichever layer you are using.
+						//var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"); //Street
+						var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"); // Topo
+						//var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer"); // National Geographic
+						//var newbase = new OpenStreetMapLayer(); // Open Street Basemap
 						mybase = 'no street';
 						$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
 					} else {
 						//// Your aerial Layer
-						var newbase = new VETiledLayer({
-							bingMapsKey: "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh",
+						/*var newbase = new VETiledLayer({
+							bingMapsKey: "-Your Bing Key-",
 							mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
-						});
+						}); */
+						var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer");
 						mybase = 'image';
 						$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
 					}
