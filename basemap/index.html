@@ -381,7 +381,7 @@
 							mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
 						}); */
 						//var newbase = new ArcGISDynamicMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer");
-						var newbase = new ArcGISDynamicMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
+						var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
 						mybase = 'image';
 						$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
 					}
