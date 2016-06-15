@@ -348,20 +348,11 @@
 				whatisit = app.data.getCurrentSection();
 				infoIneed = whatisit.media.type;
 				if (infoIneed == "webmap"){
-						$("#streetv").fadeIn();
 						$("#basemapchange").fadeIn();
 					} else {
-						$("#streetv").hide();
 						$("#basemapchange").hide();
 					}
-					///////////////////////////////////////////////////////////
-					if (evt == 0 || evt == 35){
-						$("#streetv").hide();
-						$("#basemapchange").hide();
-					} else {
-						$("#streetv").fadeIn();
-						$("#basemapchange").fadeIn();
-					}
+
 			}
 					// Switches Basemap between aerial and topo
 			function init(){
