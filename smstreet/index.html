@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Basemap Switch</title>
+		<title>Street View Button</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 
@@ -36,7 +36,7 @@
 			//-------------------------------------------------------------------------------------------
 			var configOptions = {
 				// Enter an application ID created through the Map Journal builder
-				appid: "15bb01ca322048a993e3a75311e1ab12",
+				appid: "7d842f31cb354e66a21eeac75e479570",
 				// Optionally to secure Journal's access, use an OAuth application ID (example: 6gyOg377fLUhUk6f)
 				// User will need to sign-in to access the viewer even if your application is public
 				oAuthAppId: "",
@@ -66,12 +66,12 @@
 	</head>
 	<body class="claro">
 		<style>
-		<!-- Basemap Style -->
-		<!-- Basemap Style -->
+		<!-- Street View Style -->
+		<!-- Street View Style -->
 		#position{z-index:1000; position:absolute; left: 15px; top: 120px;}
-		#basemapchange{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1001; position:absolute; left: 15px; top: 120px; border-color: #57585A;padding: 5px 9px;}
-		<!-- Basemap Style -->
-		<!-- Basemap Style -->
+		#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1001; position:absolute; left: 15px; top: 120px; border-color: #57585A;padding: 5px 9px;}
+		<!-- Street View Style -->
+		<!-- Street View Style -->
 		</style>
 
 		<!-- Builder top panel is injected here -->
@@ -109,7 +109,10 @@
 								</table>
 						
 							</div>
-			
+							<!-- street view cursor image NEEDS TO GO HERE -->
+							<img id="image" src="image/gsve.png"/>
+							<img id="image2" src="image/gsvw.png"/>
+							<!-- street view cursor image NEEDS TO GO HERE -->
 							<div class="appTitle" tabindex="-1" aria-hidden="true"></div>
 							<span class="error-status">
 								<button class="btn btn-xs btn-warning check-story"></button>
@@ -147,14 +150,15 @@
 					<td id="mainStagePanel">
 						<div id="mainStagePanelInner">
 							<div class="medias">
-							<!-- Basemap Change Button -->
+							<!-- Street View Button  -->
 							<div id="position">
 					
 							</div>
-							<button id="basemapchange"data-toggle="tooltip" title="Show Aerial" type="button" class="btn btn-default btn-sm showBasemap " >
-								<span class="fa fa-picture-o"></span>
+							
+							<button id="streetv" data-toggle="tooltip" title="Google Street view" type="button" data-toggle="button" aria-pressed="false" autocomplete="off" class="btn btn-default btn-sm " >
+								<i class="fa fa-street-view" aria-hidden="true"></i>
 							</button>
-							<!-- Basemap Change Button -->
+							<!-- Street View Button  -->
 							
 							<!-- Maps and media injected here -->
 							</div>
