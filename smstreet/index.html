@@ -342,8 +342,10 @@
 		
 	require([
 		'dojo/topic',
+		"esri/geometry/webMercatorUtils"
 	], function(
-		topic
+		topic,
+		webMercatorUtils
 	) {
 		var prevx = 1;
 		var thestreet;
