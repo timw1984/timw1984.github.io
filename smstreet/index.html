@@ -345,7 +345,7 @@
 	], function(
 		topic
 	) {
-		
+		var prevx = 1;
 		var thestreet;
 		var streetcurs = "normal";
 		init();
@@ -361,7 +361,6 @@
 						$("#streetv").hide();
 					}		
 			}
-		
 		}
 		topic.subscribe("story-perform-action-media", function(media){
 			if (media.type == "webpage"){
@@ -369,7 +368,6 @@
 			} else {
 				$("#streetv").fadeIn();
 			}
-			console.log("A Main Stage action is performed:", media);
 		});
 	
 		$(".mediaBackContainer").click(function(){
@@ -419,9 +417,6 @@
 				});
 			}
 		});
-			
-				//////////////////////////////////////////////////////////////
-		
 	});
 		</script>
 	</body>
