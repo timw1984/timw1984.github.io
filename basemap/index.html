@@ -348,77 +348,73 @@
 		OpenStreetMapLayer
 	) {
 		
-			var mybase = 'no street';
-			init();
-			topic.subscribe('story-load-section', setbasemap);
-			function setbasemap(evt){
-				whatisit = app.data.getCurrentSection();
-				infoIneed = whatisit.media.type;
-				if (infoIneed == "webmap"){
-						$("#basemapchange").fadeIn();
-					} else {
-						$("#basemapchange").hide();
-					}
+		var mybase = 'no street';
+		init();
+		topic.subscribe('story-load-section', setbasemap);
+		// Get the Mainstage media type. If it is a map show the button.
+		function setbasemap(evt){
+			whatisit = app.data.getCurrentSection();
+			infoIneed = whatisit.media.type;
+			if (infoIneed == "webmap"){
+					$("#basemapchange").fadeIn();
+				} else {
+					$("#basemapchange").hide();
+				}
 
-			}
-					// Switches Basemap between aerial and topo
-			function init(){
-				$("#basemapchange").click(function () {
-					var basemap = app.map.getLayer(app.map.layerIds[0]);
-					app.map.removeLayer(basemap);
-					if (mybase == 'image'){
-						//// Your topo Layer, uncomment whichever layer you are using.
-						//var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"); //Street
-						var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"); // Topo
-						//var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer"); // National Geographic
-						//var newbase = new OpenStreetMapLayer(); // Open Street Basemap
-						mybase = 'no street';
-						$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
-					} else {
-						//// Your aerial Layer
-						/*var newbase = new VETiledLayer({
-							bingMapsKey: "-Your Bing Key-",
-							mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
-						}); */
-						//var newbase = new ArcGISDynamicMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer");
-						var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
-						mybase = 'image';
-						$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
-					}
+		}
+		// Switches Basemap between aerial and topo
+		function init(){
+			$("#basemapchange").click(function () {
+				var basemap = app.map.getLayer(app.map.layerIds[0]);
+				app.map.removeLayer(basemap);
+				if (mybase == 'image'){
+					//// Your topo Layer, uncomment whichever layer you are using.
+					//var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"); //Street
+					var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"); // Topo
+					//var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer"); // National Geographic
+					//var newbase = new OpenStreetMapLayer(); // Open Street
+					mybase = 'no street';
+					$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
+				} else {
+					//// Your aerial Layer
+					/*var newbase = new VETiledLayer({
+						bingMapsKey: "-Your Bing Key-",
+						mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
+					}); BING AERIAL */
+					var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
+					mybase = 'image';
+					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
+				}
+	
+				app.map.addLayer(newbase);
+			});
 		
-					app.map.addLayer(newbase);
-				});
-			
-			// Change button depending on which basemap is there
-				$('#basemapchange').on('click', function () {
-					this.blur();
-					var $el = $(this),
-					textNode = this.lastChild;
-					$el.find('span').toggleClass('fa-car fa-picture-o');
-					$el.toggleClass('showBasemap');
-				});
-			}
+		// Change button depending on which basemap is there
+			$('#basemapchange').on('click', function () {
+				this.blur();
+				var $el = $(this),
+				textNode = this.lastChild;
+				$el.find('span').toggleClass('fa-car fa-picture-o');
+				$el.toggleClass('showBasemap');
+			});
+		}
 			
 		// If the Mainstage media is changed show/hide the street view button
 		topic.subscribe("story-perform-action-media", function(media){
 			if (media.type == "webpage"){
-				$("#streetv").hide();
 				$("#basemapchange").hide();
 			} else {
-				$("#streetv").fadeIn();
 				$("#basemapchange").fadeIn();
 			}
-			console.log("A Main Stage action is performed:", media);
 		});
 	
 		$(".mediaBackContainer").click(function(){
-			$("#streetv").fadeIn();
 			$("#basemapchange").fadeIn();
 		});
 			
 				//////////////////////////////////////////////////////////////
 		
-		});
+	});
 		</script>
 	</body>
 </html>
