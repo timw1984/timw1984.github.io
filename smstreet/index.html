@@ -70,6 +70,8 @@
 		<!-- Street View Style -->
 		#position{z-index:1000; position:absolute; left: 15px; top: 120px;}
 		#streetv{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1001; position:absolute; left: 15px; top: 120px; border-color: #57585A;padding: 5px 9px;}
+		#image{position:absolute;display: none;z-index:1001;}
+		#image2{position:absolute;display: none;z-index:1001;}
 		<!-- Street View Style -->
 		<!-- Street View Style -->
 		</style>
@@ -340,80 +342,82 @@
 		
 	require([
 		'dojo/topic',
-		"esri/virtualearth/VETiledLayer",
-		"esri/layers/ArcGISTiledMapServiceLayer",
-		"esri/layers/ArcGISDynamicMapServiceLayer",
-		"esri/layers/OpenStreetMapLayer"
 	], function(
-		topic,
-		VETiledLayer,
-		ArcGISTiledMapServiceLayer,
-		ArcGISDynamicMapServiceLayer,
-		OpenStreetMapLayer
+		topic
 	) {
 		
-		var mybase = 'no street';
+		var thestreet;
+		var streetcurs = "normal";
 		init();
-		topic.subscribe('story-load-section', setbasemap);
-		// Get the Mainstage media type. If it is a map show the button.
-		function setbasemap(evt){
-			whatisit = app.data.getCurrentSection();
-			infoIneed = whatisit.media.type;
-			if (infoIneed == "webmap"){
-					$("#basemapchange").fadeIn();
-				} else {
-					$("#basemapchange").hide();
-				}
-
-		}
-		// Switches Basemap between aerial and topo
 		function init(){
-			$("#basemapchange").click(function () {
-				var basemap = app.map.getLayer(app.map.layerIds[0]);
-				app.map.removeLayer(basemap);
-				if (mybase == 'image'){
-					//// Your topo Layer, uncomment whichever layer you are using.
-					//var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"); //Street
-					var newbase = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"); // Topo
-					//var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer"); // National Geographic
-					//var newbase = new OpenStreetMapLayer(); // Open Street
-					mybase = 'no street';
-					$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
-				} else {
-					//// Your aerial Layer
-					/*var newbase = new VETiledLayer({
-						bingMapsKey: "-Your Bing Key-",
-						mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
-					}); BING AERIAL */
-					var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
-					mybase = 'image';
-					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
-				}
-	
-				app.map.addLayer(newbase);
-			});
+			topic.subscribe('story-load-section', streetview);
+			function streetview (evt){
+				// If the section is a webmap, show the streetview button
+					whatisit = app.data.getCurrentSection();
+					infoIneed = whatisit.media.type;
+					if (infoIneed == "webmap"){
+						$("#streetv").fadeIn();
+					} else {
+						$("#streetv").hide();
+					}		
+			}
 		
-		// Change button depending on which basemap is there
-			$('#basemapchange').on('click', function () {
-				this.blur();
-				var $el = $(this),
-				textNode = this.lastChild;
-				$el.find('span').toggleClass('fa-car fa-picture-o');
-				$el.toggleClass('showBasemap');
-			});
 		}
-			
-		// If the Mainstage media is changed show/hide the street view button
 		topic.subscribe("story-perform-action-media", function(media){
 			if (media.type == "webpage"){
-				$("#basemapchange").hide();
+				$("#streetv").hide();
 			} else {
-				$("#basemapchange").fadeIn();
+				$("#streetv").fadeIn();
 			}
+			console.log("A Main Stage action is performed:", media);
 		});
 	
 		$(".mediaBackContainer").click(function(){
-			$("#basemapchange").fadeIn();
+			$("#streetv").fadeIn();
+		});
+	// Street View
+		$("#streetv").click(function () {
+ 
+			if (streetcurs == "street"){
+				$(document).unbind('mousemove');
+				document.getElementById('image').style.display = "none";
+				document.getElementById('image2').style.display = "none";
+				streetcurs = "normal";
+				$("#streetv").blur();
+				thestreet.remove();	
+			} else {
+				// Street view image following cursor
+				$(document).mousemove(function(e){
+					if (prevx > e.pageX ){
+						document.getElementById('image').style.display = "block";
+						document.getElementById('image2').style.display = "none";
+						prevx = e.pageX;
+					} else if (prevx < e.pageX)  {
+					document.getElementById('image2').style.display = "block";
+					document.getElementById('image').style.display = "none";
+					}
+					$("#image2").css({left:e.pageX - 20, top:e.pageY- 40});
+					$("#image").css({left:e.pageX - 20, top:e.pageY- 40});
+					prevx = e.pageX;
+				});	
+				//////////////////////////////////////////////////////
+				streetcurs = "street";
+		
+				 thestreet = app.map.on("click", function(evt) {
+					$("#streetv").blur();
+					xycoor = webMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+					document.getElementById('image').style.display = "none";
+					document.getElementById('image2').style.display = "none";
+					Lati = xycoor.y;
+					Longi = xycoor.x;
+					streetviewurl = "http://maps.google.com/?cbll=" + Lati + "," + Longi + "&cbp=12,20.09,,0,5&layer=c";
+					streetcurs = "normal";
+					var win = window.open(streetviewurl, '_blank');
+					win.focus();
+					$(document).off("mousemove");
+					thestreet.remove();	
+				});
+			}
 		});
 			
 				//////////////////////////////////////////////////////////////
