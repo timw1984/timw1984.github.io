@@ -355,6 +355,7 @@
 		var mybase = 'no street';
 		init();
 		topic.subscribe("story-loaded-map", function(evt){
+					var basemaptype = app.map.getLayer(app.map.layerIds[0]);
 					setTimeout(mapready, 1000);	
 				});
 		function mapready(){
