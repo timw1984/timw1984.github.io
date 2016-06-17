@@ -356,8 +356,11 @@
 		init();
 		topic.subscribe("story-loaded-map", function(evt){
 					var basemaptype = app.map.getLayer(app.map.layerIds[0]);
-					setTimeout(mapready, 1000);	
+					setTimeout(mapready(evt), 1000);	
 				});
+		function mapready(test){
+			mooch = test;
+			console.log(test);
 		topic.subscribe('story-load-section', setbasemap);
 		// Get the Mainstage media type. If it is a map show the button.
 			function setbasemap(evt){
@@ -379,7 +382,7 @@
 					$("#basemapchange").hide();
 				}
 			}
-		
+		}
 		// Switches Basemap between aerial and topo
 		function init(){
 			$("#basemapchange").click(function () {
