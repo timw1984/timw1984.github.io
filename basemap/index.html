@@ -374,6 +374,7 @@
 					//var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer"); // National Geographic
 					//var newbase = new OpenStreetMapLayer(); // Open Street
 					mybase = 'no street';
+					$('#streetbut').removeClass().addClass('fa fa-picture-o');
 					$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
 				} else {
 					//// Your aerial Layer
@@ -383,6 +384,7 @@
 					}); BING AERIAL */
 					var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
 					mybase = 'image';
+					$('#streetbut').removeClass().addClass('fa fa-car');
 					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
 				}
 	
@@ -390,14 +392,14 @@
 			});
 		
 		// Change button depending on which basemap is there
-			$('#basemapchange').on('click', function () {
+			//$('#basemapchange').on('click', function () {
 				//this.blur();
 				//var $el = $(this),
 				//textNode = this.lastChild;
 				//$el.find('span').toggleClass('fa-car fa-picture-o');
 				//$el.toggleClass('showBasemap');
-				$('#streetbut').removeClass('fa fa-picture-o').addClass('fa fa-car');
-			});
+				//$('#streetbut').removeClass('fa fa-picture-o').addClass('fa fa-car');
+			//});
 		}
 			
 		// If the Mainstage media is changed show/hide the street view button
