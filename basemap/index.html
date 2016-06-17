@@ -152,7 +152,7 @@
 					
 							</div>
 							<button id="basemapchange"data-toggle="tooltip" title="Show Aerial" type="button" class="btn btn-default btn-sm showBasemap " >
-								<span class="fa fa-picture-o"></span>
+								<span id="streetbut" class="fa fa-picture-o"></span>
 							</button>
 							<!-- Basemap Change Button -->
 							
@@ -389,15 +389,16 @@
 				app.map.addLayer(newbase);
 			});
 		
-		// Change button depending on which basemap is there
+		/ Change button depending on which basemap is there
 			$('#basemapchange').on('click', function () {
-				this.blur();
-				var $el = $(this),
-				textNode = this.lastChild;
-				$el.find('span').toggleClass('fa-car fa-picture-o');
-				$el.toggleClass('showBasemap');
+				//this.blur();
+				//var $el = $(this),
+				//textNode = this.lastChild;
+				//$el.find('span').toggleClass('fa-car fa-picture-o');
+				//$el.toggleClass('showBasemap');
+				$('#streetbut').removeClass('fa fa-picture-o').addClass('fa fa-car');
 			});
-		}
+		}/
 			
 		// If the Mainstage media is changed show/hide the street view button
 		topic.subscribe("story-perform-action-media", function(media){
