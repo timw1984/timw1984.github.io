@@ -389,6 +389,7 @@
 					mybase = 'no street';
 					$('#streetbut').removeClass().addClass('fa fa-picture-o');
 					$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
+					this.blur();
 				} else {
 					//// Your aerial Layer
 					var newbase = new VETiledLayer({
@@ -399,6 +400,7 @@
 					mybase = 'image';
 					$('#streetbut').removeClass().addClass('fa fa-car');
 					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
+					this.blur();
 				}
 	
 				app.map.addLayer(newbase);
