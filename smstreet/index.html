@@ -351,6 +351,10 @@
 		var thestreet;
 		var streetcurs = "normal";
 		init();
+		$("[data-toggle='tooltip']").tooltip({
+			trigger : 'hover',
+			container: 'body'
+		});
 		function init(){
 			topic.subscribe('story-load-section', streetview);
 			function streetview (evt){

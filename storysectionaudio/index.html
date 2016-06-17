@@ -363,6 +363,11 @@
 			var audioon = "yes";
 			var mysong = "song value";
 			init();
+			$("[data-toggle='tooltip']").tooltip({
+			trigger : 'hover',
+			container: 'body'
+			});
+			
 			function init(){
 
 				current = 0;
