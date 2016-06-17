@@ -419,18 +419,18 @@
 					if (basemaptype.url == "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer" || basemaptype.url == "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"  || basemaptype.bingMapsKey == "-Your Bing Key-" ) {
 						mybase = 'image';
 						$('#streetbut').removeClass().addClass('fa fa-car');
-						$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
+						$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle');
 					} else {
 						$('#streetbut').removeClass().addClass('fa fa-picture-o');
-						$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
+						$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle');
 						mybase = 'no street';
 					}
 
 					$("#basemapchange").fadeIn();
-					$("#basemapchange").blur();
+					//$("#basemapchange").blur();
 				} else {
 					$("#basemapchange").hide();
-					$("#basemapchange").blur();
+					//$("#basemapchange").blur();
 				}
 		}
 				//////////////////////////////////////////////////////////////
