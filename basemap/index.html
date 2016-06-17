@@ -149,7 +149,6 @@
 							<div class="medias">
 							<!-- Basemap Change Button -->
 							<div id="position">
-					
 							</div>
 							<button id="basemapchange"data-toggle="tooltip" title="Show Aerial" type="button" class="btn btn-default btn-sm showBasemap " >
 								<span id="streetbut" class="fa fa-picture-o"></span>
@@ -360,8 +359,9 @@
 				whatisit = app.data.getCurrentSection();
 				infoIneed = whatisit.media.type;
 				if (infoIneed == "webmap"){
+					// In case the map is an aerial already
 					var basemaptype = app.map.getLayer(app.map.layerIds[0]);
-					if (basemaptype.url == "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer" || basemaptype.bingMapsKey == "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh" ) {
+					if (basemaptype.url == "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer" || basemaptype.bingMapsKey == "-Your Bing Key-" ) {
 						mybase = 'image';
 						$('#streetbut').removeClass().addClass('fa fa-car');
 					} else {
@@ -392,11 +392,11 @@
 					$("#basemapchange").blur();
 				} else {
 					//// Your aerial Layer
-					var newbase = new VETiledLayer({
-						bingMapsKey: "AhT2NcxCVx_A4ittYFe0TCxuAAmPBQkKMAzm7D4RhPGWBBGG7Q_mide0fo-iixdh",
+					/*var newbase = new VETiledLayer({
+						bingMapsKey: "-Your Bing Key-",
 						mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
-					}); //BING AERIAL 
-					//var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
+					}); //BING AERIAL */
+					var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
 					mybase = 'image';
 					$('#streetbut').removeClass().addClass('fa fa-car');
 					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
