@@ -362,6 +362,11 @@
 				infoIneed = whatisit.media.type;
 				if (infoIneed == "webmap"){
 					var basemaptype = app.map.getLayer(app.map.layerIds[0]);
+					if (basemaptype.url == "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer") {
+						mybase = 'image';
+					} else {
+						mybase = 'no street';
+					}
 					thistype;
 					$("#basemapchange").fadeIn();
 				} else {
@@ -385,11 +390,11 @@
 					$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle').tooltip('show');
 				} else {
 					//// Your aerial Layer
-					/*var newbase = new VETiledLayer({
+					var newbase = new VETiledLayer({
 						bingMapsKey: "-Your Bing Key-",
 						mapStyle: VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS
-					}); BING AERIAL */
-					var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
+					}); //BING AERIAL 
+					//var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
 					mybase = 'image';
 					$('#streetbut').removeClass().addClass('fa fa-car');
 					$("#basemapchange").attr('title', 'Show Street').tooltip('fixTitle').tooltip('show');
