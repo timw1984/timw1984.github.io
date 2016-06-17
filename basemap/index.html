@@ -354,7 +354,7 @@
 		
 		var mybase = 'no street';
 		init();
-		topic.subscribe("story-loaded-map", function(){
+		topic.subscribe("story-loaded-map", function(evt){
 					setTimeout(mapready, 1000);	
 				});
 		function mapready(){
