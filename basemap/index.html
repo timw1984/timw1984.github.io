@@ -356,11 +356,26 @@
 		init();
 		topic.subscribe("story-loaded-map", function(evt){
 					var basemaptype = app.map.getLayer(app.map.layerIds[0]);
+								whatisit = app.data.getCurrentSection();
+				infoIneed = whatisit.media.type;
+				if (infoIneed == "webmap"){
+					// In case the map is an aerial already
+					var basemaptype = app.map.getLayer(app.map.layerIds[0]);
+					if (basemaptype.url == "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer" || basemaptype.url == "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"  || basemaptype.bingMapsKey == "-Your Bing Key-" ) {
+						mybase = 'image';
+						$('#streetbut').removeClass().addClass('fa fa-car');
+					} else {
+						$('#streetbut').removeClass().addClass('fa fa-picture-o');
+						mybase = 'no street';
+					}
+
+					$("#basemapchange").fadeIn();
+				} else {
+					$("#basemapchange").hide();
+				}
 					setTimeout(mapready(evt), 1000);	
 				});
-		function mapready(test){
-			mooch = test;
-			console.log(test);
+		function mapready(){
 		topic.subscribe('story-load-section', setbasemap);
 		// Get the Mainstage media type. If it is a map show the button.
 			function setbasemap(evt){
