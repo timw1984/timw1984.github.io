@@ -346,6 +346,11 @@
 		ArcGISDynamicMapServiceLayer,
 		OpenStreetMapLayer
 	) {
+		// Show tooltips
+		$("[data-toggle='tooltip']").tooltip({
+			trigger : 'hover',
+			container: 'body'
+		});  
 		
 		var mybase = 'no street';
 		init();
