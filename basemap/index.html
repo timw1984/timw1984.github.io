@@ -359,11 +359,7 @@
 					setTimeout(mapready(), 1000);	
 				});
 		function mapready(){
-		topic.subscribe('story-load-section', setbasemap);
-		// Get the Mainstage media type. If it is a map show the button.
-			function setbasemap(){
-				whatmap();
-			}
+			topic.subscribe('story-load-section', whatmap);
 		}
 		// Switches Basemap between aerial and topo
 		function init(){
@@ -425,12 +421,9 @@
 						$("#basemapchange").attr('title', 'Show Aerial').tooltip('fixTitle');
 						mybase = 'no street';
 					}
-
 					$("#basemapchange").fadeIn();
-					//$("#basemapchange").blur();
 				} else {
 					$("#basemapchange").hide();
-					//$("#basemapchange").blur();
 				}
 		}
 				//////////////////////////////////////////////////////////////
