@@ -303,7 +303,11 @@
 	});
 	
 	geocoder.on("find-results", function(evt){
-		myDialog2.show();
+		if (evt.results.results.length > 0){
+			console.log("found it")
+		} else {
+			myDialog2.show();
+		}
 	});
 	
 	var hGraphics = new GraphicsLayer({id:"highlights"});
