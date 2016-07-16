@@ -243,6 +243,10 @@
 	 }, "Locate");
 	 locateButton.startup();
 	 
+	 locateButton.on("locate", function(evt){
+		map.graphics.clear();
+	 });
+	 
 	var myDialog = new Dialog({
         content: "<img src='images/GeoError.png' alt='Error' style='width:auto; height:auto;'>"
     });
@@ -296,6 +300,7 @@
 	  });
 	  
 	  geocoder.on("select", function(evt){
+		map.graphics.clear();
 		var pt = evt.result.feature.geometry;
 		var GeocoderGraphic = new Graphic(pt,pictureMarkerSymbol);
 		map.graphics.add(GeocoderGraphic);
