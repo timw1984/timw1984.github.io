@@ -238,14 +238,11 @@
 	  
 	 var locateButton = new LocateButton({
 		map: map,
-		//symbol: pictureMarkerSymbol,
+		symbol: pictureMarkerSymbol,
 		scale: 120000
 	 }, "Locate");
 	 locateButton.startup();
 	 
-	 locateButton.on("locate", function(evt){
-		map.graphics.clear();
-	 });
 	 
 	var myDialog = new Dialog({
         content: "<img src='images/GeoError.png' alt='Error' style='width:auto; height:auto;'>"
