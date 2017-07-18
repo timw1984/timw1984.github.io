@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Map Clock</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.21/esri/css/esri.css">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+	  
+	  #time{
+		position: absolute;
+		z-index: 100;
+		left:48.5%;
+        border-radius: 25px;
+        background: black;
+		color:white;
+        padding: 5px; 
+ 		
+	  }
+	  .here:after {
+		content: "";
+		position: absolute;
+		z-index: 100;
+		top: 0;
+		bottom: 0;
+		left: 50%;
+		border-left: 3px dotted #ff0000;
+		transform: translate(-50%);
+		}
+
+	#basemapchange{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1001; position:absolute; left: 5px; top: 5px; border-color: #57585A; padding: 5px 9px;}
+	<!-- Basemap Style -->
+	<!-- Basemap Style -->
+	</style>
+
+	</style>
+
+    </style>
+    <script src="https://js.arcgis.com/3.21/"></script>
+    <script>
+      var map, myTime;
+
+      require(["esri/map","esri/dijit/OverviewMap",
+        "dojo/parser", "esri/layers/ArcGISTiledMapServiceLayer","dojo/dom-class","dojo/dom","dojo/dom-attr", "dojo/domReady!"], function(Map,OverviewMap,parser,ArcGISTiledMapServiceLayer,domClass, dom,domAttr) {
+		 parser.parse();
+		
+		var mybasemap = "NatGeo_World_Map";
+	    var seconds = new Date().getSeconds();
+		var minutes = new Date().getMinutes();
+		var hours = new Date().getHours();
+		var time = new Date();
+		  var d = new Date();
+		  var h = addZero(d.getHours());
+		  var m = addZero(d.getMinutes());
+		  var s = addZero(d.getSeconds());
+		  myTime =  h + ":" + m + ":" + s;
+		document.getElementById('timetext').innerHTML = myTime;
+		
+		var minutesseconds = minutes * 60;
+		var hoursseconds = hours * 60 * 60;
+		
+		var yourTime = seconds + minutesseconds + hoursseconds;
+		var centerMap = yourTime * 0.0041666666667;
+		 console.log(yourTime);
+        map = new Map("map", {
+          basemap: "national-geographic",
+          slider:	false,	  //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+          center: [centerMap, 52.00], // longitude, latitude
+          zoom: 9
+        });
+		
+		//////////////////////////////
+		function doFunction(){
+		 if (mybasemap == "NatGeo_World_Map") {
+			var basemap = map.getLayer(map.layerIds[0]);
+			map.removeLayer(basemap);
+			mybasemap = "Not_Nat";
+			console.log(mybasemap);
+			var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer");
+			map.addLayer(newbase);
+			domClass.remove("streetbut", "fa fa-picture-o");
+			domClass.add("streetbut", "fa fa-car");
+			domAttr.set("basemapchange", "title", "Show Map");
+		 } else {
+		   var basemap = map.getLayer(map.layerIds[0]);
+			map.removeLayer(basemap);
+			mybasemap = "NatGeo_World_Map";
+			console.log(mybasemap);
+			var newbase = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer");
+			map.addLayer(newbase);
+			domClass.remove("streetbut", "fa fa-car");
+			domClass.add("streetbut", "fa fa-picture-o");
+			domAttr.set("basemapchange", "title", "Show Aerial");
+		 }
+		}
+
+		document.getElementById("basemapchange").onclick = doFunction;
+		
+		//////////////////////////////
+		 var overviewMapDijit = new OverviewMap({
+          map: map,
+		  expandFactor: 11,
+		  attachTo: "bottom-left",
+		  opacity:0.6,
+		  color:"#f44242",
+          visible: true
+        });
+        overviewMapDijit.startup();
+		
+		function addZero(i) {
+			if (i < 10) {
+				i = "0" + i;
+			}
+			return i;
+		}
+	   
+	   //console.log(seconds);
+	   //var currentLong = 0.0041666666667;	
+	   setInterval(function() {
+  // method to be executed;
+          map.centerAndZoom([centerMap, 52.00],9);
+		  centerMap = centerMap + 0.0041666666667;
+		  var d = new Date();
+		  var h = addZero(d.getHours());
+		  var m = addZero(d.getMinutes());
+		  var s = addZero(d.getSeconds());
+		  myTime =  h + ":" + m + ":" + s;		  
+		  var1();
+		  console.log(centerMap);
+		}, 1000);
+		
+		function var1() {
+			document.getElementById('timetext').innerHTML = myTime;
+			
+		}
+		
+		function divit(){
+			var divline = document.createElement('divline');
+			var theDiv = document.getElementById("esri_dijit_OverviewMap_0-map_root");
+			divline.style.content = "";
+			divline.style.position = "absolute";
+			divline.style.zIndex = "100";
+			divline.style.top = "0";
+			divline.style.bottom = "0";
+			divline.style.left = "50%";
+			divline.style.borderleft = "3px dotted #ff0000";
+			divline.style.transform = "translate(-50%)";
+			theDiv.appendChild(divline);
+		
+		}
+		setTimeout(function() { divit(); }, 5000);
+		
+      });
+    </script>
+  </head>
+
+  <body class="claro">
+    <div id="map">
+
+		<button id="basemapchange" data-toggle="tooltip" title="Show Aerial" type="button" class="btn btn-default btn-sm showBasemap " >
+		<span id="streetbut" class="fa fa-picture-o"></span>
+		</button>
+
+	<div class="here"></div>
+		<div id="time"><div id="timetext"></div></div>
+	</div>
+  </body>
+</html>
