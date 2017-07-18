@@ -125,6 +125,8 @@
 	   //var currentLong = 0.0041666666667;	
 	   setInterval(function() {
   // method to be executed;
+			var currentCenter = map.extent.getCenter().getLatitude();  
+		  map.centerAndZoom([centerMap, currentCenter],9);
           map.centerAndZoom([centerMap, 52.00],9);
 		  centerMap = centerMap + 0.0041666666667;
 		  var d = new Date();
