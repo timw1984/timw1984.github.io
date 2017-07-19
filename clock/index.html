@@ -33,9 +33,17 @@
 		left: 50%;
 		border-left: 3px dotted #ff0000;
 		transform: translate(-50%);
+		
 		}
+		   #search {
+         display: block;
+         position: absolute;
+         z-index: 1000;
+         top: 10px;
+         left: 74px;
+      }
 
-	#basemapchange{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1001; position:absolute; left: 5px; top: 5px; border-color: #57585A; padding: 5px 9px;background-color:white;}
+	#basemapchange{margin-left: 5px; margin-bottom: 5px; margin-top: 2px; z-index:1001; position:absolute; left: 5px; top: 8px; border-color: #57585A; padding: 9px 15px;border-radius: 5px;background-color:white; border: 1px solid #57585A;}
 	<!-- Basemap Style -->
 	<!-- Basemap Style -->
 	</style>
@@ -45,10 +53,12 @@
     </style>
     <script src="https://js.arcgis.com/3.21/"></script>
     <script>
-      var map, myTime;
+      var map, myTime, currentCenter;
 
       require(["esri/map","esri/dijit/OverviewMap",
-        "dojo/parser", "esri/layers/ArcGISTiledMapServiceLayer","dojo/dom-class","dojo/dom","dojo/dom-attr", "dojo/domReady!"], function(Map,OverviewMap,parser,ArcGISTiledMapServiceLayer,domClass, dom,domAttr) {
+        "dojo/parser", "esri/layers/ArcGISTiledMapServiceLayer",
+		"dojo/dom-class","dojo/dom","dojo/dom-attr","esri/dijit/Search","esri/geometry/webMercatorUtils","dojo/on", "dojo/domReady!"], 
+		function(Map,OverviewMap,parser,ArcGISTiledMapServiceLayer,domClass, dom,domAttr,Search, webMercatorUtils,on) {
 		 parser.parse();
 		
 		var mybasemap = "NatGeo_World_Map";
@@ -143,29 +153,32 @@
 			
 		}
 		
-		function divit(){
-			var divline = document.createElement('divline');
-			var theDiv = document.getElementById("esri_dijit_OverviewMap_0-map_root");
-			divline.style.content = "";
-			divline.style.position = "absolute";
-			divline.style.zIndex = "100";
-			divline.style.top = "0";
-			divline.style.bottom = "0";
-			divline.style.left = "50%";
-			divline.style.borderleft = "3px dotted #ff0000";
-			divline.style.transform = "translate(-50%)";
-			theDiv.appendChild(divline);
+		 var search = new Search({
+            map: map,
+			enableButtonMode: true,
+			expanded: false
+         }, "search");
+         search.startup();
 		
-		}
-		setTimeout(function() { divit(); }, 5000);
+		on(search,'search-results', function(e) {
+				var myx = e.results[0]//[0].feature.geometry.spatialReference.x;
+				var myxx = myx[0]//.feature.geometry.spatialReference.x;
+				var myfinalx = myxx.feature.geometry.x;
+				var myfinaly = myxx.feature.geometry.y;
+				var normalizedVal = webMercatorUtils.xyToLngLat(myfinalx, myfinaly);
+				currentCenter = normalizedVal[1];
+
+			});
+	
 		
       });
     </script>
   </head>
 
   <body class="claro">
+  
     <div id="map">
-
+		<div id="search"></div>
 		<button id="basemapchange" data-toggle="tooltip" title="Show Aerial" type="button" class="btn btn-default btn-sm showBasemap " >
 		<span id="streetbut" class="fa fa-picture-o"></span>
 		</button>
